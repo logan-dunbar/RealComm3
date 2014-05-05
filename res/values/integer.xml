@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="booth_flip_animation_half">150</integer>
+    <integer name="booth_flip_animation_full">300</integer>
+    
+    <integer name="customViewFragmentSeedId">1000</integer>
+    
+    <integer name="splashImageFadeDuration">5000</integer>
+    <integer name="splashFragmentFadeInDuration">3500</integer>
+    <integer name="splashFragmentToListingFragment">1000</integer>
+    <integer name="listingFragmentToProfileFragment">1000</integer>
+    <integer name="profileFragmentToListingFragment">500</integer>
+
+</resources>

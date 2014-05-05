@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="talkDayTabHost" type="id"></item>
+    <item name="frontFragment" type="id"></item>
+    <item name="backFragment" type="id"></item>
+    <item name="fadeInAnimation" type="id"></item>
+    <item name="fadeOutAnimation" type="id"></item>
+    <item name="slideInRightAnimation" type="id"></item>
+    <item name="slideOutRightAnimation" type="id"></item>
+    <item name="slideInLeftAnimation" type="id"></item>
+    <item name="slideOutLeftAnimation" type="id"></item>
+    <item name="slideUpInAnimation" type="id"></item>
+    <item name="slideUpOutAnimation" type="id"></item>
+
+</resources>
