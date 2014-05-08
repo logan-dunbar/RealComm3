@@ -24,6 +24,7 @@ import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseActivity;
 import com.openbox.realcomm3.database.models.BoothModel;
+import com.openbox.realcomm3.database.models.SelectedBoothModel;
 import com.openbox.realcomm3.fragments.DataFragment;
 import com.openbox.realcomm3.fragments.ListingPageFragment;
 import com.openbox.realcomm3.fragments.ProfilePageFragment;
@@ -45,7 +46,6 @@ import com.openbox.realcomm3.utilities.interfaces.BeaconStatusChangeCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
-import com.openbox.realcomm3.utilities.interfaces.ListingPageInterface;
 import com.openbox.realcomm3.utilities.managers.AppModeManager;
 import com.openbox.realcomm3.utilities.managers.BeaconStatusManager;
 import com.openbox.realcomm3.utilities.managers.RealcommPageManager;
@@ -97,9 +97,8 @@ public class RealCommActivity extends BaseActivity implements
 	private List<ClearFocusInterface> clearFocusListeners = new ArrayList<>();
 	private List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
 	private BeaconManagerBoundCallbacks beaconManagerBoundListener;
-	private ListingPageInterface listingPageInterface;
 
-	private int selectedCompanyId;
+	private SelectedBoothModel selectedBooth;
 
 	/**********************************************************************************************
 	 * Activity Lifecycle Implements
@@ -164,11 +163,6 @@ public class RealCommActivity extends BaseActivity implements
 		if (fragment instanceof AppModeChangedCallbacks)
 		{
 			this.appModeChangedListeners.add((AppModeChangedCallbacks) fragment);
-		}
-
-		if (fragment instanceof ListingPageInterface)
-		{
-			this.listingPageInterface = (ListingPageInterface) fragment;
 		}
 	}
 
@@ -297,9 +291,9 @@ public class RealCommActivity extends BaseActivity implements
 	 * Activity Interface Implements
 	 **********************************************************************************************/
 	@Override
-	public void setSelectedCompanyId(int companyId)
+	public void setSelectedBooth(int boothId, int companyId)
 	{
-		this.selectedCompanyId = companyId;
+		this.selectedBooth = new SelectedBoothModel(boothId, companyId);
 	}
 
 	@Override
@@ -383,11 +377,6 @@ public class RealCommActivity extends BaseActivity implements
 				.show(listingFragment)
 				.commit();
 		}
-
-//		if (this.listingPageInterface != null)
-//		{
-//			this.listingPageInterface.startViewTimer();
-//		}
 	}
 
 	@Override
@@ -407,7 +396,7 @@ public class RealCommActivity extends BaseActivity implements
 			listingFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
 
 			// TODO see what happens if you replace a fragment that is still on the page O.o
-			profileFragment = ProfilePageFragment.newInstance(this.selectedCompanyId);
+			profileFragment = ProfilePageFragment.newInstance(this.selectedBooth);
 
 			profileFragment.setInAnimationDuration(duration);
 			profileFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
@@ -419,11 +408,6 @@ public class RealCommActivity extends BaseActivity implements
 				.add(R.id.realcommFragmentContainer, profileFragment, ProfilePageFragment.TAG)
 				.commit();
 		}
-
-//		if (this.listingPageInterface != null)
-//		{
-//			this.listingPageInterface.stopViewTimer();
-//		}
 	}
 
 	@Override

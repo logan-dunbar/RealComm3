@@ -1,8 +1,5 @@
 package com.openbox.realcomm3.fragments;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -11,8 +8,6 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,16 +15,13 @@ import android.widget.TextView;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseFragment;
-import com.openbox.realcomm3.controls.BoothFrameLayout;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.database.models.CompanyLogoModel;
-import com.openbox.realcomm3.utilities.animations.FlipAnimation;
-import com.openbox.realcomm3.utilities.interfaces.BoothFrameLayoutCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.loaders.CompanyLogoLoader;
 
-public class BoothFragment extends BaseFragment implements DataChangedCallbacks//, BoothFrameLayoutCallbacks
+public class BoothFragment extends BaseFragment implements DataChangedCallbacks// , BoothFrameLayoutCallbacks
 {
 	private static final String BOOTH_ID_KEY = "boothIdKey";
 	private static final String IS_BIG_KEY = "isBigKey";
@@ -41,11 +33,6 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 
 	private BoothModel boothModel;
 	private CompanyLogoModel companyLogoModel;
-
-	private BoothFrameLayout boothFrameLayout;
-	private List<FlipAnimation> flipAnimationList = new ArrayList<>();
-	private int layoutWidth;
-	private int layoutHeight;
 
 	private ImageView logo;
 	private TextView header;
@@ -113,9 +100,6 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 
-		//this.boothFrameLayout = (BoothFrameLayout) view.findViewById(R.id.boothFrameLayout);
-		//this.boothFrameLayout.setBoothFrameLayoutListener(this);
-
 		this.logo = (ImageView) view.findViewById(R.id.boothFragmentLogo);
 		this.header = (TextView) view.findViewById(R.id.boothFragmentHeader);
 		this.subHeader = (TextView) view.findViewById(R.id.boothFragmentSubHeader);
@@ -132,26 +116,6 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 
 		return view;
 	}
-
-//	@Override
-//	public Animation onCreateAnimation(int transit, boolean enter, int nextAnim)
-//	{
-//		Animation parentAnimation = super.onCreateAnimation(transit, enter, nextAnim);
-//		if (parentAnimation != null && parentAnimation instanceof AnimationSet)
-//		{
-//			for (Animation animation : ((AnimationSet) parentAnimation).getAnimations())
-//			{
-//				if (animation instanceof FlipAnimation)
-//				{
-//					this.flipAnimationList.add((FlipAnimation) animation);
-//				}
-//			}
-//		}
-//
-//		updateFlipAnimations();
-//
-//		return parentAnimation;
-//	}
 
 	/**********************************************************************************************
 	 * Public Methods
@@ -212,17 +176,6 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	}
 
 	/**********************************************************************************************
-	 * Data Changed Callbacks
-	 **********************************************************************************************/
-//	@Override
-//	public void onMeasureCalled(int width, int height)
-//	{
-//		this.layoutWidth = width;
-//		this.layoutHeight = height;
-//		updateFlipAnimations();
-//	}
-
-	/**********************************************************************************************
 	 * Private Helper Methods
 	 **********************************************************************************************/
 	private void updateLogo()
@@ -244,15 +197,6 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 		this.companyLogoModel = results;
 		updateLogo();
 	}
-
-//	private void updateFlipAnimations()
-//	{
-//		for (FlipAnimation animation : this.flipAnimationList)
-//		{
-//			animation.setCenterX((float) (this.layoutWidth / 2.0));
-//			animation.setCenterY((float) (this.layoutHeight / 2.0));
-//		}
-//	}
 
 	/**********************************************************************************************
 	 * Loader Callbacks

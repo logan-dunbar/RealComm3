@@ -5,6 +5,7 @@ import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.CustomAnimationListener;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
+import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
 import android.app.Activity;
@@ -20,6 +21,8 @@ public class BaseFragment extends Fragment
 	public static final int DEFAULT_DELAY = 0;
 
 	private ActivityInterface activityListener;
+	private DataInterface dataInterface;
+	private AppModeInterface appModeInterface;
 
 	private int inAnimationDuration = DEFAULT_ANIMATION_DURATION;
 	private int outAnimationDuration = DEFAULT_ANIMATION_DURATION;
@@ -37,6 +40,16 @@ public class BaseFragment extends Fragment
 	public ActivityInterface getActivityListener()
 	{
 		return activityListener;
+	}
+
+	public DataInterface getDataInterface()
+	{
+		return dataInterface;
+	}
+
+	public AppModeInterface getAppModeInterface()
+	{
+		return appModeInterface;
 	}
 
 	public void setInAnimationDuration(int inAnimationDuration)
@@ -108,13 +121,27 @@ public class BaseFragment extends Fragment
 		{
 			this.activityListener = (ActivityInterface) activity;
 		}
+
+		if (activity instanceof DataInterface)
+		{
+			this.dataInterface = (DataInterface) activity;
+		}
+
+		if (activity instanceof AppModeInterface)
+		{
+			this.appModeInterface = (AppModeInterface) activity;
+		}
 	}
 
 	@Override
 	public void onDetach()
 	{
 		super.onDetach();
+
+		// Clean up
 		this.activityListener = null;
+		this.dataInterface = null;
+		this.appModeInterface = null;
 	}
 
 	@Override

@@ -32,6 +32,10 @@
     <string name="splashFindDesc">Search a complete directory of exhibitors</string>
     <string name="splashAttendTitle">Attend</string>
     <string name="splashAttendDesc">Up-to-the-minute schedule of conference events</string>
+    
+    <string name="companyAddressTitle">ADDRESS</string>
+    <string name="companyContactTitle">CONTACT</string>
+    <string name="companyLinksTitle">LINKS</string>
 
     <!-- Preferences -->
     <string name="enableProximityTitle">Enable Proximity Sensing</string>
@@ -41,5 +45,9 @@
     <string name="logoImageDescription">Company Logo</string>
     <string name="contactImageDescription">Contact</string>
     <string name="proximityImageDescription">Proximity Graphic</string>
+    
+    <string name="facebookImageDescription">Facebook Icon</string>
+    <string name="twitterImageDescription">Twitter Icon</string>
+    <string name="linkedInImageDescription">LinkedIn Icon</string>
 
 </resources>

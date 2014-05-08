@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.openbox.realcomm3.controls.BoothFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/boothFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -26,16 +26,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textSize="@dimen/textSizeBiggest"
-                android:textStyle="bold" />
+                android:textSize="@dimen/textSizeBiggest" />
 
             <TextView
                 android:id="@+id/boothFragmentSubHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:textSize="@dimen/textSizeBig"
-                android:textStyle="bold" />
+                android:textSize="@dimen/textSizeBig" />
 
             <TextView
                 android:id="@+id/boothFragmentDetails"
@@ -47,8 +45,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="5"
-                android:textSize="@dimen/textSizeMedium"
-                android:textStyle="bold" />
+                android:textSize="@dimen/textSizeMedium" />
         </LinearLayout>
 
         <FrameLayout
@@ -81,4 +78,4 @@
         android:cropToPadding="true"
         android:scaleType="fitCenter" />
 
-</com.openbox.realcomm3.controls.BoothFrameLayout>
+</FrameLayout>

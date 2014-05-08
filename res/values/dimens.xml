@@ -5,7 +5,10 @@
     <dimen name="defaultCornerRadius">8dp</dimen>
     <dimen name="defaultPadding">10dp</dimen>
     <dimen name="defaultMargin">10dp</dimen>
-    <dimen name="listItemHeight">80dp</dimen>
+    <dimen name="profilePaddingTopBottom">50dp</dimen>
+    <dimen name="profilePaddingLeftRight">80dp</dimen>
+    <dimen name="boothListItemHeight">80dp</dimen>
+    <dimen name="talkListItemHeight">60dp</dimen>
     <dimen name="logoHeight">50dp</dimen>
     <dimen name="logoWidth">150dp</dimen>
     <dimen name="logoSpacingTop">15dp</dimen>
@@ -25,5 +28,8 @@
     <dimen name="textSizeMedium">18sp</dimen>
     <dimen name="textSizeSmall">15sp</dimen>
     <dimen name="defaultCompoundDrawablePadding">10dp</dimen>
+    <dimen name="borderWidth">2dp</dimen>
+    <dimen name="profileFragmentTopBottomMargin">25dp</dimen>
+    <dimen name="profileSocialNetworksRightMargin">15dp</dimen>
 
 </resources>

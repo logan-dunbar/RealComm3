@@ -11,12 +11,9 @@ import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.helpers.ViewTimerTask;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 import com.openbox.realcomm3.utilities.interfaces.BoothListInterface;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.DataInterface;
-import com.openbox.realcomm3.utilities.interfaces.ListingPageInterface;
 import com.openbox.realcomm3.utilities.interfaces.TimerTaskCallbacks;
 import android.app.Activity;
 import android.os.Bundle;
@@ -29,8 +26,7 @@ public class ListingPageFragment extends BaseFragment implements
 	TimerTaskCallbacks,
 	DataChangedCallbacks,
 	AppModeChangedCallbacks,
-	ClearFocusInterface,
-	ListingPageInterface
+	ClearFocusInterface
 {
 	public static final String TAG = "listingPageFragment";
 
@@ -44,11 +40,10 @@ public class ListingPageFragment extends BaseFragment implements
 	 * Fields
 	 **********************************************************************************************/
 	// Listeners/Interfaces
-	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
-	private DataInterface dataInterface;
-	private List<ClearFocusInterface> clearFocusListeners = new ArrayList<>();
-	private AppModeInterface appModeInterface;
 	private BoothListInterface boothListInterface;
+	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
+	private List<ClearFocusInterface> clearFocusListeners = new ArrayList<>();
+	private List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
 
 	// View Timer
 	private Timer viewUpdateTimer;
@@ -75,16 +70,6 @@ public class ListingPageFragment extends BaseFragment implements
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
-
-		if (activity instanceof DataInterface)
-		{
-			this.dataInterface = (DataInterface) activity;
-		}
-
-		if (activity instanceof AppModeInterface)
-		{
-			this.appModeInterface = (AppModeInterface) activity;
-		}
 	}
 
 	@Override
@@ -93,11 +78,10 @@ public class ListingPageFragment extends BaseFragment implements
 		super.onDetach();
 
 		// Clean up
-		this.dataChangedListeners.clear();
-		this.dataInterface = null;
-		this.clearFocusListeners.clear();
-		this.appModeInterface = null;
 		this.boothListInterface = null;
+		this.dataChangedListeners.clear();
+		this.clearFocusListeners.clear();
+		this.appModeChangedListeners.clear();
 	}
 
 	@Override
@@ -114,6 +98,8 @@ public class ListingPageFragment extends BaseFragment implements
 		super.onViewCreated(view, savedInstanceState);
 
 		createBoothListFragment();
+
+		createDashboardFragment();
 	}
 
 	@Override
@@ -138,7 +124,7 @@ public class ListingPageFragment extends BaseFragment implements
 	public void onHiddenChanged(boolean hidden)
 	{
 		super.onHiddenChanged(hidden);
-		
+
 		if (hidden)
 		{
 			stopViewTimer();
@@ -180,6 +166,24 @@ public class ListingPageFragment extends BaseFragment implements
 	}
 
 	/**********************************************************************************************
+	 * App Mode Changed Callbacks
+	 **********************************************************************************************/
+	@Override
+	public void onAppModeChanged()
+	{
+		for (AppModeChangedCallbacks listener : this.appModeChangedListeners)
+		{
+			listener.onAppModeChanged();
+		}
+	}
+
+	@Override
+	public void onOnlineModeToOfflineMode()
+	{
+		// Stub. Not needed.
+	}
+
+	/**********************************************************************************************
 	 * Timer Task Callbacks
 	 **********************************************************************************************/
 	@Override
@@ -193,21 +197,6 @@ public class ListingPageFragment extends BaseFragment implements
 				ListingPageFragment.this.updateView();
 			}
 		});
-	}
-
-	/**********************************************************************************************
-	 * App Mode Changed Callbacks
-	 **********************************************************************************************/
-	@Override
-	public void onAppModeChanged()
-	{
-		// TODO figure this one out
-	}
-
-	@Override
-	public void onOnlineModeToOfflineMode()
-	{
-		// Stub: Not needed by fragments
 	}
 
 	/**********************************************************************************************
@@ -226,36 +215,13 @@ public class ListingPageFragment extends BaseFragment implements
 	}
 
 	/**********************************************************************************************
-	 * Listing Page Interface Implements
-	 **********************************************************************************************/
-	@Override
-	public void startViewTimer()
-	{
-		if (this.viewUpdateTimer == null)
-		{
-			this.viewUpdateTimer = new Timer();
-			this.viewUpdateTimer.schedule(new ViewTimerTask(this), TIMER_DELAY, TIMER_PERIOD);
-		}
-	}
-
-	@Override
-	public void stopViewTimer()
-	{
-		if (this.viewUpdateTimer != null)
-		{
-			this.viewUpdateTimer.cancel();
-			this.viewUpdateTimer = null;
-		}
-	}
-
-	/**********************************************************************************************
 	 * Update View Methods
 	 **********************************************************************************************/
 	private void updateView()
 	{
-		if (this.appModeInterface != null)
+		if (getAppModeInterface() != null)
 		{
-			switch (this.appModeInterface.getCurrentAppMode())
+			switch (getAppModeInterface().getCurrentAppMode())
 			{
 				case INITIALIZING:
 					// Do nothing
@@ -279,9 +245,9 @@ public class ListingPageFragment extends BaseFragment implements
 
 	private void updateViewOffline()
 	{
-		if (this.dataInterface != null)
+		if (getDataInterface() != null)
 		{
-			this.boothIdsToDisplay = this.dataInterface.getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			this.boothIdsToDisplay = getDataInterface().getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
 		}
 
 		updateBoothView();
@@ -294,9 +260,9 @@ public class ListingPageFragment extends BaseFragment implements
 			this.boothListInterface.updateList();
 		}
 
-		if (this.dataInterface != null)
+		if (getDataInterface() != null)
 		{
-			this.boothIdsToDisplay = this.dataInterface.getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			this.boothIdsToDisplay = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
 		}
 
 		updateBoothView();
@@ -322,9 +288,8 @@ public class ListingPageFragment extends BaseFragment implements
 			int duration = getResources().getInteger(R.integer.boothFragmentFlipDuration);
 
 			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-
-			// TODO pimp out the animations
 			ft.setCustomAnimations(R.id.flipInDownAnimation, R.id.flipOutDownAnimation);
+			
 			BoothFragment oldFragment = (BoothFragment) getChildFragmentManager().findFragmentById(containerId);
 			Boolean switchFragment = true;
 			if (oldFragment != null)
@@ -392,6 +357,37 @@ public class ListingPageFragment extends BaseFragment implements
 			this.boothListInterface = fragment;
 			this.dataChangedListeners.add(fragment);
 			this.clearFocusListeners.add(fragment);
+		}
+	}
+
+	private void createDashboardFragment()
+	{
+		DashboardFragment fragment = (DashboardFragment) getChildFragmentManager().findFragmentById(R.id.dashboardContainer);
+		if (fragment == null)
+		{
+			fragment = DashboardFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.dashboardContainer, fragment).commit();
+		}
+
+		this.appModeChangedListeners.add(fragment);
+		this.dataChangedListeners.add(fragment);
+	}
+
+	private void startViewTimer()
+	{
+		if (this.viewUpdateTimer == null)
+		{
+			this.viewUpdateTimer = new Timer();
+			this.viewUpdateTimer.schedule(new ViewTimerTask(this), TIMER_DELAY, TIMER_PERIOD);
+		}
+	}
+
+	private void stopViewTimer()
+	{
+		if (this.viewUpdateTimer != null)
+		{
+			this.viewUpdateTimer.cancel();
+			this.viewUpdateTimer = null;
 		}
 	}
 

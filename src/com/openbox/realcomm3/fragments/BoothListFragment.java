@@ -162,7 +162,7 @@ public class BoothListFragment extends BaseFragment implements
 		BoothModel booth = this.boothAdapter.getItem(position);
 		if (getActivityListener() != null)
 		{
-			getActivityListener().setSelectedCompanyId(booth.getCompanyId());
+			getActivityListener().setSelectedBooth(booth.getBoothId(), booth.getCompanyId());
 			getActivityListener().changePage(RealcommPage.PROFILEPAGE);
 		}
 	}
