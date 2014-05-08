@@ -3,7 +3,6 @@ package com.openbox.realcomm3.base;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.services.WebService;
@@ -103,10 +102,10 @@ public class BaseActivity extends FragmentActivity implements AsyncTaskInterface
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Careful when this is called in the Lifecycle
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.main_menu, menu);
-//		this.updateMenuItem = menu.findItem(R.id.refreshMenuItem);
-//		updateUpdateMenuItemVisibility();
+		// MenuInflater inflater = getMenuInflater();
+		// inflater.inflate(R.menu.main_menu, menu);
+		// this.updateMenuItem = menu.findItem(R.id.refreshMenuItem);
+		// updateUpdateMenuItemVisibility();
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -116,21 +115,21 @@ public class BaseActivity extends FragmentActivity implements AsyncTaskInterface
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-//		switch (item.getItemId())
-//		{
-//			case R.id.refreshMenuItem:
-//				this.updateMenuItem.setEnabled(false);
-//				downloadDatabase();
-//				break;
-//			case R.id.settingsMenuItem:
-//				startSettingsActivity();
-//				break;
-//			case R.id.dataCaptureMenuItem:
-//				startDataCaptureActivity();
-//				break;
-//			default:
-//				break;
-//		}
+		// switch (item.getItemId())
+		// {
+		// case R.id.refreshMenuItem:
+		// this.updateMenuItem.setEnabled(false);
+		// downloadDatabase();
+		// break;
+		// case R.id.settingsMenuItem:
+		// startSettingsActivity();
+		// break;
+		// case R.id.dataCaptureMenuItem:
+		// startDataCaptureActivity();
+		// break;
+		// default:
+		// break;
+		// }
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -222,20 +221,29 @@ public class BaseActivity extends FragmentActivity implements AsyncTaskInterface
 	@Override
 	public void onCheckUpdateReceive(Intent intent)
 	{
-		// TODO Override to implement when checking update is complete, super() must be called last
-		updateUpdateMenuItemVisibility();
+		// TODO Override to implement, when checking update is complete super() must be called last
+
+		// Check update and Download are separate because they used to be user driven
+		// updateUpdateMenuItemVisibility();
+
+		if (RealCommApplication.updateNeeded)
+		{
+			downloadDatabase();
+		}
 	}
 
 	@Override
 	public void onDownloadDatabaseReceive(Intent intent)
 	{
-		// TODO Override to implement when downloading com.openbox.realcomm.database is complete, super() must be called last
-		updateUpdateMenuItemVisibility();
+		// TODO Override to implement, when downloading database is complete super() must be called last
+
+		// Check update and Download are separate because they used to be user driven
+		// updateUpdateMenuItemVisibility();
 
 		unbindDownloadDatabaseReceiver();
 		unbindWebService();
 
-		this.updateMenuItem.setEnabled(true);
+		// this.updateMenuItem.setEnabled(true);
 		ToastHelper.showLongMessage(this, "Sync complete");
 	}
 
@@ -275,17 +283,17 @@ public class BaseActivity extends FragmentActivity implements AsyncTaskInterface
 
 	private void updateUpdateMenuItemVisibility()
 	{
-//		if (this.updateMenuItem != null)
-//		{
-//			if (RealCommApplication.updateNeeded)
-//			{
-//				this.updateMenuItem.setIcon(R.drawable.ic_menu_refresh_colour);
-//			}
-//			else
-//			{
-//				this.updateMenuItem.setIcon(R.drawable.ic_menu_refresh_grey);
-//			}
-//		}
+		// if (this.updateMenuItem != null)
+		// {
+		// if (RealCommApplication.updateNeeded)
+		// {
+		// this.updateMenuItem.setIcon(R.drawable.ic_menu_refresh_colour);
+		// }
+		// else
+		// {
+		// this.updateMenuItem.setIcon(R.drawable.ic_menu_refresh_grey);
+		// }
+		// }
 	}
 
 	protected void setDisplayHomeAsUpEnable(Boolean enabled)
@@ -298,25 +306,19 @@ public class BaseActivity extends FragmentActivity implements AsyncTaskInterface
 
 	private void startSettingsActivity()
 	{
-//		Intent intent = new Intent(this, SettingsPageActivity.class);
-//
-//		// Don't restart if already showing settings
-//		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//		startActivity(intent);
+		// Intent intent = new Intent(this, SettingsPageActivity.class);
+		//
+		// // Don't restart if already showing settings
+		// intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		// startActivity(intent);
 	}
 
 	private void startDataCaptureActivity()
 	{
-//		Intent intent = new Intent(this, DataCaptureActivity.class);
-//
-//		// Don't restart if already showing settings
-//		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//		startActivity(intent);
-	}
-
-	public void hideSoftKeyboard()
-	{
-		InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(FragmentActivity.INPUT_METHOD_SERVICE);
-		inputMethodManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+		// Intent intent = new Intent(this, DataCaptureActivity.class);
+		//
+		// // Don't restart if already showing settings
+		// intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		// startActivity(intent);
 	}
 }

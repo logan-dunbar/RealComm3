@@ -12,5 +12,7 @@
     <item name="slideOutLeftAnimation" type="id"></item>
     <item name="slideUpInAnimation" type="id"></item>
     <item name="slideUpOutAnimation" type="id"></item>
+    <item name="flipInDownAnimation" type="id"></item>
+    <item name="flipOutDownAnimation" type="id"></item>
 
 </resources>

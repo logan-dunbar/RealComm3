@@ -20,7 +20,7 @@ public class ClearableEditText extends EditText implements OnFocusChangeListener
 
 	private Drawable rightDrawable;
 	private Rect touchableBounds;
-	
+
 	private Boolean getIsClearShowing()
 	{
 		Drawable[] drawables = getCompoundDrawables();
@@ -113,7 +113,7 @@ public class ClearableEditText extends EditText implements OnFocusChangeListener
 			{
 				// Clear text
 				setText(null);
-				
+
 				// If clearing from outside, hide the clear button
 				if (!hasFocus())
 				{
@@ -121,7 +121,7 @@ public class ClearableEditText extends EditText implements OnFocusChangeListener
 				}
 
 				// Stop propagation, we have done what we wanted to
-				return false;
+				return true;
 			}
 		}
 

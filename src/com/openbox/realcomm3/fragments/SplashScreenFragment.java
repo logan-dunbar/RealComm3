@@ -24,13 +24,16 @@ public class SplashScreenFragment extends BaseFragment
 		return fragment;
 	}
 
+	/**********************************************************************************************
+	 * Fragment Lifecycle Implements
+	 **********************************************************************************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
 		setInAnimationCompleteListener(this.animationInCompleteRunnable);
-		setOutAnimationCompleteListener(this.animationOutCompleteRunnable);
+		// setOutAnimationCompleteListener(this.animationOutCompleteRunnable);
 	}
 
 	@Override
@@ -74,6 +77,9 @@ public class SplashScreenFragment extends BaseFragment
 		return view;
 	}
 
+	/**********************************************************************************************
+	 * Animation Complete Runnables
+	 **********************************************************************************************/
 	private Runnable animationInCompleteRunnable = new Runnable()
 	{
 		@Override

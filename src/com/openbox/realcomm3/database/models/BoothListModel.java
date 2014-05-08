@@ -6,7 +6,7 @@ import com.openbox.realcomm3.database.objects.Company;
 public class BoothListModel
 {
 	private int boothId;
-	private float accuracy = BoothDistanceModel.DEFAULT_ACCURACY; // Set to default until ranging has begun
+	private double accuracy = BoothModel.DEFAULT_ACCURACY; // Set to default until ranging has begun
 	private int boothNumber;
 
 	private int companyId;
@@ -14,11 +14,17 @@ public class BoothListModel
 
 	public BoothListModel(Booth booth, Company company)
 	{
-		this.boothId = booth.getBoothId();
-		this.boothNumber = booth.getBoothNumber();
+		if (booth != null)
+		{
+			this.boothId = booth.getBoothId();
+			this.boothNumber = booth.getBoothNumber();
+		}
 
-		this.companyId = company.getCompanyId();
-		this.companyName = company.getName();
+		if (company != null)
+		{
+			this.companyId = company.getCompanyId();
+			this.companyName = company.getName();
+		}
 	}
 
 	public int getBoothId()
@@ -31,12 +37,12 @@ public class BoothListModel
 		this.boothId = boothId;
 	}
 
-	public float getAccuracy()
+	public double getAccuracy()
 	{
 		return accuracy;
 	}
 
-	public void setAccuracy(float accuracy)
+	public void setAccuracy(double accuracy)
 	{
 		this.accuracy = accuracy;
 	}

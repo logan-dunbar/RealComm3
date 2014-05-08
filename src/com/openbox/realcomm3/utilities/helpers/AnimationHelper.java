@@ -1,5 +1,8 @@
 package com.openbox.realcomm3.utilities.helpers;
 
+import com.openbox.realcomm3.utilities.animations.FlipAnimation;
+import com.openbox.realcomm3.utilities.animations.FlipAnimation.FlipDirection;
+import com.openbox.realcomm3.utilities.animations.FlipAnimation.ScaleUpDownEnum;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -93,6 +96,25 @@ public class AnimationHelper
 		return animation;
 	}
 
+	// TODO come up with better names...
+	public static Animation getFlipInUpDownAnimation(AnimationInterpolator interpolator, int duration, int delay, CustomAnimationListener listener,
+		int startDegrees, int endDegrees)
+	{
+		FlipAnimation animation = new FlipAnimation(startDegrees, endDegrees, FlipAnimation.SCALE_DEFAULT, FlipAnimation.ScaleUpDownEnum.SCALE_UP,
+			FlipAnimation.FlipDirection.UpDown);
+		setAnimationValues(animation, interpolator, duration, delay, listener);
+		return animation;
+	}
+
+	public static Animation getFlipOutUpDownAnimation(AnimationInterpolator interpolator, int duration, int delay, CustomAnimationListener listener,
+		int startDegrees, int endDegrees)
+	{
+		FlipAnimation animation = new FlipAnimation(startDegrees, endDegrees, FlipAnimation.SCALE_DEFAULT, FlipAnimation.ScaleUpDownEnum.SCALE_DOWN,
+			FlipAnimation.FlipDirection.UpDown);
+		setAnimationValues(animation, interpolator, duration, delay, listener);
+		return animation;
+	}
+
 	private static void setAnimationValues(Animation animation, AnimationInterpolator interpolator, int duration, int delay, CustomAnimationListener listener)
 	{
 		animation.setInterpolator(getAnimationInterpolator(interpolator));
@@ -105,13 +127,13 @@ public class AnimationHelper
 	{
 		switch (interpolatorEnum)
 		{
-			case AccelerateDecceleratInterpolator:
+			case ACCELERATEDECELERATE:
 				return new AccelerateDecelerateInterpolator();
-			case AccelerateInterpolator:
+			case ACCELERATE:
 				return new AccelerateInterpolator();
-			case DeccelerateInterpolator:
+			case DECELERATE:
 				return new DecelerateInterpolator();
-			case LinearInterpolator:
+			case LINEAR:
 				return new LinearInterpolator();
 			default:
 				return new LinearInterpolator();

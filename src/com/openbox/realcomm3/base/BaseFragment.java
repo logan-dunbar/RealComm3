@@ -5,6 +5,7 @@ import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.CustomAnimationListener;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
+import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,10 +25,14 @@ public class BaseFragment extends Fragment
 	private int outAnimationDuration = DEFAULT_ANIMATION_DURATION;
 	private int inAnimationDelay = DEFAULT_DELAY;
 	private int outAnimationDelay = DEFAULT_DELAY;
-	private AnimationInterpolator inAnimationInterpolator = AnimationInterpolator.LinearInterpolator;
-	private AnimationInterpolator outAnimationInterpolator = AnimationInterpolator.LinearInterpolator;
+	private AnimationInterpolator inAnimationInterpolator = AnimationInterpolator.LINEAR;
+	private AnimationInterpolator outAnimationInterpolator = AnimationInterpolator.LINEAR;
 	private CustomAnimationListener inAnimationCompleteListener;
 	private CustomAnimationListener outAnimationCompleteListener;
+	private int inFlipStartDegrees;
+	private int inFlipEndDegrees;
+	private int outFlipStartDegrees;
+	private int outFlipEndDegrees;
 
 	public ActivityInterface getActivityListener()
 	{
@@ -74,6 +79,26 @@ public class BaseFragment extends Fragment
 		this.outAnimationCompleteListener = new CustomAnimationListener(outAnimationCompleteRunnable);
 	}
 
+	public void setInFlipStartDegrees(int inFlipStartDegrees)
+	{
+		this.inFlipStartDegrees = inFlipStartDegrees;
+	}
+
+	public void setInFlipEndDegrees(int inFlipEndDegrees)
+	{
+		this.inFlipEndDegrees = inFlipEndDegrees;
+	}
+
+	public void setOutFlipStartDegrees(int outFlipStartDegrees)
+	{
+		this.outFlipStartDegrees = outFlipStartDegrees;
+	}
+
+	public void setOutFlipEndDegrees(int outFlipEndDegrees)
+	{
+		this.outFlipEndDegrees = outFlipEndDegrees;
+	}
+
 	@Override
 	public void onAttach(Activity activity)
 	{
@@ -100,7 +125,8 @@ public class BaseFragment extends Fragment
 		// So the activity can animate knowing the view is all there
 		if (this.activityListener != null)
 		{
-			this.activityListener.onFragmentViewCreated();
+			// TODO see if this is required or not
+			// this.activityListener.onFragmentViewCreated();
 		}
 	}
 
@@ -166,6 +192,24 @@ public class BaseFragment extends Fragment
 					this.outAnimationDuration,
 					this.outAnimationDelay,
 					this.outAnimationCompleteListener);
+				break;
+			case R.id.flipInDownAnimation:
+				animation = AnimationHelper.getFlipInUpDownAnimation(
+					this.inAnimationInterpolator,
+					this.inAnimationDuration,
+					this.inAnimationDelay,
+					this.inAnimationCompleteListener,
+					this.inFlipStartDegrees,
+					this.inFlipEndDegrees);
+				break;
+			case R.id.flipOutDownAnimation:
+				animation = AnimationHelper.getFlipOutUpDownAnimation(
+					this.outAnimationInterpolator,
+					this.outAnimationDuration,
+					this.outAnimationDelay,
+					this.outAnimationCompleteListener,
+					this.outFlipStartDegrees,
+					this.outFlipEndDegrees);
 				break;
 			default:
 				return null;

@@ -1,5 +1,7 @@
 package com.openbox.realcomm3.utilities.helpers;
 
+import java.util.List;
+
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 
 import android.content.Context;
@@ -14,7 +16,7 @@ public class ClearFocusTouchListener implements OnTouchListener
 {
 	private ClearFocusInterface clearFocusListener;
 	private Context context;
-	
+
 	public ClearFocusTouchListener(Context context, ClearFocusInterface listener)
 	{
 		this.clearFocusListener = listener;
@@ -28,24 +30,31 @@ public class ClearFocusTouchListener implements OnTouchListener
 		{
 			int x = (int) event.getRawX();
 			int y = (int) event.getRawY();
+
 			IBinder windowToken = v.getWindowToken();
-			
-			View viewToClearFocus = this.clearFocusListener.getViewToClearFocus();
-			if (viewToClearFocus != null && viewToClearFocus.hasFocus())
+			ClearFocusTouchListener.hideKeyboard(this.context, windowToken);
+
+			List<View> views = this.clearFocusListener.getViewsToClearFocus();
+			Rect outRect = new Rect();
+			for (View view : views)
 			{
-				Rect outRect = new Rect();
-				viewToClearFocus.getGlobalVisibleRect(outRect);
-				if (!outRect.contains(x, y))
+				if (view.hasFocus())
 				{
-					viewToClearFocus.clearFocus();
-					InputMethodManager imm = (InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE);
-					
-					// TODO: might need to change this flag
-					imm.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS);
+					view.getGlobalVisibleRect(outRect);
+					if (!outRect.contains(x, y))
+					{
+						view.clearFocus();
+					}
 				}
 			}
 		}
-		
+
 		return false;
+	}
+
+	public static void hideKeyboard(Context context, IBinder windowToken)
+	{
+		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 }

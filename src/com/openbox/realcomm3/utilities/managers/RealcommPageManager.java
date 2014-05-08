@@ -21,10 +21,10 @@ public class RealcommPageManager
 
 	public void backPressed()
 	{
-		if (this.currentPage == RealcommPage.ProfilePage)
+		if (this.currentPage == RealcommPage.PROFILEPAGE)
 		{
 			// To handle popping the back stack
-			this.currentPage = RealcommPage.ListingPage;
+			this.currentPage = RealcommPage.LISTINGPAGE;
 		}
 	}
 
@@ -32,16 +32,16 @@ public class RealcommPageManager
 	{
 		switch (newPage)
 		{
-			case Initializing:
+			case INITIALIZING:
 				// Should not get here
 				break;
-			case SplashScreen:
+			case SPLASHSCREEN:
 				changePageToSplashScreen(newPage);
 				break;
-			case ListingPage:
+			case LISTINGPAGE:
 				changePageToListingPage(newPage);
 				break;
-			case ProfilePage:
+			case PROFILEPAGE:
 				changePageToProfilePage(newPage);
 				break;
 			default:
@@ -53,17 +53,17 @@ public class RealcommPageManager
 	{
 		switch (this.currentPage)
 		{
-			case Initializing:
+			case INITIALIZING:
 				changeInitializingToSplashScreen();
 				changePage(newPage);
 				break;
-			case SplashScreen:
+			case SPLASHSCREEN:
 				// Stay here
 				break;
-			case ListingPage:
+			case LISTINGPAGE:
 				// Shouldn't need this
 				break;
-			case ProfilePage:
+			case PROFILEPAGE:
 				// Shouldn't need this
 				break;
 			default:
@@ -75,17 +75,17 @@ public class RealcommPageManager
 	{
 		switch (this.currentPage)
 		{
-			case Initializing:
+			case INITIALIZING:
 				// Shouldn't need this
 				break;
-			case SplashScreen:
+			case SPLASHSCREEN:
 				changeSplashScreenToListingPage();
 				changePage(newPage);
 				break;
-			case ListingPage:
+			case LISTINGPAGE:
 				// Stay here
 				break;
-			case ProfilePage:
+			case PROFILEPAGE:
 				changeProfilePageToListingPage();
 				changePage(newPage);
 				break;
@@ -98,17 +98,17 @@ public class RealcommPageManager
 	{
 		switch (this.currentPage)
 		{
-			case Initializing:
+			case INITIALIZING:
 				// Shouldn't need this
 				break;
-			case SplashScreen:
+			case SPLASHSCREEN:
 				// Shouldn't need this
 				break;
-			case ListingPage:
+			case LISTINGPAGE:
 				changeListingPageToProfilePage();
 				changePage(newPage);
 				break;
-			case ProfilePage:
+			case PROFILEPAGE:
 				// Stay here
 				break;
 			default:
@@ -123,7 +123,7 @@ public class RealcommPageManager
 			this.activityListener.showSplashScreenFragment();
 		}
 
-		this.currentPage = RealcommPage.SplashScreen;
+		this.currentPage = RealcommPage.SPLASHSCREEN;
 	}
 
 	private void changeSplashScreenToListingPage()
@@ -133,7 +133,7 @@ public class RealcommPageManager
 			this.activityListener.hideSplashScreenFragmentAndShowListingPageFragment();
 		}
 
-		this.currentPage = RealcommPage.ListingPage;
+		this.currentPage = RealcommPage.LISTINGPAGE;
 	}
 
 	private void changeProfilePageToListingPage()
@@ -143,7 +143,7 @@ public class RealcommPageManager
 			this.activityListener.showListingPageFragmentAndRemoveProfileFragment();
 		}
 
-		this.currentPage = RealcommPage.ListingPage;
+		this.currentPage = RealcommPage.LISTINGPAGE;
 	}
 
 	private void changeListingPageToProfilePage()
@@ -153,7 +153,7 @@ public class RealcommPageManager
 			this.activityListener.addProfilePageAndHideListingPage();
 		}
 
-		this.currentPage = RealcommPage.ProfilePage;
+		this.currentPage = RealcommPage.PROFILEPAGE;
 	}
 
 	// private void template()

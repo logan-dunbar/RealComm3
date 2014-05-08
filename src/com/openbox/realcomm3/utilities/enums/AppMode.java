@@ -2,11 +2,11 @@ package com.openbox.realcomm3.utilities.enums;
 
 public enum AppMode
 {
-	Initializing("Initializing"),
-	Offline("Offline"),
-	Online("Online"),
-	OutOfRange("Out of Range"),
-	Paused("Paused");
+	INITIALIZING("Initializing"),
+	OFFLINE("Offline"),
+	ONLINE("Online"),
+	OUTOFRANGE("Out of Range"),
+	PAUSED("Paused");
 	
 	private final String displayName;
 	

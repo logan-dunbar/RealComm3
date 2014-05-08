@@ -1,10 +1,12 @@
 package com.openbox.realcomm3.database.models;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 
 import android.content.res.Resources;
 
 import com.openbox.realcomm3.database.objects.Booth;
+import com.openbox.realcomm3.database.objects.Company;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
 import com.radiusnetworks.ibeacon.IBeacon;
 
@@ -14,123 +16,195 @@ public class BoothModel
 	private static final int DEFAULT_RSSI = -120;
 	private static final int DEFAULT_TX_POWER = -76;
 
-	private int boothId;
-	private int boothNumber;
-	private String uuid;
-	private int major;
-	private int minor;
+	public static final double DEFAULT_ACCURACY = calculateAccuracy(DEFAULT_RSSI, DEFAULT_TX_POWER);
+
+	/**********************************************************************************************
+	 * Fields
+	 **********************************************************************************************/
+	private LinkedList<Integer> rssiHistory = new LinkedList<Integer>();
+	private int txPower;
 
 	private Double accuracy = null;
-	private Double runningAverageRssi = null;
 
-	private LinkedList<Integer> rssiHistory = new LinkedList<Integer>();
+	private int boothId;
+	private String UUID;
+	private int major;
+	private int minor;
+	private int boothNumber;
 
-	public BoothModel(Booth booth)
+	private int companyId;
+	private String companyName;
+	private String companyDescription;
+
+	/**********************************************************************************************
+	 * Constructor
+	 **********************************************************************************************/
+	public BoothModel(Booth booth, Company company)
 	{
 		if (booth != null)
 		{
 			this.boothId = booth.getBoothId();
-			this.boothNumber = booth.getBoothNumber();
-			this.uuid = booth.getUUID();
+			this.UUID = booth.getUUID();
 			this.major = booth.getMajor();
 			this.minor = booth.getMinor();
+			this.boothNumber = booth.getBoothNumber();
+		}
+
+		if (company != null)
+		{
+			this.companyId = company.getCompanyId();
+			this.companyName = company.getName();
+			this.companyDescription = company.getDescription();
 		}
 	}
 
+	/**********************************************************************************************
+	 * Public Methods
+	 **********************************************************************************************/
 	public Double getAccuracy()
 	{
 		if (accuracy == null)
 		{
-			updateDistanceWithDefault();
+			updateAccuracyWithDefault();
 		}
 
 		return accuracy;
 	}
-	
-	public void resetDistance()
+
+	public void resetAccuracy()
 	{
 		this.rssiHistory.clear();
-		updateDistanceWithDefault();
+		updateAccuracyWithDefault();
 	}
 
-	public void updateDistanceWithBeacon(IBeacon beacon)
+	public void updateAccuracyWithBeacon(IBeacon beacon)
 	{
 		this.rssiHistory.add(beacon.getRssi());
-		updateDistance(beacon.getTxPower());
+		this.txPower = beacon.getTxPower();
+		updateAccuracy();
 
 	}
 
-	public void updateDistanceWithDefault()
+	public void updateAccuracyWithDefault()
 	{
 		this.rssiHistory.add(DEFAULT_RSSI);
-		updateDistance(DEFAULT_TX_POWER);
+		this.txPower = DEFAULT_TX_POWER;
+		updateAccuracy();
 	}
 
-	private void updateDistance(int txPower)
+	public int getColor(Resources resources)
+	{
+		return resources.getColor(getProximityRegion(getAccuracy()).getColorId());
+	}
+
+	public static ProximityRegion getProximityRegion(double accuracy)
+	{
+		if (accuracy < ProximityRegion.IMMEDIATE.getProximityLimit())
+		{
+			return ProximityRegion.IMMEDIATE;
+		}
+		else if (accuracy < ProximityRegion.NEAR.getProximityLimit())
+		{
+			return ProximityRegion.NEAR;
+		}
+		else if (accuracy < ProximityRegion.FAR.getProximityLimit())
+		{
+			return ProximityRegion.FAR;
+		}
+		else
+		{
+			return ProximityRegion.OUTOFRANGE;
+		}
+	}
+
+	public static Comparator<BoothModel> getAccuracyComparator()
+	{
+		return new Comparator<BoothModel>()
+		{
+			@Override
+			public int compare(BoothModel lhs, BoothModel rhs)
+			{
+				double lhsAccuracy = lhs.getAccuracy();
+				double rhsAccuracy = rhs.getAccuracy();
+				if (lhsAccuracy < rhsAccuracy)
+				{
+					// 50 - 23
+					return -1;
+				}
+				else if (lhsAccuracy > rhsAccuracy)
+				{
+					return 1;
+				}
+				else
+				{
+					return BoothModel.getCompanyNameComparator().compare(lhs, rhs);
+				}
+			}
+		};
+	}
+
+	public static Comparator<BoothModel> getCompanyNameComparator()
+	{
+		return new Comparator<BoothModel>()
+		{
+			@Override
+			public int compare(BoothModel lhs, BoothModel rhs)
+			{
+				return lhs.getCompanyName().compareToIgnoreCase(rhs.getCompanyName());
+			}
+		};
+	}
+
+	/**********************************************************************************************
+	 * Private Methods
+	 **********************************************************************************************/
+	private void updateAccuracy()
 	{
 		if (this.rssiHistory.size() >= WINDOW_LENGTH)
 		{
 			this.rssiHistory.poll();
 		}
 
-		calculateRunningAverageRssi();
-		calculateAccuracy(txPower);
+		double runningAverageRssi = calculateRunningAverageRssi();
+		this.accuracy = calculateAccuracy(runningAverageRssi, this.txPower);
 	}
 
-	private void calculateRunningAverageRssi()
+	private double calculateRunningAverageRssi()
 	{
 		if (this.rssiHistory.size() == 0)
 		{
-			this.runningAverageRssi = (double) DEFAULT_RSSI;
+			return (double) DEFAULT_RSSI;
 		}
-		
-		this.runningAverageRssi = 0.0;
+
+		double runningAverageRssi = 0.0;
 		for (int i = 0; i < this.rssiHistory.size(); i++)
 		{
-			this.runningAverageRssi += this.rssiHistory.get(i);
+			runningAverageRssi += this.rssiHistory.get(i);
 		}
 
-		this.runningAverageRssi = this.runningAverageRssi / this.rssiHistory.size();
+		runningAverageRssi = runningAverageRssi / this.rssiHistory.size();
+		return runningAverageRssi;
 	}
 
-	private void calculateAccuracy(int txPower)
+	private static double calculateAccuracy(double runningAverageRssi, int txPower)
 	{
-		double ratio = (this.runningAverageRssi * 1.0) / txPower;
+		double accuracy;
+		double ratio = (runningAverageRssi * 1.0) / txPower;
 		if (ratio < 1.0)
 		{
-			this.accuracy = Math.pow(ratio, 10);
+			accuracy = Math.pow(ratio, 10);
 		}
 		else
 		{
-			this.accuracy = (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
+			accuracy = (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
 		}
+
+		return accuracy;
 	}
 
-	public int getColor(Resources resources)
-	{
-		return resources.getColor(getProximityRegion().getColorId());
-	}
-	
-	public ProximityRegion getProximityRegion()
-	{
-		if (this.getAccuracy() < ProximityRegion.Immediate.getProximityLimit())
-		{
-			return ProximityRegion.Immediate;
-		}
-		else if (this.getAccuracy() < ProximityRegion.Near.getProximityLimit())
-		{
-			return ProximityRegion.Near;
-		}
-		else if (this.getAccuracy() < ProximityRegion.Far.getProximityLimit())
-		{
-			return ProximityRegion.Far;
-		}
-		else
-		{
-			return ProximityRegion.OutOfRange;
-		}
-	}
-
+	/**********************************************************************************************
+	 * Getters and Setters
+	 **********************************************************************************************/
 	public int getBoothId()
 	{
 		return boothId;
@@ -141,24 +215,14 @@ public class BoothModel
 		this.boothId = boothId;
 	}
 
-	public int getBoothNumber()
+	public String getUUID()
 	{
-		return boothNumber;
+		return UUID;
 	}
 
-	public void setBoothNumber(int boothNumber)
+	public void setUUID(String uUID)
 	{
-		this.boothNumber = boothNumber;
-	}
-
-	public String getUuid()
-	{
-		return uuid;
-	}
-
-	public void setUuid(String uuid)
-	{
-		this.uuid = uuid;
+		UUID = uUID;
 	}
 
 	public int getMajor()
@@ -179,5 +243,45 @@ public class BoothModel
 	public void setMinor(int minor)
 	{
 		this.minor = minor;
+	}
+
+	public int getBoothNumber()
+	{
+		return boothNumber;
+	}
+
+	public void setBoothNumber(int boothNumber)
+	{
+		this.boothNumber = boothNumber;
+	}
+
+	public int getCompanyId()
+	{
+		return companyId;
+	}
+
+	public void setCompanyId(int companyId)
+	{
+		this.companyId = companyId;
+	}
+
+	public String getCompanyName()
+	{
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName)
+	{
+		this.companyName = companyName;
+	}
+
+	public String getCompanyDescription()
+	{
+		return companyDescription;
+	}
+
+	public void setCompanyDescription(String companyDescription)
+	{
+		this.companyDescription = companyDescription;
 	}
 }

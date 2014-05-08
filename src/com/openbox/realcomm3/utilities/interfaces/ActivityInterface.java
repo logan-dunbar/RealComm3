@@ -4,9 +4,9 @@ import com.openbox.realcomm3.utilities.enums.RealcommPage;
 
 public interface ActivityInterface
 {
-	// Fragment related
-	void onFragmentViewCreated();
-
+	// Page related
+	void setSelectedCompanyId(int companyId);
+	
 	void changePage(RealcommPage page);
 
 	// Realcomm Page Manager related

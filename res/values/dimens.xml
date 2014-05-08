@@ -5,7 +5,7 @@
     <dimen name="defaultCornerRadius">8dp</dimen>
     <dimen name="defaultPadding">10dp</dimen>
     <dimen name="defaultMargin">10dp</dimen>
-    <dimen name="listItemHeight">50dp</dimen>
+    <dimen name="listItemHeight">80dp</dimen>
     <dimen name="logoHeight">50dp</dimen>
     <dimen name="logoWidth">150dp</dimen>
     <dimen name="logoSpacingTop">15dp</dimen>

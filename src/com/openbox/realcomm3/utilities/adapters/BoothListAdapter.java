@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Locale;
 
 import com.openbox.realcomm3.R;
-import com.openbox.realcomm3.database.models.BoothDistanceModel;
+import com.openbox.realcomm3.application.RealCommApplication;
+import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.database.models.BoothListModel;
 
 import android.content.Context;
@@ -15,24 +16,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
-public class BoothListAdapter extends ArrayAdapter<BoothListModel>
+public class BoothListAdapter extends ArrayAdapter<BoothModel>
 {
+	private static final String BOOTH_PREFIX = "Booth ";
+	
 	private LayoutInflater layoutInflater;
 	private Resources resources;
+	private RealCommApplication application;
 
-	private List<BoothListModel> fullBoothList;
+	private List<BoothModel> fullBoothList = new ArrayList<>();
 	private String filter;
 
-	public BoothListAdapter(Context context)
+	public BoothListAdapter(Context context, RealCommApplication application)
 	{
 		super(context, 0);
 		this.resources = context.getResources();
 		this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.application = application;
 	}
 
-	public void setItems(List<BoothListModel> data)
+	public void setItems(List<BoothModel> data)
 	{
 		if (data != null)
 		{
@@ -58,8 +64,8 @@ public class BoothListAdapter extends ArrayAdapter<BoothListModel>
 		}
 		else
 		{
-			List<BoothListModel> filteredList = new ArrayList<>();
-			for (BoothListModel model : this.fullBoothList)
+			List<BoothModel> filteredList = new ArrayList<>();
+			for (BoothModel model : this.fullBoothList)
 			{
 				if (model.getCompanyName().toUpperCase(Locale.ENGLISH).contains(this.filter.toUpperCase(Locale.ENGLISH)) ||
 					String.valueOf(model.getBoothNumber()).contains(this.filter))
@@ -82,7 +88,11 @@ public class BoothListAdapter extends ArrayAdapter<BoothListModel>
 		{
 			row = this.layoutInflater.inflate(R.layout.list_item_booth, null);
 			holder = new ViewHolder();
-			holder.text = (TextView) row.findViewById(R.id.companyNameTextView);
+			holder.circleLayout = (FrameLayout) row.findViewById(R.id.boothItemCircleLayout);
+			holder.companyName = (TextView) row.findViewById(R.id.companyNameTextView);
+			holder.companyName.setTypeface(this.application.getExo2Font());
+			holder.boothNumber = (TextView) row.findViewById(R.id.boothNumberTextView);
+			holder.boothNumber.setTypeface(this.application.getExo2Font());
 			row.setTag(holder);
 		}
 		else
@@ -91,20 +101,24 @@ public class BoothListAdapter extends ArrayAdapter<BoothListModel>
 			holder = (ViewHolder) row.getTag();
 		}
 
-		BoothListModel model = getItem(position);
-		holder.text.setText(model.getCompanyName());
-
-		// TODO booth number
-
-		GradientDrawable circle = (GradientDrawable) holder.text.getCompoundDrawables()[0];
-		int colorId = BoothDistanceModel.getProximityRegion(model.getAccuracy()).getColorId();
-		circle.setColor(this.resources.getColor(colorId));
+		BoothModel model = getItem(position);
+		int colorId = BoothModel.getProximityRegion(model.getAccuracy()).getColorId();
+		int resolvedColorId = this.resources.getColor(colorId);
 		
+		holder.companyName.setText(model.getCompanyName());
+		holder.boothNumber.setText(BOOTH_PREFIX + String.valueOf(model.getBoothNumber()));
+		holder.boothNumber.setTextColor(resolvedColorId);
+
+		GradientDrawable circle = (GradientDrawable) holder.circleLayout.getBackground();
+		circle.setColor(resolvedColorId);
+
 		return row;
 	}
 
 	static class ViewHolder
 	{
-		TextView text;
+		FrameLayout circleLayout;
+		TextView companyName;;
+		TextView boothNumber;
 	}
 }
