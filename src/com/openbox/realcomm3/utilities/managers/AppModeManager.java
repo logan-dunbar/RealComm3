@@ -8,6 +8,7 @@ import com.openbox.realcomm3.utilities.interfaces.AppModeOfflineInterface;
 public class AppModeManager
 {
 	private AppMode currentAppMode;
+	private AppMode previousAppMode;
 	private AppMode currentAppModeSelector;
 	private BeaconStatusManager beaconStatusManager;
 	private AppModeChangedCallbacks appModeChangedListener;
@@ -15,6 +16,16 @@ public class AppModeManager
 	public AppMode getCurrentAppMode()
 	{
 		return this.currentAppMode;
+	}
+
+	public AppMode getPreviousAppMode()
+	{
+		return previousAppMode;
+	}
+
+	public void setPreviousAppMode(AppMode previousAppMode)
+	{
+		this.previousAppMode = previousAppMode;
 	}
 
 	public void setCurrentAppMode(AppMode currentAppMode)

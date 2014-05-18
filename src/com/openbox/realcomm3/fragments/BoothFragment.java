@@ -1,15 +1,20 @@
 package com.openbox.realcomm3.fragments;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
@@ -17,6 +22,9 @@ import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.database.models.CompanyLogoModel;
+import com.openbox.realcomm3.utilities.enums.RealcommPage;
+import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
+import com.openbox.realcomm3.utilities.helpers.BitmapHelper;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.loaders.CompanyLogoLoader;
@@ -110,12 +118,60 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 		this.details.setTypeface(application.getExo2Font());
 
 		this.viewProfileButton = (Button) view.findViewById(R.id.boothFragmentViewProfileButton);
-		this.viewProfileButton.setTypeface(application.getExo2Font());
+		if (this.viewProfileButton != null)
+		{
+			this.viewProfileButton.setTypeface(application.getExo2Font());
+			this.viewProfileButton.setOnClickListener(this.clickListener);
+		}
+
+		RelativeLayout boothClickableLayout = (RelativeLayout) view.findViewById(R.id.boothClickableLayout);
+		if (boothClickableLayout != null)
+		{
+			boothClickableLayout.setOnClickListener(this.clickListener);
+		}
+
+		ViewTreeObserver observer = details.getViewTreeObserver();
+		observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
+		{
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onGlobalLayout()
+			{
+				int maxLines = (int) details.getHeight() / details.getLineHeight();
+				details.setMaxLines(maxLines);
+				details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			}
+		});
 
 		updateBooth();
 
 		return view;
 	}
+
+	private void goToProfilePage()
+	{
+		if (getActivityListener() != null && this.boothModel != null)
+		{
+			getActivityListener().setSelectedBooth(this.boothModel.getBoothId(), this.boothModel.getCompanyId());
+			if (getActivityListener().getIsLargeScreen())
+			{
+				getActivityListener().changePage(RealcommPage.PROFILE_PAGE);
+			}
+			else
+			{
+				getActivityListener().changePage(RealcommPhonePage.PROFILE_PAGE);
+			}
+		}
+	}
+
+	private OnClickListener clickListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			goToProfilePage();
+		}
+	};
 
 	/**********************************************************************************************
 	 * Public Methods
@@ -128,12 +184,18 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 			this.boothModel = this.dataInterface.getBoothModelForBoothId(getArguments().getInt(BOOTH_ID_KEY));
 			if (this.boothModel != null)
 			{
-				initCompanyLogoLoader();
+				if (this.logo != null)
+				{
+					initCompanyLogoLoader();
+				}
 
 				int color = this.boothModel.getColor(getActivity().getResources());
 
-				GradientDrawable buttonBg = (GradientDrawable) this.viewProfileButton.getBackground();
-				buttonBg.setColor(color);
+				if (this.viewProfileButton != null)
+				{
+					GradientDrawable buttonBg = (GradientDrawable) this.viewProfileButton.getBackground();
+					buttonBg.setColor(color);
+				}
 
 				// TODO: Make a circle and color it properly
 
@@ -182,7 +244,16 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	{
 		if (this.companyLogoModel != null && this.logo != null)
 		{
-			this.logo.setImageBitmap(this.companyLogoModel.getCompanyLogo());
+
+			float radius = getResources().getDimension(R.dimen.defaultCornerRadius);
+			int width = (int) getResources().getDimension(R.dimen.boothCompanyLogoWidth);
+			int height = (int) getResources().getDimension(R.dimen.boothCompanyLogoHeight);
+
+			if (this.companyLogoModel.getCompanyLogo() != null)
+			{
+				Bitmap companyLogo = BitmapHelper.getRoundedBitmap(this.companyLogoModel.getCompanyLogo(), width, height, radius);
+				this.logo.setImageBitmap(companyLogo);
+			}
 		}
 	}
 

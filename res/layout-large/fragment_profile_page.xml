@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/profilePaddingTopBottom"
+    android:paddingLeft="@dimen/profilePaddingLeftRight"
+    android:paddingRight="@dimen/profilePaddingLeftRight"
+    android:paddingTop="@dimen/profilePaddingTopBottom" >
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6" >
+
+        <LinearLayout
+            android:id="@+id/companyDetailsAndCategoriesLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/companyDetailsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companyCategoriesBorder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/defaultBorderPadding"
+                android:paddingTop="@dimen/defaultBorderPadding" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/profileBorderWidth"
+                    android:layout_gravity="center"
+                    android:background="@color/border_grey" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companyCategoriesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <View
+            android:layout_width="@dimen/profileBorderWidth"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@color/border_grey" />
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3" >
+
+        <LinearLayout
+            android:id="@+id/companyAddressContactsAndLinksLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@+id/companyAddressContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companyContactsBorder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/defaultBorderPadding"
+                android:paddingTop="@dimen/defaultBorderPadding" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/profileBorderWidth"
+                    android:layout_gravity="center"
+                    android:background="@color/border_grey" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companyContactsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companyLinksBorder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/defaultBorderPadding"
+                android:paddingTop="@dimen/defaultBorderPadding" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/profileBorderWidth"
+                    android:layout_gravity="center"
+                    android:background="@color/border_grey" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companyLinksContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companySocialNetworksBorder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/defaultBorderPadding"
+                android:paddingTop="@dimen/defaultBorderPadding" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/profileBorderWidth"
+                    android:layout_gravity="center"
+                    android:background="@color/border_grey" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/companySocialNetworksContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+            </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,35 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="listingFragmentMargin">5dp</dimen>
-    <dimen name="defaultCornerRadius">8dp</dimen>
+    <!-- Text Sizes -->
+    <dimen name="textSize40">40sp</dimen>
+    <dimen name="textSize30">30sp</dimen>
+    <dimen name="textSize24">24sp</dimen>
+    <dimen name="textSize20">20sp</dimen>
+    <dimen name="textSize18">18sp</dimen>
+    <dimen name="textSize16">16sp</dimen>
+    <dimen name="textSize14">14sp</dimen>
+
+    <!-- App Defaults -->
     <dimen name="defaultPadding">10dp</dimen>
     <dimen name="defaultMargin">10dp</dimen>
+    <dimen name="defaultSpacingMargin">15dp</dimen>
+    <dimen name="defaultCompanyLogoWidth">150dp</dimen>
+    <dimen name="defaultCompanyLogoHeight">50dp</dimen>
+    <dimen name="defaultCornerRadius">5dp</dimen>
+    <dimen name="defaultBorderWidth">2dp</dimen>
+    <dimen name="defaultBorderPadding">15dp</dimen>
+
+    <!-- Tabs -->
+    <dimen name="tabWidth">80dp</dimen>
+    <dimen name="tabHeight">30dp</dimen>
+    <dimen name="tabSpacing">@dimen/defaultSpacingMargin</dimen>
+    <dimen name="tabPadding">5dp</dimen>
+    <dimen name="tabTextSize">@dimen/textSize18</dimen>
+
+    <!-- View Pager -->
+    <dimen name="viewPagerIndicatorPadding">6dp</dimen>
+    <dimen name="viewPagerIndicatorStrokeWidth">3dp</dimen>
+
+    <!-- Navigation Drawer -->
+    <dimen name="drawerHeight">60dp</dimen>
+    
+    <!-- Splash Screen -->
+    <dimen name="splashPadding">20dp</dimen>
+    <dimen name="splashCirclePadding">5dp</dimen>
+    <dimen name="splashCircleMargin">10dp</dimen>
+    <dimen name="splashLogoSize">36dp</dimen>
+    <dimen name="splashLogoMarginRight">20dp</dimen>
+    <dimen name="splashDetailMarginTop">20dp</dimen>
+    <dimen name="splashDetailBetweenMargin">20dp</dimen>
+    <dimen name="splashDetailInnerMargin">@dimen/defaultSpacingMargin</dimen>
+    <dimen name="splashDetailsTextWidth">200dp</dimen>
+    <dimen name="splashCircleDiameter">20dp</dimen>
+
+    <!-- Listing Page -->
+    <dimen name="listingPagePadding">20dp</dimen>
+    
+    <!-- Booth Explore -->
+    <dimen name="boothExploreMarginTopBottom">10dp</dimen>
+
+    <!-- Booth -->
+    <dimen name="boothMargin">@dimen/defaultMargin</dimen>
+    <dimen name="boothPadding">@dimen/defaultPadding</dimen>
+    <dimen name="boothHeaderHeight">50dp</dimen>
+    <dimen name="boothCompanyLogoSpacing">@dimen/defaultSpacingMargin</dimen>
+    <dimen name="boothDetailsMargin">20dp</dimen>
+    <dimen name="boothViewProfileButtonWidth">@dimen/defaultCompanyLogoWidth</dimen>
+    <dimen name="boothViewProfileButtonSpacing">@dimen/defaultSpacingMargin</dimen>
+    <dimen name="boothCompanyLogoWidth">@dimen/defaultCompanyLogoWidth</dimen>
+    <dimen name="boothCompanyLogoHeight">@dimen/defaultCompanyLogoHeight</dimen>
+
+    <!-- Booth List -->
+    <dimen name="boothListMargin">@dimen/defaultMargin</dimen>
+    <dimen name="boothListButtonsSpacing">@dimen/defaultSpacingMargin</dimen>
+
+    <!-- Booth List Item -->
+    <dimen name="boothListItemCircleMargin">@dimen/defaultMargin</dimen>
+    <dimen name="boothListItemHeight">80dp</dimen>
+    <dimen name="boothListItemCircleDiameter">25dp</dimen>
+
+    <!-- Connection Status -->
+    <dimen name="connectionStatusMargin">@dimen/defaultMargin</dimen>
+
+    <!-- Proximity Control -->
+    <dimen name="proximityMarginTopBottom">@dimen/defaultMargin</dimen>
+    <dimen name="proximityMarginLeftRight">30dp</dimen>
+    <dimen name="proximityCountCircleDiameter">40dp</dimen>
+
+    <!-- Schedule -->
+    <dimen name="scheduleMargin">@dimen/defaultMargin</dimen>
+
+    <!-- Talk List Item -->
+    <dimen name="talkListItemMargin">@dimen/defaultMargin</dimen>
+
+    <!-- Profile -->
+    <dimen name="profileBorderWidth">@dimen/defaultBorderWidth</dimen>
     <dimen name="profilePaddingTopBottom">50dp</dimen>
     <dimen name="profilePaddingLeftRight">80dp</dimen>
-    <dimen name="boothListItemHeight">80dp</dimen>
-    <dimen name="talkListItemHeight">60dp</dimen>
-    <dimen name="logoHeight">50dp</dimen>
-    <dimen name="logoWidth">150dp</dimen>
-    <dimen name="logoSpacingTop">15dp</dimen>
-    <dimen name="boothHeaderHeight">50dp</dimen>
-    <dimen name="viewProfileButtonSpacing">15dp</dimen>
-    <dimen name="viewProfileButtonWidth">150dp</dimen>
-    <dimen name="boothDetailsMargin">20dp</dimen>
-    <dimen name="circleDiameter">25dp</dimen>
-    <dimen name="circlePadding">10dp</dimen>
-    <dimen name="countCircleDiameter">40dp</dimen>
-    <dimen name="splashCircleDiameter">30dp</dimen>
-    <dimen name="splashTextWidth">200dp</dimen>
-    <dimen name="defaultProfilePadding">30dp</dimen>
-    <dimen name="textSizeHuge">40sp</dimen>
-    <dimen name="textSizeBiggest">30sp</dimen>
-    <dimen name="textSizeBig">20sp</dimen>
-    <dimen name="textSizeMedium">18sp</dimen>
-    <dimen name="textSizeSmall">15sp</dimen>
-    <dimen name="defaultCompoundDrawablePadding">10dp</dimen>
-    <dimen name="borderWidth">2dp</dimen>
-    <dimen name="profileFragmentTopBottomMargin">25dp</dimen>
-    <dimen name="profileSocialNetworksRightMargin">15dp</dimen>
+    <dimen name="profileItemMargin">@dimen/defaultMargin</dimen>
+    <dimen name="profileItemSpacingMargin">@dimen/defaultSpacingMargin</dimen>
+    <dimen name="profileHeaderTextSize">@dimen/textSize24</dimen>
+    <dimen name="profileDetailsTextSize">@dimen/textSize16</dimen>
 
+    <!-- Company Details -->
+    <dimen name="companyDetailsMargin">@dimen/profileItemMargin</dimen>
+    <dimen name="companyDetailsSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    <dimen name="companyDetailsCompanyLogoWidth">@dimen/defaultCompanyLogoWidth</dimen>
+    <dimen name="companyDetailsCompanyLogoHeight">@dimen/defaultCompanyLogoHeight</dimen>
+    <dimen name="companyDetailsCompanyNameTextSize">@dimen/textSize30</dimen>
+    <dimen name="companyDetailsBoothNumberTextSize">@dimen/textSize24</dimen>
+    <dimen name="companyDetailsDetailsTextSize">@dimen/profileDetailsTextSize</dimen>
+
+    <!-- Company Categories -->
+    <dimen name="companyCategoriesMargin">@dimen/profileItemMargin</dimen>
+
+    <!-- Categories -->
+    <dimen name="categoriesSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    <dimen name="categoriesTextSize">@dimen/profileDetailsTextSize</dimen>
+
+    <!-- Company Address -->
+    <dimen name="companyAddressMargin">@dimen/profileItemMargin</dimen>
+    <dimen name="companyAddressSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    <dimen name="companyAddressHeaderTextSize">@dimen/profileHeaderTextSize</dimen>
+    <dimen name="companyAddressDetailsTextSize">@dimen/profileDetailsTextSize</dimen>
+    
+    <!-- Company Contacts -->
+    <dimen name="companyContactsMargin">@dimen/profileItemMargin</dimen>
+    <dimen name="companyContactsMarginBottom">4dp</dimen>
+    <dimen name="companyContactsSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    <dimen name="companyContactsHeaderTextSize">@dimen/profileHeaderTextSize</dimen>
+
+    <!-- Contacts -->
+    <dimen name="contactImageSize">100dp</dimen>
+    <dimen name="contactsSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    <dimen name="contactDetailsTextSize">@dimen/profileDetailsTextSize</dimen>
+    
+    <!-- Company Links -->
+    <dimen name="companyLinksMargin">@dimen/profileItemMargin</dimen>
+    <dimen name="companyLinksSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    <dimen name="companyLinksHeaderTextSize">@dimen/profileHeaderTextSize</dimen>
+    <dimen name="companyLinksDetailsTextSize">@dimen/profileDetailsTextSize</dimen>
+    
+    <!-- Social Networks -->
+    <dimen name="socialNetworksMargin">@dimen/profileItemMargin</dimen>
+    <dimen name="socialNetworksSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
 </resources>

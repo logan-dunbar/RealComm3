@@ -14,6 +14,7 @@ import com.openbox.realcomm3.database.models.TalkDayModel;
 import com.openbox.realcomm3.database.models.VenueModel;
 import com.openbox.realcomm3.utilities.adapters.VenueFragmentAdapter;
 import com.openbox.realcomm3.utilities.interfaces.ScheduleDataInterface;
+import com.viewpagerindicator.LinePageIndicator;
 
 public class TalkDayFragment extends BaseFragment implements ScheduleDataInterface
 {
@@ -58,6 +59,9 @@ public class TalkDayFragment extends BaseFragment implements ScheduleDataInterfa
 		VenueFragmentAdapter venueAdapter = new VenueFragmentAdapter(getChildFragmentManager());
 		this.venuePager.setAdapter(venueAdapter);
 		this.venuePager.setOffscreenPageLimit(5);
+
+		LinePageIndicator indicator = (LinePageIndicator) view.findViewById(R.id.venuePagerIndicator);
+		indicator.setViewPager(this.venuePager);
 
 		if (this.scheduleDataInterface != null)
 		{

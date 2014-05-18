@@ -1,50 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:baselineAligned="false"
-    android:orientation="horizontal" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
     <FrameLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" >
-
-        <FrameLayout
-            android:id="@+id/boothItemCircleLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/circle" >
-        </FrameLayout>
+        android:id="@+id/boothItemCircleLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/boothListItemCircleMargin"
+        android:background="@drawable/circle_list_item" >
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="@dimen/boothListItemHeight"
-        android:layout_weight="9"
-        android:orientation="vertical" >
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/boothItemCircleLayout"
+        android:gravity="center_vertical" >
 
         <TextView
             android:id="@+id/companyNameTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:includeFontPadding="false"
             android:minHeight="0dp"
-            android:text="Testing"
-            android:textSize="@dimen/textSizeBiggest" />
+            android:singleLine="true"
+            android:textSize="@dimen/textSize30" />
 
         <TextView
             android:id="@+id/boothNumberTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/companyNameTextView"
             android:includeFontPadding="false"
             android:minHeight="0dp"
-            android:textSize="@dimen/textSizeBig" />
-    </LinearLayout>
+            android:textSize="@dimen/textSize24" />
+    </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

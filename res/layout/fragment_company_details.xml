@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/profileFragmentTopBottomMargin"
-    android:layout_marginTop="@dimen/profileFragmentTopBottomMargin"
+    android:layout_margin="@dimen/companyDetailsMargin"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -13,12 +12,15 @@
 
         <ImageView
             android:id="@+id/companyLogoImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="@dimen/companyDetailsCompanyLogoWidth"
+            android:layout_height="@dimen/companyDetailsCompanyLogoHeight"
+            android:contentDescription="@string/logoImageDescription" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/companyDetailsSpacingMargin"
             android:orientation="vertical" >
 
             <TextView
@@ -26,14 +28,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textSizeMedium" />
+                android:textSize="@dimen/companyDetailsCompanyNameTextSize" />
 
             <TextView
                 android:id="@+id/boothNumberTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="@dimen/textSizeMedium" />
+                android:textSize="@dimen/companyDetailsBoothNumberTextSize" />
         </LinearLayout>
     </LinearLayout>
 
@@ -41,7 +43,8 @@
         android:id="@+id/companyDescriptionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/companyDetailsSpacingMargin"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeMedium" />
+        android:textSize="@dimen/companyDetailsDetailsTextSize" />
 
 </LinearLayout>

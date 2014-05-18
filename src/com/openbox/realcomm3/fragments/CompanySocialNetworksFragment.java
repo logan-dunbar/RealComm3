@@ -10,8 +10,9 @@ import android.widget.LinearLayout;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
+import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 
-public class CompanySocialNetworksFragment extends BaseProfileFragment
+public class CompanySocialNetworksFragment extends BaseProfileFragment implements ProfileDataChangedCallbacks
 {
 	private LinearLayout socialNetworksLayout;
 	private ImageView facebook;
@@ -36,24 +37,30 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		this.twitter = (ImageView) view.findViewById(R.id.twitterImageView);
 		this.linkedIn = (ImageView) view.findViewById(R.id.linkedInImageView);
 
-		updateView();
-
 		return view;
+	}
+
+	@Override
+	public void onCompanyLoaded()
+	{
+		updateView();
+	}
+
+	public void showBorder()
+	{
+
 	}
 
 	private void updateView()
 	{
-		if (getProfilePageInterface() != null)
+		CompanyModel model = getCompanyModel();
+		if (model != null)
 		{
-			CompanyModel model = getProfilePageInterface().getCompany();
-			if (model != null)
-			{
-				updateFacebook(model);
+			updateFacebook(model);
 
-				updateTwitter(model);
+			updateTwitter(model);
 
-				updateLinkedIn(model);
-			}
+			updateLinkedIn(model);
 		}
 	}
 
@@ -65,7 +72,7 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		}
 		else
 		{
-			this.socialNetworksLayout.removeView(this.facebook);
+			this.facebook.setVisibility(View.GONE);
 		}
 	}
 
@@ -77,7 +84,7 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		}
 		else
 		{
-			this.socialNetworksLayout.removeView(this.twitter);
+			this.twitter.setVisibility(View.GONE);
 		}
 	}
 
@@ -89,7 +96,7 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		}
 		else
 		{
-			this.socialNetworksLayout.removeView(this.linkedIn);
+			this.linkedIn.setVisibility(View.GONE);
 		}
 	}
 }

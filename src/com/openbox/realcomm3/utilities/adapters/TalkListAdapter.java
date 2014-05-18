@@ -3,6 +3,7 @@ package com.openbox.realcomm3.utilities.adapters;
 import java.util.List;
 
 import com.openbox.realcomm3.R;
+import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.database.models.TalkModel;
 
 import android.content.Context;
@@ -15,11 +16,13 @@ import android.widget.TextView;
 public class TalkListAdapter extends ArrayAdapter<TalkModel>
 {
 	private LayoutInflater layoutInflater;
+	private RealCommApplication application;
 
-	public TalkListAdapter(Context context)
+	public TalkListAdapter(Context context, RealCommApplication application)
 	{
 		super(context, 0);
 		this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.application = application;
 	}
 
 	public void setItems(List<TalkModel> talkList)
@@ -40,7 +43,13 @@ public class TalkListAdapter extends ArrayAdapter<TalkModel>
 		{
 			row = this.layoutInflater.inflate(R.layout.list_item_talk, null);
 			holder = new ViewHolder();
+
+			holder.talkTime = (TextView) row.findViewById(R.id.talkTime);
 			holder.talkName = (TextView) row.findViewById(R.id.talkName);
+
+			holder.talkTime.setTypeface(this.application.getExo2FontBold());
+			holder.talkName.setTypeface(this.application.getExo2Font());
+
 			row.setTag(holder);
 		}
 		else
@@ -51,6 +60,7 @@ public class TalkListAdapter extends ArrayAdapter<TalkModel>
 
 		TalkModel talk = getItem(position);
 
+		holder.talkTime.setText(talk.getTalkTimeString());
 		holder.talkName.setText(talk.getName());
 
 		return row;
@@ -70,6 +80,7 @@ public class TalkListAdapter extends ArrayAdapter<TalkModel>
 
 	class ViewHolder
 	{
+		TextView talkTime;
 		TextView talkName;
 	}
 }

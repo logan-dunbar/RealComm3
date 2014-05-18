@@ -1,6 +1,5 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/FrameLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}" >
@@ -10,20 +9,75 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/background_clear" />
+        android:src="@drawable/background_clear_phone" />
 
     <ImageView
         android:id="@+id/blurRealcommBackgroundImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/background_blur"
+        android:src="@drawable/background_blur_phone"
         android:visibility="invisible" />
 
-    <FrameLayout
-        android:id="@+id/realcommFragmentContainer"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/realcommFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/navigationDrawerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drawerHeight"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/exploreButton"
+                android:background="@drawable/tab_selector"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Explore"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+
+            <Button
+                android:id="@+id/findButton"
+                android:background="@drawable/tab_selector"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Find"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+
+            <Button
+                android:id="@+id/scheduleButton"
+                android:background="@drawable/tab_selector"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Schedule"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+
+            <Button
+                android:id="@+id/infoButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/tab_selector"
+                android:text="Info"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>

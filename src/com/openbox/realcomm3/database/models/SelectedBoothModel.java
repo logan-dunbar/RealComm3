@@ -1,7 +1,12 @@
 package com.openbox.realcomm3.database.models;
 
-public class SelectedBoothModel
+import java.io.Serializable;
+
+public class SelectedBoothModel implements Serializable
 {
+	// Generated serialVersionUID
+	private static final long serialVersionUID = -4372057858623803115L;
+
 	private int boothId;
 	private int companyId;
 

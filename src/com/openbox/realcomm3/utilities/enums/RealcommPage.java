@@ -3,7 +3,7 @@ package com.openbox.realcomm3.utilities.enums;
 public enum RealcommPage
 {
 	INITIALIZING,
-	SPLASHSCREEN,
-	LISTINGPAGE,
-	PROFILEPAGE
+	SPLASH_SCREEN,
+	LISTING_PAGE,
+	PROFILE_PAGE
 }

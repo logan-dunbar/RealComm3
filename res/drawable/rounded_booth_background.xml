@@ -5,7 +5,6 @@
     <solid android:color="@color/opaque_white" />
 
     <corners
-        android:bottomLeftRadius="@dimen/defaultCornerRadius"
-        android:bottomRightRadius="@dimen/defaultCornerRadius" />
+        android:radius="@dimen/defaultCornerRadius" />
 
 </shape>

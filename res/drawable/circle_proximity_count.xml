@@ -3,8 +3,8 @@
     android:shape="oval" >
 
     <size
-        android:height="@dimen/countCircleDiameter"
-        android:width="@dimen/countCircleDiameter" >
+        android:height="@dimen/proximityCountCircleDiameter"
+        android:width="@dimen/proximityCountCircleDiameter" >
     </size>
 
 </shape>

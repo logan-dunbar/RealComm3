@@ -2,22 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/profileFragmentTopBottomMargin"
-    android:layout_marginTop="@dimen/profileFragmentTopBottomMargin"
+    android:layout_margin="@dimen/companyAddressMargin"
+    android:layout_marginTop="0dp"
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/companyAddressHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/companyAddressTitle"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeBig" />
+        android:textSize="@dimen/companyAddressHeaderTextSize" />
 
     <TextView
         android:id="@+id/companyAddressTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/companyAddressSpacingMargin"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeMedium" />
+        android:textSize="@dimen/companyAddressDetailsTextSize" />
 
 </LinearLayout>

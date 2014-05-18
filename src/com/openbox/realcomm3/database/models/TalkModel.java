@@ -1,6 +1,9 @@
 package com.openbox.realcomm3.database.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import com.openbox.realcomm3.database.objects.Talk;
 import com.openbox.realcomm3.database.objects.TalkTrack;
@@ -8,13 +11,15 @@ import com.openbox.realcomm3.utilities.helpers.DateHelper;
 
 public class TalkModel
 {
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+	
 	private int venueId;
 	private String name;
 	private String description;
 	private Date startTime;
 	private Date endTime;
 	private String talkTrack;
-	
+
 	public TalkModel(Talk talk, TalkTrack talkTrack)
 	{
 		this.venueId = talk.getVenueId();
@@ -22,10 +27,10 @@ public class TalkModel
 		this.description = talk.getDescription();
 		this.startTime = talk.getStartTime();
 		this.endTime = talk.getEndTime();
-		
+
 		this.talkTrack = talkTrack.getName();
 	}
-	
+
 	public int getVenueId()
 	{
 		return venueId;
@@ -39,6 +44,11 @@ public class TalkModel
 	public Date getDate()
 	{
 		return DateHelper.getDateOnly(this.startTime);
+	}
+
+	public String getTalkTimeString()
+	{
+		return dateFormat.format(this.startTime) + " - " + dateFormat.format(this.endTime);
 	}
 
 	public String getName()

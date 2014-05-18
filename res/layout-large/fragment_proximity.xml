@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/proximityMarginTopBottom"
+    android:layout_marginLeft="@dimen/proximityMarginLeftRight"
+    android:layout_marginRight="@dimen/proximityMarginLeftRight"
+    android:layout_marginTop="@dimen/proximityMarginTopBottom"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/exhibitionAreaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/exhibitionAreaHeader"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize30" />
+
+    <TextView
+        android:id="@+id/boothsNearMeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize24" />
+
+    <include layout="@layout/custom_proximity_control" />
+
+</LinearLayout>

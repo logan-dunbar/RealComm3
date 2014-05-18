@@ -128,9 +128,9 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	{
 		switch (sortMode)
 		{
-			case ACCURACY:
+			case NEAR_ME:
 				return getListSortedByAccuracy();
-			case NAME:
+			case A_TO_Z:
 				return getListSortedByName();
 			default:
 				return new ArrayList<>(this.boothModelList);

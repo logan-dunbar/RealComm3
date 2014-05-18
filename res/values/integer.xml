@@ -11,5 +11,10 @@
     <integer name="profileFragmentToListingFragment">500</integer>
     <integer name="boothFragmentFlipDuration">450</integer>
     <integer name="boothFragmentBetweenDelay">200</integer>
+    
+    <integer name="phoneSplashToBoothExplore">1000</integer>
+    <integer name="phoneNavigationDuration">200</integer>
+    <integer name="phoneNavigationToProfileDuration">600</integer>
+    <integer name="phoneNavigationFromProfileDuration">400</integer>
 
 </resources>

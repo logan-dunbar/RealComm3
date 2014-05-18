@@ -1,16 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.openbox.realcomm3"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/profileFragmentTopBottomMargin"
-    android:layout_marginTop="@dimen/profileFragmentTopBottomMargin"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/companyContactsMargin"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="@dimen/companyContactsMarginBottom"
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/companyContactsHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:includeFontPadding="false"
         android:text="@string/companyContactTitle"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeBig" />
+        android:textSize="@dimen/companyContactsHeaderTextSize" />
+
+    <com.openbox.realcomm3.controls.VariableHeightViewPager
+        android:id="@+id/contactPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/companyContactsSpacingMargin"
+        android:paddingBottom="@dimen/viewPagerIndicatorPadding" >
+    </com.openbox.realcomm3.controls.VariableHeightViewPager>
+
+    <com.viewpagerindicator.LinePageIndicator
+        android:id="@+id/contactPagerIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        app:centered="true"
+        app:strokeWidth="@dimen/viewPagerIndicatorStrokeWidth" />
 
 </LinearLayout>

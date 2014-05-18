@@ -11,13 +11,18 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.R;
@@ -25,9 +30,12 @@ import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseActivity;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.database.models.SelectedBoothModel;
+import com.openbox.realcomm3.fragments.BoothExploreFragment;
+import com.openbox.realcomm3.fragments.BoothListFragment;
 import com.openbox.realcomm3.fragments.DataFragment;
 import com.openbox.realcomm3.fragments.ListingPageFragment;
 import com.openbox.realcomm3.fragments.ProfilePageFragment;
+import com.openbox.realcomm3.fragments.ScheduleFragment;
 import com.openbox.realcomm3.fragments.SplashScreenFragment;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.enums.AppMode;
@@ -35,6 +43,7 @@ import com.openbox.realcomm3.utilities.enums.BeaconStatus;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
 import com.openbox.realcomm3.utilities.enums.RealcommPage;
+import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
 import com.openbox.realcomm3.utilities.helpers.ToastHelper;
@@ -49,6 +58,7 @@ import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.managers.AppModeManager;
 import com.openbox.realcomm3.utilities.managers.BeaconStatusManager;
 import com.openbox.realcomm3.utilities.managers.RealcommPageManager;
+import com.openbox.realcomm3.utilities.managers.RealcommPhonePageManager;
 import com.radiusnetworks.ibeacon.IBeacon;
 import com.radiusnetworks.ibeacon.IBeaconConsumer;
 import com.radiusnetworks.ibeacon.IBeaconManager;
@@ -64,7 +74,8 @@ public class RealCommActivity extends BaseActivity implements
 	BeaconStatusChangeCallbacks,
 	AppModeChangedCallbacks,
 	AppModeInterface,
-	RangeNotifier
+	RangeNotifier,
+	OnClickListener
 {
 	private static final String APP_MODE_KEY = "appModeKey";
 	private static final String APP_MODE_SELECTOR_KEY = "appModeSelectorKey";
@@ -73,13 +84,15 @@ public class RealCommActivity extends BaseActivity implements
 
 	private static final int ENABLE_BLUETOOTH_REQUEST = 1;
 
+	// TODO Update to our UUID and Major values, when the time is right
 	private static final Region ALL_BEACONS = new Region("regionId", null, null, null);
 
 	/**********************************************************************************************
 	 * Fields
 	 **********************************************************************************************/
-	// Page manager
+	// Page managers
 	private RealcommPageManager pageManager;
+	private RealcommPhonePageManager phonePageManager;
 
 	// App Mode
 	private AppModeManager appModeManager;
@@ -90,6 +103,8 @@ public class RealCommActivity extends BaseActivity implements
 	// Views
 	private ImageView clearRealcommBackground;
 	private ImageView blurRealCommBackground;
+	private LinearLayout navigationDrawer;
+	private List<Button> navigationButtons = new ArrayList<>();
 
 	// Data listeners
 	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
@@ -98,7 +113,9 @@ public class RealCommActivity extends BaseActivity implements
 	private List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
 	private BeaconManagerBoundCallbacks beaconManagerBoundListener;
 
+	// Globals
 	private SelectedBoothModel selectedBooth;
+	private boolean isLargeScreen;
 
 	/**********************************************************************************************
 	 * Activity Lifecycle Implements
@@ -108,6 +125,8 @@ public class RealCommActivity extends BaseActivity implements
 	{
 		super.onCreate(savedInstanceState);
 		getWindow().setBackgroundDrawable(null); // Dark background not needed anymore
+		setIsLargeScreen();
+		setScreenOrientation();
 		setContentView(R.layout.activity_realcomm);
 
 		getWindow().getDecorView().getRootView().setOnTouchListener(new ClearFocusTouchListener(this, this));
@@ -115,16 +134,43 @@ public class RealCommActivity extends BaseActivity implements
 		this.clearRealcommBackground = (ImageView) findViewById(R.id.clearRealcommBackgroundImageView);
 		this.blurRealCommBackground = (ImageView) findViewById(R.id.blurRealcommBackgroundImageView);
 
-		// Initialize the page manager
+		// Initialize the page managers
 		initStateManagers(savedInstanceState);
 
 		// Initialize the Data Fragment
-		createDataFragment();
+		initializeDataFragment();
 
 		// Show SplashScreen if required
-		if (this.pageManager.getCurrentPage() == RealcommPage.INITIALIZING)
+		showSplashScreen();
+	}
+
+	private void showSplashScreen()
+	{
+		if (this.isLargeScreen)
 		{
-			this.pageManager.changePage(RealcommPage.SPLASHSCREEN);
+			if (this.pageManager.getCurrentPage() == RealcommPage.INITIALIZING)
+			{
+				this.pageManager.changePage(RealcommPage.SPLASH_SCREEN);
+			}
+		}
+		else
+		{
+			if (this.phonePageManager.getCurrentPage() == RealcommPhonePage.INITIALIZING)
+			{
+				this.phonePageManager.changePage(RealcommPhonePage.SPLASH_SCREEN);
+			}
+		}
+	}
+
+	private void setScreenOrientation()
+	{
+		if (this.isLargeScreen)
+		{
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		}
+		else
+		{
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 	}
 
@@ -137,7 +183,15 @@ public class RealCommActivity extends BaseActivity implements
 		outState.putSerializable(APP_MODE_KEY, this.appModeManager.getCurrentAppMode());
 		outState.putSerializable(APP_MODE_SELECTOR_KEY, this.appModeManager.getCurrentAppModeSelector());
 		outState.putSerializable(BEACON_STATUS_KEY, this.appModeManager.getCurrentBeaconStatus());
-		outState.putSerializable(CURRENT_PAGE_KEY, this.pageManager.getCurrentPage());
+
+		if (this.isLargeScreen)
+		{
+			outState.putSerializable(CURRENT_PAGE_KEY, this.pageManager.getCurrentPage());
+		}
+		else
+		{
+			outState.putSerializable(CURRENT_PAGE_KEY, this.phonePageManager.getCurrentPage());
+		}
 	}
 
 	@Override
@@ -191,7 +245,7 @@ public class RealCommActivity extends BaseActivity implements
 		super.onPause();
 
 		// Pause the app
-		this.appModeManager.changeAppMode(AppMode.PAUSED);
+		changeAppMode(AppMode.PAUSED);
 	}
 
 	@Override
@@ -224,13 +278,32 @@ public class RealCommActivity extends BaseActivity implements
 	public void onBackPressed()
 	{
 		// Intercept the back button to do a custom transition when on the ProfilePage
-		if (this.pageManager.getCurrentPage() == RealcommPage.PROFILEPAGE)
+		if (this.isLargeScreen)
 		{
-			this.changePage(RealcommPage.LISTINGPAGE);
+			if (this.pageManager.getCurrentPage() != RealcommPage.LISTING_PAGE)
+			{
+				this.changePage(RealcommPage.LISTING_PAGE);
+			}
+			else
+			{
+				super.onBackPressed();
+			}
 		}
 		else
 		{
-			super.onBackPressed();
+			// TODO custom back stuff for phone pages
+			if (this.phonePageManager.getCurrentPage() == RealcommPhonePage.PROFILE_PAGE)
+			{
+				this.changePage(this.phonePageManager.getPreviousPage());
+			}
+			else if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
+			{
+				this.changePage(RealcommPhonePage.BOOTH_EXPLORE);
+			}
+			else
+			{
+				super.onBackPressed();
+			}
 		}
 	}
 
@@ -242,13 +315,13 @@ public class RealCommActivity extends BaseActivity implements
 			// When the request to enable Bluetooth returns
 			if (resultCode == Activity.RESULT_OK)
 			{
-				this.appModeManager.changeAppMode(AppMode.ONLINE);
+				changeAppMode(AppMode.ONLINE);
 			}
 			else
 			{
-				// TODO: update wording
-				ToastHelper.showLongMessage(this, "Enable Bluetooth for Proximity Scanning");
-				this.appModeManager.changeAppMode(AppMode.OFFLINE);
+				// TODO: needed?
+				// ToastHelper.showLongMessage(this, "Enable Bluetooth for Proximity Scanning");
+				changeAppMode(AppMode.OFFLINE);
 			}
 		}
 	}
@@ -297,9 +370,39 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	@Override
+	public boolean getIsLargeScreen()
+	{
+		return this.isLargeScreen;
+	}
+
+	@Override
 	public void changePage(RealcommPage page)
 	{
 		this.pageManager.changePage(page);
+	}
+
+	@Override
+	public void changePage(RealcommPhonePage page)
+	{
+		this.phonePageManager.setPreviousPage(this.phonePageManager.getCurrentPage());
+		this.phonePageManager.changePage(page);
+	}
+
+	@Override
+	public void initializeFragments()
+	{
+		if (this.isLargeScreen)
+		{
+			initializeListingPageFragment();
+		}
+		else
+		{
+			initializeBoothExploreFragment();
+			initializeBoothListFragment();
+			initializeScheduleFragment();
+		}
+
+		initializeProfileFragment();
 	}
 
 	@Override
@@ -317,7 +420,7 @@ public class RealCommActivity extends BaseActivity implements
 			int delay = getResources().getInteger(R.integer.splashImageFadeDuration) - fadeIn;
 			fragment.setInAnimationDuration(fadeIn);
 			fragment.setInAnimationDelay(delay);
-			fragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+			fragment.setInAnimationInterpolator(AnimationInterpolator.DECELERATE);
 
 			getSupportFragmentManager()
 				.beginTransaction()
@@ -328,85 +431,344 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void hideSplashScreenFragmentAndShowListingPageFragment()
+	public void showListingPageAndRemoveSplashScreen()
 	{
 		SplashScreenFragment splashFragment = (SplashScreenFragment) getSupportFragmentManager().findFragmentByTag(SplashScreenFragment.TAG);
 		ListingPageFragment listingFragment = (ListingPageFragment) getSupportFragmentManager().findFragmentByTag(ListingPageFragment.TAG);
 
-		// TODO check this if (do a quick change to and from listing page, might need to executePendingTransactions())
-		if (splashFragment != null && listingFragment == null)
+		if (splashFragment != null && splashFragment.isVisible() && listingFragment != null)
 		{
+			// Out
 			splashFragment.setOutAnimationDuration(getResources().getInteger(R.integer.splashFragmentToListingFragment));
 			splashFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
 
-			listingFragment = ListingPageFragment.newInstance();
-
+			// In
 			listingFragment.setInAnimationDuration(getResources().getInteger(R.integer.splashFragmentToListingFragment));
 			listingFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
 
-			getSupportFragmentManager()
-				.beginTransaction()
-				.setCustomAnimations(R.id.slideUpInAnimation, R.id.slideUpOutAnimation)
-				.remove(splashFragment)
-				.add(R.id.realcommFragmentContainer, listingFragment, ListingPageFragment.TAG)
-				.commit();
+			showAndRemoveFragments(listingFragment, splashFragment, R.id.slideUpInAnimation, R.id.slideUpOutAnimation);
 		}
 	}
 
 	@Override
-	public void showListingPageFragmentAndRemoveProfileFragment()
+	public void showProfilePageAndHideListingPage()
 	{
 		ListingPageFragment listingFragment = (ListingPageFragment) getSupportFragmentManager().findFragmentByTag(ListingPageFragment.TAG);
 		ProfilePageFragment profileFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
 
-		// TODO check this if (do a quick change to and from listing page, might need to executePendingTransactions())
-		if (listingFragment != null && profileFragment != null)
+		if (listingFragment != null && listingFragment.isVisible() && profileFragment != null)
 		{
-			int duration = getResources().getInteger(R.integer.profileFragmentToListingFragment);
+			profileFragment.updateProfilePage(this.selectedBooth);
 
-			listingFragment.setInAnimationDuration(duration);
-			listingFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-
-			profileFragment.setOutAnimationDuration(duration);
-			profileFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-
-			getSupportFragmentManager()
-				.beginTransaction()
-				.setCustomAnimations(R.id.slideInLeftAnimation, R.id.slideOutRightAnimation, R.id.slideInRightAnimation, R.id.slideOutLeftAnimation)
-				.remove(profileFragment)
-				.show(listingFragment)
-				.commit();
-		}
-	}
-
-	@Override
-	public void addProfilePageAndHideListingPage()
-	{
-		ListingPageFragment listingFragment = (ListingPageFragment) getSupportFragmentManager().findFragmentByTag(ListingPageFragment.TAG);
-
-		// TODO might not need this
-		ProfilePageFragment profileFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
-
-		// TODO check this if (do a quick change to and from listing page, might need to executePendingTransactions())
-		if (listingFragment != null && profileFragment == null)
-		{
-			int duration = getResources().getInteger(R.integer.listingFragmentToProfileFragment);
-
-			listingFragment.setOutAnimationDuration(duration);
+			// Out
+			listingFragment.setOutAnimationDuration(getResources().getInteger(R.integer.listingFragmentToProfileFragment));
 			listingFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
 
-			// TODO see what happens if you replace a fragment that is still on the page O.o
-			profileFragment = ProfilePageFragment.newInstance(this.selectedBooth);
-
-			profileFragment.setInAnimationDuration(duration);
+			// In
+			profileFragment.setInAnimationDuration(getResources().getInteger(R.integer.listingFragmentToProfileFragment));
 			profileFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
 
-			getSupportFragmentManager()
-				.beginTransaction()
-				.setCustomAnimations(R.id.slideInRightAnimation, R.id.slideOutLeftAnimation, R.id.slideInLeftAnimation, R.id.slideOutRightAnimation)
-				.hide(listingFragment)
-				.add(R.id.realcommFragmentContainer, profileFragment, ProfilePageFragment.TAG)
-				.commit();
+			showAndHideFragments(profileFragment, listingFragment, R.id.slideInRightAnimation, R.id.slideOutLeftAnimation);
+		}
+	}
+
+	@Override
+	public void showListingPageAndHideProfilePage()
+	{
+		ListingPageFragment listingFragment = (ListingPageFragment) getSupportFragmentManager().findFragmentByTag(ListingPageFragment.TAG);
+		ProfilePageFragment profileFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
+
+		if (profileFragment != null && profileFragment.isVisible() && listingFragment != null)
+		{
+			// Out
+			listingFragment.setInAnimationDuration(getResources().getInteger(R.integer.profileFragmentToListingFragment));
+			listingFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			// In
+			profileFragment.setOutAnimationDuration(getResources().getInteger(R.integer.profileFragmentToListingFragment));
+			profileFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			showAndHideFragments(listingFragment, profileFragment, R.id.slideInLeftAnimation, R.id.slideOutRightAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothExploreAndRemoveSplashScreen()
+	{
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+		SplashScreenFragment splashScreenFragment = (SplashScreenFragment) getSupportFragmentManager().findFragmentByTag(SplashScreenFragment.TAG);
+
+		if (splashScreenFragment != null && splashScreenFragment.isVisible() && boothExploreFragment != null)
+		{
+			// Out
+			splashScreenFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneSplashToBoothExplore));
+			splashScreenFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneSplashToBoothExplore));
+			boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndRemoveFragments(boothExploreFragment, splashScreenFragment, R.id.slideUpInAnimation, R.id.slideUpOutAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothExploreAndHideBoothList()
+	{
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+
+		if (boothListFragment != null && boothListFragment.isVisible() && boothExploreFragment != null)
+		{
+			// Out
+			boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndHideFragments(boothExploreFragment, boothListFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothExploreAndRemoveProfilePage()
+	{
+		ProfilePageFragment profilePageFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+
+		if (profilePageFragment != null && profilePageFragment.isVisible() && boothExploreFragment != null)
+		{
+			// Out
+			profilePageFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
+			profilePageFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			// In
+			boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
+			boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			showAndHideFragments(boothExploreFragment, profilePageFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothExploreAndHideSchedulePage()
+	{
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+
+		if (scheduleFragment != null && scheduleFragment.isVisible() && boothExploreFragment != null)
+		{
+			// Out
+			scheduleFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			scheduleFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndHideFragments(boothExploreFragment, scheduleFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothListAndHideBoothExplore()
+	{
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+
+		if (boothExploreFragment != null && boothExploreFragment.isVisible() && boothListFragment != null)
+		{
+			// Out
+			boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothListFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndHideFragments(boothListFragment, boothExploreFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothListAndHideProfilePage()
+	{
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+		ProfilePageFragment profilePageFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
+
+		if (profilePageFragment != null && profilePageFragment.isVisible() && boothListFragment != null)
+		{
+			// Out
+			profilePageFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
+			profilePageFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			// In
+			boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
+			boothListFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			showAndHideFragments(boothListFragment, profilePageFragment, R.id.slideInLeftAnimation, R.id.slideOutRightAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothListAndHideSchedulePage()
+	{
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+
+		if (scheduleFragment != null && scheduleFragment.isVisible() && boothListFragment != null)
+		{
+			// Out
+			scheduleFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			scheduleFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothListFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndHideFragments(boothListFragment, scheduleFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showProfilePageAndHideBoothExplore()
+	{
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+		ProfilePageFragment profilePageFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
+
+		if (boothExploreFragment != null && boothExploreFragment.isVisible() && profilePageFragment != null)
+		{
+			profilePageFragment.updateProfilePage(this.selectedBooth);
+
+			// Out
+			profilePageFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
+			profilePageFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			// In
+			boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
+			boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			showAndHideFragments(profilePageFragment, boothExploreFragment, R.id.slideInRightAnimation, R.id.slideOutLeftAnimation);
+		}
+	}
+
+	@Override
+	public void showProfilePageAndHideBoothList()
+	{
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+		ProfilePageFragment profilePageFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
+
+		if (boothListFragment != null && boothListFragment.isVisible() && profilePageFragment != null)
+		{
+			profilePageFragment.updateProfilePage(this.selectedBooth);
+
+			// Out
+			profilePageFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
+			profilePageFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			// In
+			boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
+			boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			showAndHideFragments(profilePageFragment, boothListFragment, R.id.slideInRightAnimation, R.id.slideOutLeftAnimation);
+		}
+	}
+
+	@Override
+	public void showSchedulePageAndHideBoothExplore()
+	{
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+
+		if (boothExploreFragment != null && boothExploreFragment.isVisible() && scheduleFragment != null)
+		{
+			// Out
+			boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			scheduleFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			scheduleFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndHideFragments(scheduleFragment, boothExploreFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showSchedulePageAndHideBoothList()
+	{
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+
+		if (boothListFragment != null && boothListFragment.isVisible() && scheduleFragment != null)
+		{
+			// Out
+			boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			scheduleFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			scheduleFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			showAndHideFragments(scheduleFragment, boothListFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void initNavigationDrawer()
+	{
+		this.navigationDrawer = (LinearLayout) findViewById(R.id.navigationDrawerContainer);
+
+		Button exploreButton = (Button) findViewById(R.id.exploreButton);
+		Button findButton = (Button) findViewById(R.id.findButton);
+		Button scheduleButton = (Button) findViewById(R.id.scheduleButton);
+		Button infoButton = (Button) findViewById(R.id.infoButton);
+
+		exploreButton.setOnClickListener(this);
+		findButton.setOnClickListener(this);
+		scheduleButton.setOnClickListener(this);
+		infoButton.setOnClickListener(this);
+
+		this.navigationButtons.add(exploreButton);
+		this.navigationButtons.add(findButton);
+		this.navigationButtons.add(scheduleButton);
+		this.navigationButtons.add(infoButton);
+	}
+
+	@Override
+	public void showNavigationDrawer()
+	{
+		if (this.navigationDrawer != null)
+		{
+			this.navigationDrawer.setVisibility(View.VISIBLE);
+		}
+	}
+
+	@Override
+	public void hideNavigationDrawer()
+	{
+		if (this.navigationDrawer != null)
+		{
+			this.navigationDrawer.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void selectPageButton()
+	{
+		int buttonId = this.phonePageManager.getCurrentPage().getButtonId();
+		for (Button button : this.navigationButtons)
+		{
+			if (button.getId() == buttonId)
+			{
+				button.setSelected(true);
+			}
+			else
+			{
+				button.setSelected(false);
+			}
 		}
 	}
 
@@ -421,13 +783,54 @@ public class RealCommActivity extends BaseActivity implements
 		this.blurRealCommBackground.setVisibility(View.VISIBLE);
 
 		// Go to listing page
-		this.pageManager.changePage(RealcommPage.LISTINGPAGE);
+		if (this.isLargeScreen)
+		{
+			this.pageManager.changePage(RealcommPage.LISTING_PAGE);
+		}
+		else
+		{
+			this.phonePageManager.changePage(RealcommPhonePage.BOOTH_EXPLORE);
+		}
 	}
 
 	@Override
 	public void onSplashScreenAnimationOutComplete()
 	{
 		// TODO Might not need
+	}
+
+	/**********************************************************************************************
+	 * Activity Interface Implements
+	 **********************************************************************************************/
+	@Override
+	public void onClick(View v)
+	{
+		switch (v.getId())
+		{
+			case R.id.exploreButton:
+				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
+				{
+
+					changePage(RealcommPhonePage.BOOTH_EXPLORE);
+				}
+				break;
+			case R.id.findButton:
+				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_LIST)
+				{
+					changePage(RealcommPhonePage.BOOTH_LIST);
+				}
+				break;
+			case R.id.scheduleButton:
+				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.SCHEDULE_PAGE)
+				{
+					changePage(RealcommPhonePage.SCHEDULE_PAGE);
+				}
+				break;
+			case R.id.infoButton:
+				// TODO
+				ToastHelper.showLongMessage(this, "Still implementing...");
+				break;
+		}
 	}
 
 	/**********************************************************************************************
@@ -583,6 +986,17 @@ public class RealCommActivity extends BaseActivity implements
 		return null;
 	}
 
+	@Override
+	public AppMode getPreviousAppMode()
+	{
+		if (this.appModeManager != null)
+		{
+			return this.appModeManager.getPreviousAppMode();
+		}
+
+		return null;
+	}
+
 	/**********************************************************************************************
 	 * Beacon Consumer Callbacks
 	 **********************************************************************************************/
@@ -680,27 +1094,136 @@ public class RealCommActivity extends BaseActivity implements
 		AppMode startingAppMode = AppMode.INITIALIZING;
 		AppMode startingAppModeSelector = AppMode.ONLINE;
 		RealcommPage startingPage = RealcommPage.INITIALIZING;
+		RealcommPhonePage startingPhonePage = RealcommPhonePage.INITIALIZING;
 
 		if (savedInstanceState != null)
 		{
 			startingBeaconStatus = (BeaconStatus) savedInstanceState.getSerializable(BEACON_STATUS_KEY);
 			startingAppMode = (AppMode) savedInstanceState.getSerializable(APP_MODE_KEY);
 			startingAppModeSelector = (AppMode) savedInstanceState.getSerializable(APP_MODE_SELECTOR_KEY);
-			startingPage = (RealcommPage) savedInstanceState.getSerializable(CURRENT_PAGE_KEY);
+
+			if (this.isLargeScreen)
+			{
+				startingPage = (RealcommPage) savedInstanceState.getSerializable(CURRENT_PAGE_KEY);
+			}
+			else
+			{
+				startingPhonePage = (RealcommPhonePage) savedInstanceState.getSerializable(CURRENT_PAGE_KEY);
+			}
 		}
 
 		BeaconStatusManager beaconStatusManager = new BeaconStatusManager(this, startingBeaconStatus, RealCommApplication.getHasBluetoothLe());
 		this.appModeManager = new AppModeManager(startingAppMode, startingAppModeSelector, beaconStatusManager, this);
-		this.pageManager = new RealcommPageManager(startingPage, this);
+
+		if (this.isLargeScreen)
+		{
+			this.pageManager = new RealcommPageManager(startingPage, this);
+		}
+		else
+		{
+			this.phonePageManager = new RealcommPhonePageManager(startingPhonePage, this);
+		}
 	}
 
-	private void createDataFragment()
+	private void setIsLargeScreen()
+	{
+		// Lookup Configuration#screenLayout for more details
+		this.isLargeScreen = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)
+			>= Configuration.SCREENLAYOUT_SIZE_LARGE;
+	}
+
+	private void initializeDataFragment()
 	{
 		DataFragment fragment = (DataFragment) getSupportFragmentManager().findFragmentByTag(DataFragment.TAG);
 		if (fragment == null)
 		{
 			getSupportFragmentManager().beginTransaction().add(DataFragment.newInstance(), DataFragment.TAG).commit();
 		}
+	}
+
+	private void initializeListingPageFragment()
+	{
+		ListingPageFragment listingFragment = (ListingPageFragment) getSupportFragmentManager().findFragmentByTag(ListingPageFragment.TAG);
+		if (listingFragment == null)
+		{
+			listingFragment = ListingPageFragment.newInstance();
+			addAndHideFragment(R.id.realcommFragmentContainer, listingFragment, ListingPageFragment.TAG);
+		}
+	}
+
+	private void initializeBoothExploreFragment()
+	{
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+		if (boothExploreFragment == null)
+		{
+			boothExploreFragment = BoothExploreFragment.newInstance();
+			addAndHideFragment(R.id.realcommFragmentContainer, boothExploreFragment, BoothExploreFragment.TAG);
+			this.dataChangedListeners.add(boothExploreFragment);
+			this.appModeChangedListeners.add(boothExploreFragment);
+		}
+	}
+
+	private void initializeBoothListFragment()
+	{
+		BoothListFragment boothListFragment = (BoothListFragment) getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+		if (boothListFragment == null)
+		{
+			boothListFragment = BoothListFragment.newInstance();
+			addAndHideFragment(R.id.realcommFragmentContainer, boothListFragment, BoothListFragment.TAG);
+			this.dataChangedListeners.add(boothListFragment);
+			this.clearFocusListeners.add(boothListFragment);
+		}
+	}
+
+	private void initializeScheduleFragment()
+	{
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+		if (scheduleFragment == null)
+		{
+			scheduleFragment = ScheduleFragment.newInstance();
+			addAndHideFragment(R.id.realcommFragmentContainer, scheduleFragment, ScheduleFragment.TAG);
+			this.dataChangedListeners.add(scheduleFragment);
+		}
+	}
+
+	private void initializeProfileFragment()
+	{
+		ProfilePageFragment profilePageFragment = (ProfilePageFragment) getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
+		if (profilePageFragment == null)
+		{
+			profilePageFragment = ProfilePageFragment.newInstance();
+			addAndHideFragment(R.id.realcommFragmentContainer, profilePageFragment, ProfilePageFragment.TAG);
+			this.dataChangedListeners.add(profilePageFragment);
+		}
+	}
+
+	private void addAndHideFragment(int containerId, Fragment fragment, String tag)
+	{
+		getSupportFragmentManager()
+			.beginTransaction()
+			.add(containerId, fragment, tag)
+			.hide(fragment)
+			.commit();
+	}
+
+	private void showAndRemoveFragments(Fragment showFragment, Fragment removeFragment, int inAnimationId, int outAnimationId)
+	{
+		getSupportFragmentManager()
+			.beginTransaction()
+			.setCustomAnimations(inAnimationId, outAnimationId)
+			.remove(removeFragment)
+			.show(showFragment)
+			.commit();
+	}
+
+	private void showAndHideFragments(Fragment showFragment, Fragment hideFragment, int inAnimationId, int outAnimationId)
+	{
+		getSupportFragmentManager()
+			.beginTransaction()
+			.setCustomAnimations(inAnimationId, outAnimationId)
+			.hide(hideFragment)
+			.show(showFragment)
+			.commit();
 	}
 
 	private void animateRealcommBackground()
@@ -721,6 +1244,12 @@ public class RealCommActivity extends BaseActivity implements
 		this.clearRealcommBackground.setAnimation(backgroundImageFadeOut);
 	}
 
+	private void changeAppMode(AppMode newAppMode)
+	{
+		this.appModeManager.setPreviousAppMode(this.appModeManager.getCurrentAppMode());
+		this.appModeManager.changeAppMode(newAppMode);
+	}
+
 	private void determineAppMode()
 	{
 		if (this.appModeManager.getCurrentAppModeSelector() == AppMode.ONLINE)
@@ -729,7 +1258,7 @@ public class RealCommActivity extends BaseActivity implements
 			{
 				if (RealCommApplication.isBluetoothEnabled(this))
 				{
-					this.appModeManager.changeAppMode(AppMode.ONLINE);
+					changeAppMode(AppMode.ONLINE);
 				}
 				else
 				{
@@ -739,12 +1268,12 @@ public class RealCommActivity extends BaseActivity implements
 			}
 			else
 			{
-				this.appModeManager.changeAppMode(AppMode.OFFLINE);
+				changeAppMode(AppMode.OFFLINE);
 			}
 		}
 		else
 		{
-			this.appModeManager.changeAppMode(AppMode.OFFLINE);
+			changeAppMode(AppMode.OFFLINE);
 		}
 	}
 
@@ -764,14 +1293,14 @@ public class RealCommActivity extends BaseActivity implements
 				{
 					case BluetoothAdapter.STATE_OFF:
 						ToastHelper.showLongMessage(RealCommActivity.this, "Offline mode engaged!");
-						RealCommActivity.this.appModeManager.changeAppMode(AppMode.OFFLINE);
+						changeAppMode(AppMode.OFFLINE);
 						break;
 					case BluetoothAdapter.STATE_TURNING_OFF:
 						// ToastHelper.showShortMessage(ListingPageActivity.this, "Bluetooth turning off!");
 						break;
 					case BluetoothAdapter.STATE_ON:
 						ToastHelper.showLongMessage(RealCommActivity.this, "Online mode engaged!");
-						RealCommActivity.this.appModeManager.changeAppMode(AppMode.ONLINE);
+						changeAppMode(AppMode.ONLINE);
 						break;
 					case BluetoothAdapter.STATE_TURNING_ON:
 						// ToastHelper.showShortMessage(ListingPageActivity.this, "Bluetooth turning on!");

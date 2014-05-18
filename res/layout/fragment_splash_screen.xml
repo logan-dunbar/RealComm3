@@ -3,56 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="@dimen/splashPadding" >
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2" >
+        <TextView
+            android:id="@+id/splashScreenHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/splashHeader"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSize24" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:id="@+id/splashScreenHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/splashHeader"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeBiggest" />
-
-                <TextView
-                    android:id="@+id/splashScreenSubHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/splashSubHeader"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeBiggest" />
-            </LinearLayout>
-        </FrameLayout>
+        <TextView
+            android:id="@+id/splashScreenSubHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/splashScreenHeader"
+            android:layout_centerHorizontal="true"
+            android:text="@string/splashSubHeader"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textSize24" />
 
         <LinearLayout
+            android:id="@+id/splashCircleContainer"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:orientation="horizontal" >
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/splashScreenSubHeader"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
+            android:padding="@dimen/splashCirclePadding" >
 
             <FrameLayout
                 android:id="@+id/splashCircleRed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/defaultMargin"
-                android:background="@drawable/splash_circle" >
+                android:layout_margin="@dimen/splashCircleMargin"
+                android:background="@drawable/circle_splash" >
             </FrameLayout>
 
             <FrameLayout
@@ -60,8 +51,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/defaultMargin"
-                android:background="@drawable/splash_circle" >
+                android:layout_margin="@dimen/splashCircleMargin"
+                android:background="@drawable/circle_splash" >
             </FrameLayout>
 
             <FrameLayout
@@ -69,169 +60,137 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/defaultMargin"
-                android:background="@drawable/splash_circle" >
+                android:layout_margin="@dimen/splashCircleMargin"
+                android:background="@drawable/circle_splash" >
             </FrameLayout>
         </LinearLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.5" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/logos_landing" />
-        </FrameLayout>
+        <ImageView
+            android:id="@+id/splashLogos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/splashCircleContainer"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/logos_landing" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3" >
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/splashLogos"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/splashDetailMarginTop"
+            android:orientation="vertical" >
 
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" >
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:id="@+id/splashScreenIconExplore"
+                    android:layout_width="@dimen/splashLogoSize"
+                    android:layout_height="@dimen/splashLogoSize"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/splashLogoMarginRight"
                     android:src="@drawable/icon_landing_explore" />
 
                 <TextView
                     android:id="@+id/splashScreenExploreTitleTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/splashScreenIconExplore"
                     android:text="@string/splashExploreTitle"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeHuge" />
+                    android:textSize="@dimen/textSize20" />
 
                 <TextView
                     android:id="@+id/splashScreenExploreDescTextView"
-                    android:layout_width="@dimen/splashTextWidth"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/splashScreenExploreTitleTextView"
+                    android:layout_toRightOf="@+id/splashScreenIconExplore"
                     android:text="@string/splashExploreDesc"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeBig" />
-            </LinearLayout>
+                    android:textSize="@dimen/textSize14" />
+            </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/splashDetailBetweenMargin" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:id="@+id/splashScreenIconExploreFind"
+                    android:layout_width="@dimen/splashLogoSize"
+                    android:layout_height="@dimen/splashLogoSize"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/splashLogoMarginRight"
                     android:src="@drawable/icon_landing_lookup" />
 
                 <TextView
                     android:id="@+id/splashScreenFindTitleTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/splashScreenIconExploreFind"
                     android:text="@string/splashFindTitle"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeHuge" />
+                    android:textSize="@dimen/textSize20" />
 
                 <TextView
                     android:id="@+id/splashScreenFindDescTextView"
-                    android:layout_width="@dimen/splashTextWidth"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/splashScreenFindTitleTextView"
+                    android:layout_toRightOf="@+id/splashScreenIconExploreFind"
                     android:text="@string/splashFindDesc"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeBig" />
-            </LinearLayout>
+                    android:textSize="@dimen/textSize14" />
+            </RelativeLayout>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical" >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/splashDetailBetweenMargin" >
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:id="@+id/splashScreenIconExploreAttend"
+                    android:layout_width="@dimen/splashLogoSize"
+                    android:layout_height="@dimen/splashLogoSize"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/splashLogoMarginRight"
                     android:src="@drawable/icon_landing_attend" />
 
                 <TextView
                     android:id="@+id/splashScreenAttendTitleTextView"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/splashScreenIconExploreAttend"
                     android:text="@string/splashAttendTitle"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeHuge" />
+                    android:textSize="@dimen/textSize20" />
 
                 <TextView
                     android:id="@+id/splashScreenAttendDescTextView"
-                    android:layout_width="@dimen/splashTextWidth"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/splashScreenAttendTitleTextView"
+                    android:layout_toRightOf="@+id/splashScreenIconExploreAttend"
                     android:text="@string/splashAttendDesc"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textSizeBig" />
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" >
-            </FrameLayout>
+                    android:textSize="@dimen/textSize14" />
+            </RelativeLayout>
         </LinearLayout>
+    </RelativeLayout>
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_landing_down" />
-        </FrameLayout>
-    </LinearLayout>
+    <ImageView
+        android:layout_width="@dimen/splashLogoSize"
+        android:layout_height="@dimen/splashLogoSize"
+        android:layout_gravity="center|bottom"
+        android:src="@drawable/icon_landing_down" />
 
 </FrameLayout>

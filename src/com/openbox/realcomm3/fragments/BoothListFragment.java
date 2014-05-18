@@ -5,8 +5,9 @@ import java.util.List;
 
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.RealcommPage;
+import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
-import com.openbox.realcomm3.utilities.interfaces.BoothListInterface;
+import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.R;
@@ -22,18 +23,26 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class BoothListFragment extends BaseFragment implements
 	TextWatcher,
 	OnItemClickListener,
-	BoothListInterface,
-	DataChangedCallbacks
+	ClearFocusInterface,
+	DataChangedCallbacks,
+	OnClickListener
 {
+	public static final String TAG = "boothListFragment";
+
 	private static final String BOOTH_SORT_MODE_KEY = "boothSortModeKey";
+
+	private Button aToZButton;
+	private Button nearMeButton;
 
 	private ClearableEditText boothFilter;
 	private ListView boothListView;
@@ -79,6 +88,15 @@ public class BoothListFragment extends BaseFragment implements
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 
+		this.aToZButton = (Button) view.findViewById(R.id.boothListAtoZButton);
+		this.nearMeButton = (Button) view.findViewById(R.id.boothListNearMeButton);
+		this.aToZButton.setText(BoothSortMode.A_TO_Z.getDisplayName());
+		this.nearMeButton.setText(BoothSortMode.NEAR_ME.getDisplayName());
+		this.aToZButton.setOnClickListener(this);
+		this.nearMeButton.setOnClickListener(this);
+		this.aToZButton.setTypeface(application.getExo2Font());
+		this.nearMeButton.setTypeface(application.getExo2Font());
+
 		this.boothFilter = (ClearableEditText) view.findViewById(R.id.boothFilter);
 		this.boothFilter.addTextChangedListener(this);
 		this.boothFilter.setTypeface(application.getExo2Font());
@@ -93,13 +111,14 @@ public class BoothListFragment extends BaseFragment implements
 		this.boothListView.setAdapter(this.boothAdapter);
 
 		// TODO: check this default
-		this.currentSortMode = BoothSortMode.NAME;
+		this.currentSortMode = BoothSortMode.NEAR_ME;
 		if (savedInstanceState != null)
 		{
 			this.currentSortMode = (BoothSortMode) savedInstanceState.getSerializable(BOOTH_SORT_MODE_KEY);
 		}
 
 		// TODO maybe check how many times this is being run, so as not to be wasting processing power
+		updateButtons();
 		updateList();
 
 		return view;
@@ -112,10 +131,21 @@ public class BoothListFragment extends BaseFragment implements
 		outState.putSerializable(BOOTH_SORT_MODE_KEY, this.currentSortMode);
 	}
 
+	@Override
+	public void onHiddenChanged(boolean hidden)
+	{
+		super.onHiddenChanged(hidden);
+
+		if (this.boothFilter != null)
+		{
+			this.boothFilter.setEnabled(!hidden);
+		}
+	}
+
 	/**********************************************************************************************
 	 * Booth List Interface Implements
 	 **********************************************************************************************/
-	@Override
+	// @Override
 	public void updateList()
 	{
 		// TODO maybe check how many times this is being run, so as not to be wasting processing power
@@ -125,10 +155,10 @@ public class BoothListFragment extends BaseFragment implements
 		}
 	}
 
-	@Override
+	// @Override
 	public void toggleSortMode()
 	{
-		this.currentSortMode = this.currentSortMode == BoothSortMode.ACCURACY ? BoothSortMode.NAME : BoothSortMode.ACCURACY;
+		this.currentSortMode = this.currentSortMode == BoothSortMode.NEAR_ME ? BoothSortMode.A_TO_Z : BoothSortMode.NEAR_ME;
 		updateList();
 	}
 
@@ -160,10 +190,34 @@ public class BoothListFragment extends BaseFragment implements
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
 		BoothModel booth = this.boothAdapter.getItem(position);
-		if (getActivityListener() != null)
+		if (getActivityListener() != null && booth != null)
 		{
 			getActivityListener().setSelectedBooth(booth.getBoothId(), booth.getCompanyId());
-			getActivityListener().changePage(RealcommPage.PROFILEPAGE);
+			if (getActivityListener().getIsLargeScreen())
+			{
+				getActivityListener().changePage(RealcommPage.PROFILE_PAGE);
+			}
+			else
+			{
+				getActivityListener().changePage(RealcommPhonePage.PROFILE_PAGE);
+			}
+		}
+	}
+
+	@Override
+	public void onClick(View v)
+	{
+		if (v.getId() == BoothSortMode.A_TO_Z.getButtonId() && this.currentSortMode != BoothSortMode.A_TO_Z)
+		{
+			this.currentSortMode = BoothSortMode.A_TO_Z;
+			updateButtons();
+			updateList();
+		}
+		else if (v.getId() == BoothSortMode.NEAR_ME.getButtonId() && this.currentSortMode != BoothSortMode.NEAR_ME)
+		{
+			this.currentSortMode = BoothSortMode.NEAR_ME;
+			updateButtons();
+			updateList();
 		}
 	}
 
@@ -195,5 +249,19 @@ public class BoothListFragment extends BaseFragment implements
 	public List<View> getViewsToClearFocus()
 	{
 		return Arrays.asList((View) this.boothFilter);
+	}
+
+	private void updateButtons()
+	{
+		if (this.currentSortMode == BoothSortMode.A_TO_Z)
+		{
+			this.aToZButton.setSelected(true);
+			this.nearMeButton.setSelected(false);
+		}
+		else if (this.currentSortMode == BoothSortMode.NEAR_ME)
+		{
+			this.aToZButton.setSelected(false);
+			this.nearMeButton.setSelected(true);
+		}
 	}
 }

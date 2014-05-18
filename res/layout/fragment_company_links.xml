@@ -2,22 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/profileFragmentTopBottomMargin"
-    android:layout_marginTop="@dimen/profileFragmentTopBottomMargin"
+    android:layout_margin="@dimen/companyLinksMargin"
+    android:layout_marginTop="0dp"
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/companyLinksHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/companyLinksTitle"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeBig" />
+        android:textSize="@dimen/companyLinksHeaderTextSize" />
 
     <TextView
         android:id="@+id/companyLinksTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/companyLinksSpacingMargin"
+        android:autoLink="all"
         android:textColor="@color/white"
-        android:textSize="@dimen/textSizeBig" />
+        android:textSize="@dimen/companyLinksDetailsTextSize" />
 
 </LinearLayout>

@@ -19,15 +19,6 @@ public class RealcommPageManager
 		this.activityListener = activityListener;
 	}
 
-	public void backPressed()
-	{
-		if (this.currentPage == RealcommPage.PROFILEPAGE)
-		{
-			// To handle popping the back stack
-			this.currentPage = RealcommPage.LISTINGPAGE;
-		}
-	}
-
 	public void changePage(RealcommPage newPage)
 	{
 		switch (newPage)
@@ -35,13 +26,13 @@ public class RealcommPageManager
 			case INITIALIZING:
 				// Should not get here
 				break;
-			case SPLASHSCREEN:
+			case SPLASH_SCREEN:
 				changePageToSplashScreen(newPage);
 				break;
-			case LISTINGPAGE:
+			case LISTING_PAGE:
 				changePageToListingPage(newPage);
 				break;
-			case PROFILEPAGE:
+			case PROFILE_PAGE:
 				changePageToProfilePage(newPage);
 				break;
 			default:
@@ -57,13 +48,13 @@ public class RealcommPageManager
 				changeInitializingToSplashScreen();
 				changePage(newPage);
 				break;
-			case SPLASHSCREEN:
+			case SPLASH_SCREEN:
 				// Stay here
 				break;
-			case LISTINGPAGE:
+			case LISTING_PAGE:
 				// Shouldn't need this
 				break;
-			case PROFILEPAGE:
+			case PROFILE_PAGE:
 				// Shouldn't need this
 				break;
 			default:
@@ -78,14 +69,14 @@ public class RealcommPageManager
 			case INITIALIZING:
 				// Shouldn't need this
 				break;
-			case SPLASHSCREEN:
+			case SPLASH_SCREEN:
 				changeSplashScreenToListingPage();
 				changePage(newPage);
 				break;
-			case LISTINGPAGE:
+			case LISTING_PAGE:
 				// Stay here
 				break;
-			case PROFILEPAGE:
+			case PROFILE_PAGE:
 				changeProfilePageToListingPage();
 				changePage(newPage);
 				break;
@@ -101,14 +92,14 @@ public class RealcommPageManager
 			case INITIALIZING:
 				// Shouldn't need this
 				break;
-			case SPLASHSCREEN:
+			case SPLASH_SCREEN:
 				// Shouldn't need this
 				break;
-			case LISTINGPAGE:
+			case LISTING_PAGE:
 				changeListingPageToProfilePage();
 				changePage(newPage);
 				break;
-			case PROFILEPAGE:
+			case PROFILE_PAGE:
 				// Stay here
 				break;
 			default:
@@ -121,39 +112,40 @@ public class RealcommPageManager
 		if (this.activityListener != null)
 		{
 			this.activityListener.showSplashScreenFragment();
+			this.activityListener.initializeFragments();
 		}
 
-		this.currentPage = RealcommPage.SPLASHSCREEN;
+		this.currentPage = RealcommPage.SPLASH_SCREEN;
 	}
 
 	private void changeSplashScreenToListingPage()
 	{
 		if (this.activityListener != null)
 		{
-			this.activityListener.hideSplashScreenFragmentAndShowListingPageFragment();
+			this.activityListener.showListingPageAndRemoveSplashScreen();
 		}
 
-		this.currentPage = RealcommPage.LISTINGPAGE;
+		this.currentPage = RealcommPage.LISTING_PAGE;
 	}
 
 	private void changeProfilePageToListingPage()
 	{
 		if (this.activityListener != null)
 		{
-			this.activityListener.showListingPageFragmentAndRemoveProfileFragment();
+			this.activityListener.showListingPageAndHideProfilePage();
 		}
 
-		this.currentPage = RealcommPage.LISTINGPAGE;
+		this.currentPage = RealcommPage.LISTING_PAGE;
 	}
 
 	private void changeListingPageToProfilePage()
 	{
 		if (this.activityListener != null)
 		{
-			this.activityListener.addProfilePageAndHideListingPage();
+			this.activityListener.showProfilePageAndHideListingPage();
 		}
 
-		this.currentPage = RealcommPage.PROFILEPAGE;
+		this.currentPage = RealcommPage.PROFILE_PAGE;
 	}
 
 	// private void template()

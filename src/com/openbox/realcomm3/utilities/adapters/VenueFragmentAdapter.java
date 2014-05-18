@@ -32,10 +32,10 @@ public class VenueFragmentAdapter extends FragmentPagerAdapter
 	}
 
 	@Override
-	public Fragment getItem(int location)
+	public Fragment getItem(int position)
 	{
 		// TODO: Maybe sort or something
-		return VenueFragment.newInstance(this.talkDate, this.venueList.get(location).getVenueId());
+		return VenueFragment.newInstance(this.talkDate, this.venueList.get(position).getVenueId());
 	}
 
 	@Override

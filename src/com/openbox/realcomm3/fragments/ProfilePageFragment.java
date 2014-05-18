@@ -1,11 +1,16 @@
 package com.openbox.realcomm3.fragments;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.openbox.realcomm3.R;
@@ -14,44 +19,58 @@ import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.database.models.SelectedBoothModel;
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.Company;
+import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
+import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.ProfilePageInterface;
 import com.openbox.realcomm3.utilities.loaders.CompanyModelLoader;
 
-public class ProfilePageFragment extends BaseFragment implements ProfilePageInterface
+public class ProfilePageFragment extends BaseFragment implements ProfilePageInterface, DataChangedCallbacks
 {
 	public static final String TAG = "profilePageFragment";
+	public static final String SELECTED_BOOTH_MODEL_KEY = "selectedBoothModelKey";
 	private static final int COMPANY_LOADER_ID = 1;
 
-	private static final int CATEGORIES_INDEX = 1;
-
-	private static final int ADDRESS_INDEX = 0;
-	private static final int CONTACTS_INDEX = 1;
-	private static final int LINKS_INDEX = 2;
-	private static final int SOCIAL_NETWORKS_INDEX = 3;
-
+	private SelectedBoothModel selectedBoothModel;
 	private CompanyModel companyModel;
 
-	private LinearLayout companyDetailsAndCategoriesLayout;
-	private LinearLayout companyAddressContactsAndLinksLayout;
+	private List<ProfileDataChangedCallbacks> profileDataChangedListeners = new ArrayList<>();
+	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
 
-	public static ProfilePageFragment newInstance(SelectedBoothModel selectedBooth)
+	private FrameLayout companyCategoriesBorder;
+	private FrameLayout companyAddressBorder;
+	private FrameLayout companyContactsBorder;
+	private FrameLayout companyLinksBorder;
+	private FrameLayout companySocialNetworksBorder;
+
+	public static ProfilePageFragment newInstance()
 	{
 		ProfilePageFragment fragment = new ProfilePageFragment();
-
-		Bundle args = new Bundle();
-		args.putInt(Booth.BOOTH_ID_COLUMN_NAME, selectedBooth.getBoothId());
-		args.putInt(Company.COMPANY_ID_COLUMN_NAME, selectedBooth.getCompanyId());
-		fragment.setArguments(args);
 
 		return fragment;
 	}
 
+	/**********************************************************************************************
+	 * Fragment Lifecycle Implements
+	 **********************************************************************************************/
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 
-		initCompanyLoader();
+		if (savedInstanceState != null && this.selectedBoothModel == null)
+		{
+			this.selectedBoothModel = (SelectedBoothModel) savedInstanceState.getSerializable(SELECTED_BOOTH_MODEL_KEY);
+		}
+
+		restartCompanyLoader();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		super.onSaveInstanceState(outState);
+
+		outState.putSerializable(SELECTED_BOOTH_MODEL_KEY, this.selectedBoothModel);
 	}
 
 	@Override
@@ -59,8 +78,11 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 	{
 		View view = inflater.inflate(R.layout.fragment_profile_page, container, false);
 
-		this.companyDetailsAndCategoriesLayout = (LinearLayout) view.findViewById(R.id.companyDetailsAndCategoriesLayout);
-		this.companyAddressContactsAndLinksLayout = (LinearLayout) view.findViewById(R.id.companyAddressContactsAndLinksLayout);
+		this.companyCategoriesBorder = (FrameLayout) view.findViewById(R.id.companyCategoriesBorder);
+		this.companyAddressBorder = (FrameLayout) view.findViewById(R.id.companyAddressBorder);
+		this.companyContactsBorder = (FrameLayout) view.findViewById(R.id.companyContactsBorder);
+		this.companyLinksBorder = (FrameLayout) view.findViewById(R.id.companyLinksBorder);
+		this.companySocialNetworksBorder = (FrameLayout) view.findViewById(R.id.companySocialNetworksBorder);
 
 		return view;
 	}
@@ -70,36 +92,174 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 	{
 		super.onViewCreated(view, savedInstanceState);
 
-		// TODO might move all
+		createCompanyDetailsFragment();
+		createCompanyCategoriesFragment();
+
+		createCompanyAddressFragment();
+		createCompanyContactsFragment();
+		createCompanyLinksFragment();
+		createCompanySocialNetworksFragment();
 	}
 
+	/**********************************************************************************************
+	 * Profile Page Interface Implements
+	 **********************************************************************************************/
 	@Override
 	public CompanyModel getCompany()
 	{
 		return this.companyModel;
 	}
 
-	private void initCompanyLoader()
+	/**********************************************************************************************
+	 * Data Changed Callbacks
+	 **********************************************************************************************/
+	@Override
+	public void onDataLoaded()
 	{
-		getLoaderManager().initLoader(COMPANY_LOADER_ID, null, this.companyLoaderCallbacks);
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onDataLoaded();
+		}
+	}
+
+	@Override
+	public void onDataChanged()
+	{
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onDataChanged();
+		}
+	}
+
+	@Override
+	public void onBeaconsUpdated()
+	{
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onBeaconsUpdated();
+		}
+	}
+
+	/**********************************************************************************************
+	 * Public Methods
+	 **********************************************************************************************/
+	public void updateProfilePage(SelectedBoothModel selectedBoothModel)
+	{
+		this.selectedBoothModel = selectedBoothModel;
+		restartCompanyLoader();
+	}
+
+	/**********************************************************************************************
+	 * Private Helper Methods
+	 **********************************************************************************************/
+	private void restartCompanyLoader()
+	{
+		if (this.selectedBoothModel != null)
+		{
+			Bundle args = new Bundle();
+			args.putInt(Booth.BOOTH_ID_COLUMN_NAME, this.selectedBoothModel.getBoothId());
+			args.putInt(Company.COMPANY_ID_COLUMN_NAME, this.selectedBoothModel.getCompanyId());
+			getLoaderManager().restartLoader(COMPANY_LOADER_ID, args, this.companyLoaderCallbacks);
+		}
 	}
 
 	private void finishCompanyLoad(CompanyModel results)
 	{
 		this.companyModel = results;
+		setFragmentVisibilities();
 
+		for (ProfileDataChangedCallbacks listener : this.profileDataChangedListeners)
+		{
+			listener.onCompanyLoaded();
+		}
+	}
+
+	private void setFragmentVisibilities()
+	{
 		if (this.companyModel != null)
 		{
-			createCompanyDetailsFragment();
-			createCompanyCategoriesFragment();
+			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
 
-			createCompanyAddressFragment();
-			createCompanyContactsFragment();
-			createCompanyLinksFragment();
-			createCompanySocialNetworksFragment();
+			CompanyCategoriesFragment categoriesFragment = (CompanyCategoriesFragment) getChildFragmentManager().findFragmentById(
+				R.id.companyCategoriesContainer);
+			CompanyAddressFragment addressFragment = (CompanyAddressFragment) getChildFragmentManager().findFragmentById(R.id.companyAddressContainer);
+			CompanyContactsFragment contactsFragment = (CompanyContactsFragment) getChildFragmentManager().findFragmentById(R.id.companyContactsContainer);
+			CompanyLinksFragment linksFragment = (CompanyLinksFragment) getChildFragmentManager().findFragmentById(R.id.companyLinksContainer);
+			CompanySocialNetworksFragment socialNetworksFragment = (CompanySocialNetworksFragment) getChildFragmentManager()
+				.findFragmentById(R.id.companySocialNetworksContainer);
 
-			addSectionBorders(this.companyDetailsAndCategoriesLayout);
-			addSectionBorders(this.companyAddressContactsAndLinksLayout);
+			resetBorderVisibilities();
+			
+			boolean fragmentAboveIsVisible = false;
+
+			if (categoriesFragment != null && this.companyModel.getHasCategories())
+			{
+				ft.show(categoriesFragment);
+				this.companyCategoriesBorder.setVisibility(View.VISIBLE);
+				if (getActivityListener() != null && !getActivityListener().getIsLargeScreen())
+				{
+					fragmentAboveIsVisible = true;
+				}
+			}
+
+			if (addressFragment != null && this.companyModel.getHasAddress())
+			{
+				ft.show(addressFragment);
+				if (fragmentAboveIsVisible &&
+					this.companyContactsBorder != null &&
+					getActivityListener() != null && !getActivityListener().getIsLargeScreen())
+				{
+					this.companyAddressBorder.setVisibility(View.VISIBLE);
+				}
+
+				fragmentAboveIsVisible = true;
+			}
+
+			if (contactsFragment != null && this.companyModel.getHasContacts())
+			{
+				ft.show(contactsFragment);
+				if (fragmentAboveIsVisible)
+				{
+					this.companyContactsBorder.setVisibility(View.VISIBLE);
+				}
+
+				fragmentAboveIsVisible = true;
+			}
+
+			if (linksFragment != null && this.companyModel.getHasLinks())
+			{
+				ft.show(linksFragment);
+				if (fragmentAboveIsVisible)
+				{
+					this.companyLinksBorder.setVisibility(View.VISIBLE);
+				}
+
+				fragmentAboveIsVisible = true;
+			}
+
+			if (socialNetworksFragment != null && this.companyModel.getHasSocialNetworks())
+			{
+				ft.show(socialNetworksFragment);
+				if (fragmentAboveIsVisible)
+				{
+					this.companySocialNetworksBorder.setVisibility(View.VISIBLE);
+				}
+			}
+
+			ft.commit();
+		}
+	}
+
+	private void resetBorderVisibilities()
+	{
+		this.companyCategoriesBorder.setVisibility(View.GONE);
+		this.companyContactsBorder.setVisibility(View.GONE);
+		this.companyLinksBorder.setVisibility(View.GONE);
+		this.companySocialNetworksBorder.setVisibility(View.GONE);
+		if (this.companyAddressBorder != null)
+		{
+			// Not present in the tablet version
+			this.companyAddressBorder.setVisibility(View.GONE);
 		}
 	}
 
@@ -110,120 +270,65 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 		{
 			fragment = CompanyDetailsFragment.newInstance();
 			getChildFragmentManager().beginTransaction().add(R.id.companyDetailsContainer, fragment).commit();
+			this.dataChangedListeners.add(fragment);
+			this.profileDataChangedListeners.add(fragment);
 		}
 	}
 
 	private void createCompanyCategoriesFragment()
 	{
-		if (this.companyModel.getHasCategories())
+		CompanyCategoriesFragment fragment = (CompanyCategoriesFragment) getChildFragmentManager().findFragmentById(R.id.companyCategoriesContainer);
+		if (fragment == null)
 		{
-			CompanyCategoriesFragment fragment = (CompanyCategoriesFragment) getChildFragmentManager().findFragmentById(R.id.companyCategoriesContainer);
-			if (fragment == null)
-			{
-				fragment = CompanyCategoriesFragment.newInstance();
-				getChildFragmentManager().beginTransaction().add(R.id.companyCategoriesContainer, fragment).commit();
-			}
-		}
-		else
-		{
-			this.companyDetailsAndCategoriesLayout.removeViewAt(CATEGORIES_INDEX);
+			fragment = CompanyCategoriesFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.companyCategoriesContainer, fragment).hide(fragment).commit();
+			this.profileDataChangedListeners.add(fragment);
 		}
 	}
 
 	private void createCompanyAddressFragment()
 	{
-		// TODO check if has address
-
-		if (true)
+		CompanyAddressFragment fragment = (CompanyAddressFragment) getChildFragmentManager().findFragmentById(R.id.companyAddressContainer);
+		if (fragment == null)
 		{
-			CompanyAddressFragment fragment = (CompanyAddressFragment) getChildFragmentManager().findFragmentById(R.id.companyAddressContainer);
-			if (fragment == null)
-			{
-				fragment = CompanyAddressFragment.newInstance();
-				getChildFragmentManager().beginTransaction().add(R.id.companyAddressContainer, fragment).commit();
-			}
-		}
-		else
-		{
-			this.companyAddressContactsAndLinksLayout.removeViewAt(ADDRESS_INDEX);
+			fragment = CompanyAddressFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.companyAddressContainer, fragment).hide(fragment).commit();
+			this.profileDataChangedListeners.add(fragment);
 		}
 	}
 
 	private void createCompanyContactsFragment()
 	{
-		if (true)
+		CompanyContactsFragment fragment = (CompanyContactsFragment) getChildFragmentManager().findFragmentById(R.id.companyContactsContainer);
+		if (fragment == null)
 		{
-			CompanyContactsFragment fragment = (CompanyContactsFragment) getChildFragmentManager().findFragmentById(R.id.companyContactsContainer);
-			if (fragment == null)
-			{
-				fragment = CompanyContactsFragment.newInstance();
-				getChildFragmentManager().beginTransaction().add(R.id.companyContactsContainer, fragment).commit();
-			}
-		}
-		else
-		{
-			this.companyAddressContactsAndLinksLayout.removeViewAt(CONTACTS_INDEX);
+			fragment = CompanyContactsFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.companyContactsContainer, fragment).hide(fragment).commit();
+			this.profileDataChangedListeners.add(fragment);
 		}
 	}
 
 	private void createCompanyLinksFragment()
 	{
-		// TODO check if links
-
-		if (true)
+		CompanyLinksFragment fragment = (CompanyLinksFragment) getChildFragmentManager().findFragmentById(R.id.companyLinksContainer);
+		if (fragment == null)
 		{
-			CompanyLinksFragment fragment = (CompanyLinksFragment) getChildFragmentManager().findFragmentById(R.id.companyLinksContainer);
-			if (fragment == null)
-			{
-				fragment = CompanyLinksFragment.newInstance();
-				getChildFragmentManager().beginTransaction().add(R.id.companyLinksContainer, fragment).commit();
-			}
-		}
-		else
-		{
-			this.companyAddressContactsAndLinksLayout.removeViewAt(LINKS_INDEX);
+			fragment = CompanyLinksFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.companyLinksContainer, fragment).hide(fragment).commit();
+			this.profileDataChangedListeners.add(fragment);
 		}
 	}
 
 	private void createCompanySocialNetworksFragment()
 	{
-		if (this.companyModel.getHasSocialNetworks())
+		CompanySocialNetworksFragment fragment = (CompanySocialNetworksFragment) getChildFragmentManager()
+			.findFragmentById(R.id.companySocialNetworksContainer);
+		if (fragment == null)
 		{
-			CompanySocialNetworksFragment fragment = (CompanySocialNetworksFragment) getChildFragmentManager()
-				.findFragmentById(R.id.companySocialNetworksContainer);
-			if (fragment == null)
-			{
-				fragment = CompanySocialNetworksFragment.newInstance();
-				getChildFragmentManager().beginTransaction().add(R.id.companySocialNetworksContainer, fragment).commit();
-			}
+			fragment = CompanySocialNetworksFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.companySocialNetworksContainer, fragment).hide(fragment).commit();
+			this.profileDataChangedListeners.add(fragment);
 		}
-		else
-		{
-			this.companyAddressContactsAndLinksLayout.removeViewAt(SOCIAL_NETWORKS_INDEX);
-		}
-	}
-
-	private void addSectionBorders(LinearLayout section)
-	{
-		int childCount = section.getChildCount();
-		int index = 1;
-		for (int i = 0; i < childCount - 1; i++)
-		{
-			section.addView(getBorderView(), index);
-			index += 2;
-		}
-	}
-
-	private View getBorderView()
-	{
-		View view = new View(getActivity());
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-			LinearLayout.LayoutParams.MATCH_PARENT,
-			(int) getResources().getDimension(R.dimen.borderWidth));
-		view.setLayoutParams(params);
-		view.setBackgroundColor(getResources().getColor(R.color.border_grey));
-
-		return view;
 	}
 
 	private LoaderCallbacks<CompanyModel> companyLoaderCallbacks = new LoaderCallbacks<CompanyModel>()
@@ -231,8 +336,8 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 		@Override
 		public Loader<CompanyModel> onCreateLoader(int loaderId, Bundle bundle)
 		{
-			int boothId = getArguments().getInt(Booth.BOOTH_ID_COLUMN_NAME);
-			int companyId = getArguments().getInt(Company.COMPANY_ID_COLUMN_NAME);
+			int boothId = bundle.getInt(Booth.BOOTH_ID_COLUMN_NAME);
+			int companyId = bundle.getInt(Company.COMPANY_ID_COLUMN_NAME);
 			return new CompanyModelLoader(getActivity(), boothId, companyId);
 		}
 

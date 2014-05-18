@@ -1,5 +1,8 @@
 package com.openbox.realcomm3.database.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -31,9 +34,11 @@ public class CompanyModel
 	private String targetMarkets;
 	private String geographicMarkets;
 
+	private List<ContactModel> contactList = new ArrayList<>();
+
 	private Bitmap companyLogo;
 
-	public CompanyModel(Booth booth, Company company, CompanyLogo companyLogo)
+	public CompanyModel(Booth booth, Company company, CompanyLogo companyLogo, List<ContactModel> contactList)
 	{
 		if (booth != null)
 		{
@@ -64,16 +69,85 @@ public class CompanyModel
 
 		if (companyLogo != null)
 		{
-			this.companyLogo = BitmapFactory.decodeByteArray(companyLogo.getLogoBytes(), 0, companyLogo.getLogoBytes().length);
+			// TODO do sample size decoding
+			byte[] logoBytes = companyLogo.getLogoBytes();
+			this.companyLogo = BitmapFactory.decodeByteArray(logoBytes, 0, logoBytes.length);
+		}
+
+		if (contactList != null)
+		{
+			this.contactList = contactList;
 		}
 	}
 
 	public boolean getHasCategories()
 	{
-		return (this.mainCatergories != null && this.mainCatergories != "") ||
-			(this.subCategories != null && this.subCategories != "") ||
-			(this.targetMarkets != null && this.targetMarkets != "") ||
-			(this.geographicMarkets != null && this.geographicMarkets != "");
+		return getHasMainCategories() || getHasSubCategories() || getHasTargetMarkets() || getHasGeographicMarkets();
+	}
+
+	public boolean getHasMainCategories()
+	{
+		return this.mainCatergories != null && this.mainCatergories != "";
+	}
+
+	public boolean getHasSubCategories()
+	{
+		return this.subCategories != null && this.subCategories != "";
+	}
+
+	public boolean getHasTargetMarkets()
+	{
+		return this.targetMarkets != null && this.targetMarkets != "";
+	}
+
+	public boolean getHasGeographicMarkets()
+	{
+		return this.geographicMarkets != null && this.geographicMarkets != "";
+	}
+
+	public boolean getHasAddress()
+	{
+		return getHasCity() || getHasState() || getHasAddress1() || getHasAddress2() || getHasAddress3() || getHasPostalCode();
+	}
+
+	public boolean getHasCity()
+	{
+		return this.city != null && this.city != "";
+	}
+
+	public boolean getHasState()
+	{
+		return this.state != null && this.state != "";
+	}
+
+	public boolean getHasAddress1()
+	{
+		return this.address1 != null && this.address1 != "";
+	}
+
+	public boolean getHasAddress2()
+	{
+		return this.address2 != null && this.address2 != "";
+	}
+
+	public boolean getHasAddress3()
+	{
+		return this.address3 != null && this.address3 != "";
+	}
+
+	public boolean getHasPostalCode()
+	{
+		return this.postalCode != null && this.postalCode != "";
+	}
+	
+	public boolean getHasContacts()
+	{
+		return this.contactList.size() > 0;
+	}
+	
+	public boolean getHasLinks()
+	{
+		return this.website != null && this.website != "";
 	}
 
 	public boolean getHasSocialNetworks()
@@ -94,6 +168,30 @@ public class CompanyModel
 	public boolean getHasLinkedIn()
 	{
 		return this.linkedIn != null && this.linkedIn != "";
+	}
+
+	public List<Integer> getContactIds()
+	{
+		List<Integer> contactIds = new ArrayList<>();
+		for (ContactModel contact : this.contactList)
+		{
+			contactIds.add(contact.getContactId());
+		}
+
+		return contactIds;
+	}
+
+	public ContactModel getContact(int contactId)
+	{
+		for (ContactModel contact : this.contactList)
+		{
+			if (contact.getContactId() == contactId)
+			{
+				return contact;
+			}
+		}
+
+		return null;
 	}
 
 	public int getBoothId()
@@ -284,6 +382,16 @@ public class CompanyModel
 	public void setGeographicMarkets(String geographicMarkets)
 	{
 		this.geographicMarkets = geographicMarkets;
+	}
+
+	public List<ContactModel> getContactList()
+	{
+		return contactList;
+	}
+
+	public void setContactList(List<ContactModel> contactList)
+	{
+		this.contactList = contactList;
 	}
 
 	public Bitmap getCompanyLogo()

@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
+import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.database.models.VenueModel;
 import com.openbox.realcomm3.utilities.adapters.TalkListAdapter;
@@ -62,9 +63,13 @@ public class VenueFragment extends BaseFragment
 	{
 		View view = inflater.inflate(R.layout.fragment_venue, container, false);
 
+		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
+
 		this.venueTextView = (TextView) view.findViewById(R.id.venueTextView);
+		this.venueTextView.setTypeface(application.getExo2Font());
+
 		this.talkListView = (ListView) view.findViewById(R.id.talkListView);
-		this.talkAdapter = new TalkListAdapter(getActivity());
+		this.talkAdapter = new TalkListAdapter(getActivity(), application);
 		this.talkListView.setAdapter(this.talkAdapter);
 
 		if (this.scheduleDataInterface != null)

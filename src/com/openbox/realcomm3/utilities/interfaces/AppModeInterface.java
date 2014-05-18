@@ -5,4 +5,6 @@ import com.openbox.realcomm3.utilities.enums.AppMode;
 public interface AppModeInterface
 {
 	AppMode getCurrentAppMode();
+	
+	AppMode getPreviousAppMode();
 }

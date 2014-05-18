@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <item name="talkDayTabHost" type="id"></item>
+    <item name="scheduleTabHost" type="id"></item>
+    <item name="scheduleTabContent" type="id"></item>
     <item name="frontFragment" type="id"></item>
     <item name="backFragment" type="id"></item>
     <item name="fadeInAnimation" type="id"></item>

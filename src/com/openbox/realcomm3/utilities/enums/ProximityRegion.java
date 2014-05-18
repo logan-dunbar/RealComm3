@@ -1,5 +1,7 @@
 package com.openbox.realcomm3.utilities.enums;
 
+import java.util.Locale;
+
 import com.openbox.realcomm3.R;
 
 public enum ProximityRegion
@@ -8,10 +10,10 @@ public enum ProximityRegion
 	NEAR(8.0, R.color.opaque_orange),
 	FAR(18.0, R.color.opaque_blue),
 	OUTOFRANGE(1000.0, R.color.opaque_light_grey);
-	
+
 	private final double proximityLimit;
 	private final int colorId;
-	
+
 	private ProximityRegion(double limit, int colorId)
 	{
 		this.proximityLimit = limit;
@@ -26,5 +28,11 @@ public enum ProximityRegion
 	public int getColorId()
 	{
 		return colorId;
+	}
+
+	public String getLabel()
+	{
+		// TODO do some calculation here for feet?
+		return String.format(Locale.getDefault(), "%dft", (int) this.proximityLimit);
 	}
 }

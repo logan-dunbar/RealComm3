@@ -1,13 +1,17 @@
 package com.openbox.realcomm3.utilities.loaders;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.openbox.realcomm3.database.DatabaseManager;
 import com.openbox.realcomm3.database.models.CompanyModel;
+import com.openbox.realcomm3.database.models.ContactModel;
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.Company;
 import com.openbox.realcomm3.database.objects.CompanyLogo;
+import com.openbox.realcomm3.database.objects.Contact;
+import com.openbox.realcomm3.database.objects.ContactImage;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
@@ -67,6 +71,7 @@ public class CompanyModelLoader extends AsyncTaskLoader<CompanyModel>
 		CompanyModel model = null;
 		try
 		{
+			// Company Info
 			CompanyLogo companyLogo = null;
 
 			Booth booth = DatabaseManager.getInstance().getForId(Booth.class, this.boothId);
@@ -79,7 +84,25 @@ public class CompanyModelLoader extends AsyncTaskLoader<CompanyModel>
 				companyLogo = logoList.get(0);
 			}
 
-			model = new CompanyModel(booth, company, companyLogo);
+			// Contacts
+			List<ContactModel> contactModelList = new ArrayList<>();
+			List<Contact> contacts = DatabaseManager.getInstance().getForWhereEquals(Contact.class, Company.COMPANY_ID_COLUMN_NAME, this.companyId);
+			for (Contact contact : contacts)
+			{
+				ContactImage contactImage = null;
+				List<ContactImage> contactImages = DatabaseManager.getInstance().getForWhereEquals(ContactImage.class, Contact.CONTACT_ID_COLUMN_NAME,
+					contact.getContactId());
+
+				// Should only ever be one... Should...
+				if (contactImages.size() > 0)
+				{
+					contactImage = contactImages.get(0);
+				}
+
+				contactModelList.add(new ContactModel(contact, contactImage));
+			}
+
+			model = new CompanyModel(booth, company, companyLogo, contactModelList);
 		}
 		catch (SQLException e)
 		{

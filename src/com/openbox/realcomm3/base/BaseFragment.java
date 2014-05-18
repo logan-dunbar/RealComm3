@@ -9,9 +9,7 @@ import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 
@@ -57,9 +55,19 @@ public class BaseFragment extends Fragment
 		this.inAnimationDuration = inAnimationDuration;
 	}
 
+	public int getInAnimationDuration()
+	{
+		return inAnimationDuration;
+	}
+
 	public void setOutAnimationDuration(int outAnimationDuration)
 	{
 		this.outAnimationDuration = outAnimationDuration;
+	}
+
+	public int getOutAnimationDuration()
+	{
+		return outAnimationDuration;
 	}
 
 	public void setInAnimationDelay(int inAnimationDelay)
@@ -67,9 +75,19 @@ public class BaseFragment extends Fragment
 		this.inAnimationDelay = inAnimationDelay;
 	}
 
+	public int getInAnimationDelay()
+	{
+		return inAnimationDelay;
+	}
+
 	public void setOutAnimationDelay(int outAnimationDelay)
 	{
 		this.outAnimationDelay = outAnimationDelay;
+	}
+
+	public int getOutAnimationDelay()
+	{
+		return outAnimationDelay;
 	}
 
 	public void setInAnimationInterpolator(AnimationInterpolator inAnimationInterpolator)
@@ -144,24 +162,52 @@ public class BaseFragment extends Fragment
 		this.appModeInterface = null;
 	}
 
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
+	private static Animation createNoneAnimation(Fragment fragment, boolean enter)
 	{
-		super.onViewCreated(view, savedInstanceState);
+		Animation animation = null;
+		Fragment nextParentFragment;
 
-		// So the activity can animate knowing the view is all there
-		if (this.activityListener != null)
+		// Get top most fragment (which has the animation)
+		while ((nextParentFragment = fragment.getParentFragment()) != null)
 		{
-			// TODO see if this is required or not
-			// this.activityListener.onFragmentViewCreated();
+			fragment = nextParentFragment;
 		}
+
+		// Create the None animation (which is AlphaAnimation from 1.0 to 1.0)
+		if (fragment instanceof BaseFragment && fragment.isRemoving())
+		{
+			BaseFragment baseFrag = (BaseFragment) fragment;
+
+			int duration;
+			int delay;
+			if (enter)
+			{
+				duration = baseFrag.getInAnimationDuration();
+				delay = baseFrag.getInAnimationDelay();
+			}
+			else
+			{
+				duration = baseFrag.getOutAnimationDuration();
+				delay = baseFrag.getOutAnimationDelay();
+			}
+
+			animation = AnimationHelper.getNoneAnimation(AnimationInterpolator.LINEAR, duration, delay, null);
+		}
+
+		return animation;
 	}
 
 	@Override
 	public Animation onCreateAnimation(int transit, boolean enter, int nextAnim)
 	{
-		// TODO going to need to check this, how to get values/parameters in here, check what transit is?
+		// Hack to prevent child fragments from disappearing when the parent is removed (for the profile page).
+		if (isVisible() && getParentFragment() != null && this instanceof BaseProfileFragment)
+		{
+			return createNoneAnimation(getParentFragment(), enter);
+		}
+
 		Animation animation;
+		// TODO going to need to check this, how to get values/parameters in here, check what transit is?
 		switch (nextAnim)
 		{
 			case R.id.fadeInAnimation:
@@ -239,7 +285,7 @@ public class BaseFragment extends Fragment
 					this.outFlipEndDegrees);
 				break;
 			default:
-				return null;
+				return super.onCreateAnimation(transit, enter, nextAnim);
 		}
 
 		AnimationSet set = new AnimationSet(true);

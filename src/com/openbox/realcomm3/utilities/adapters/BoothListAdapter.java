@@ -22,7 +22,7 @@ import android.widget.TextView;
 public class BoothListAdapter extends ArrayAdapter<BoothModel>
 {
 	private static final String BOOTH_PREFIX = "Booth ";
-	
+
 	private LayoutInflater layoutInflater;
 	private Resources resources;
 	private RealCommApplication application;
@@ -104,7 +104,7 @@ public class BoothListAdapter extends ArrayAdapter<BoothModel>
 		BoothModel model = getItem(position);
 		int colorId = BoothModel.getProximityRegion(model.getAccuracy()).getColorId();
 		int resolvedColorId = this.resources.getColor(colorId);
-		
+
 		holder.companyName.setText(model.getCompanyName());
 		holder.boothNumber.setText(BOOTH_PREFIX + String.valueOf(model.getBoothNumber()));
 		holder.boothNumber.setTextColor(resolvedColorId);

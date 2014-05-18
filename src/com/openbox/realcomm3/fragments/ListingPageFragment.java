@@ -8,10 +8,10 @@ import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.animations.FlipAnimation;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
+import com.openbox.realcomm3.utilities.helpers.BoothFlipHelper;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.helpers.ViewTimerTask;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.BoothListInterface;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.TimerTaskCallbacks;
@@ -30,9 +30,6 @@ public class ListingPageFragment extends BaseFragment implements
 {
 	public static final String TAG = "listingPageFragment";
 
-	private static final int TIMER_PERIOD = 2 * 1000;
-	private static final int TIMER_DELAY = TIMER_PERIOD;
-
 	private static final int NUMBER_OF_DISPLAY_BOOTHS = 3;
 	private static final int NUMBER_OF_BIG_BOOTHS = 2;
 
@@ -40,8 +37,8 @@ public class ListingPageFragment extends BaseFragment implements
 	 * Fields
 	 **********************************************************************************************/
 	// Listeners/Interfaces
-	private BoothListInterface boothListInterface;
 	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
+	private List<DataChangedCallbacks> boothDataChangedListeners = new ArrayList<>();
 	private List<ClearFocusInterface> clearFocusListeners = new ArrayList<>();
 	private List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
 
@@ -50,6 +47,10 @@ public class ListingPageFragment extends BaseFragment implements
 
 	// View State
 	private List<Integer> boothIdsToDisplay = new ArrayList<Integer>();
+
+	// Animation contants
+	private static int betweenDelayDuration;
+	private static int duration;
 
 	public static ListingPageFragment newInstance()
 	{
@@ -61,27 +62,23 @@ public class ListingPageFragment extends BaseFragment implements
 	 * Fragment Lifecycle Implements
 	 **********************************************************************************************/
 	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void onAttach(Activity activity)
-	{
-		super.onAttach(activity);
-	}
-
-	@Override
 	public void onDetach()
 	{
 		super.onDetach();
 
 		// Clean up
-		this.boothListInterface = null;
 		this.dataChangedListeners.clear();
 		this.clearFocusListeners.clear();
 		this.appModeChangedListeners.clear();
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+
+		betweenDelayDuration = getResources().getInteger(R.integer.boothFragmentBetweenDelay);
+		duration = getResources().getInteger(R.integer.boothFragmentFlipDuration);
 	}
 
 	@Override
@@ -145,6 +142,11 @@ public class ListingPageFragment extends BaseFragment implements
 		{
 			listener.onDataLoaded();
 		}
+
+		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
+		{
+			listener.onDataLoaded();
+		}
 	}
 
 	@Override
@@ -154,12 +156,22 @@ public class ListingPageFragment extends BaseFragment implements
 		{
 			listener.onDataChanged();
 		}
+
+		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
+		{
+			listener.onDataChanged();
+		}
 	}
 
 	@Override
 	public void onBeaconsUpdated()
 	{
 		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onBeaconsUpdated();
+		}
+
+		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
 		{
 			listener.onBeaconsUpdated();
 		}
@@ -219,7 +231,7 @@ public class ListingPageFragment extends BaseFragment implements
 	 **********************************************************************************************/
 	private void updateView()
 	{
-		if (getAppModeInterface() != null)
+		if (getAppModeInterface() != null && isVisible())
 		{
 			switch (getAppModeInterface().getCurrentAppMode())
 			{
@@ -255,10 +267,11 @@ public class ListingPageFragment extends BaseFragment implements
 
 	private void updateViewOnline()
 	{
-		if (this.boothListInterface != null)
-		{
-			this.boothListInterface.updateList();
-		}
+		// TODO: I don't think this is needed (the dataChanged onBoothsUpdated method is doing it already)
+		// if (this.boothListInterface != null)
+		// {
+		// this.boothListInterface.updateList();
+		// }
 
 		if (getDataInterface() != null)
 		{
@@ -277,66 +290,13 @@ public class ListingPageFragment extends BaseFragment implements
 	// This method does the actual updating of the fragments i.e. doing the fragment switch on ALL of the booths
 	private void updateBoothView()
 	{
-		int betweenDelayDuration = getResources().getInteger(R.integer.boothFragmentBetweenDelay);
-		int betweenDelay = 0;
-		for (int i = 0; i < this.boothIdsToDisplay.size(); i++)
-		{
-			// This is where the method starts (for reals)
-			int newBoothId = this.boothIdsToDisplay.get(i);
-			int containerId = getContainerId(i);
-
-			int duration = getResources().getInteger(R.integer.boothFragmentFlipDuration);
-
-			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-			ft.setCustomAnimations(R.id.flipInDownAnimation, R.id.flipOutDownAnimation);
-			
-			BoothFragment oldFragment = (BoothFragment) getChildFragmentManager().findFragmentById(containerId);
-			Boolean switchFragment = true;
-			if (oldFragment != null)
-			{
-				if (oldFragment.getBoothId() == newBoothId)
-				{
-					// TODO These should be through an interface
-					oldFragment.updateBooth();
-					switchFragment = false;
-				}
-				else
-				{
-					oldFragment.setOutAnimationDuration(duration);
-					oldFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATE);
-					oldFragment.setOutAnimationDelay(betweenDelay);
-					oldFragment.setOutFlipStartDegrees(FlipAnimation.DEFAULT_OUT_UP_START_DEGREES);
-					oldFragment.setOutFlipEndDegrees(FlipAnimation.DEFAULT_OUT_UP_END_DEGREES);
-
-					// oldFragment.setOutFlipStartDegrees(FlipAnimation.DEFAULT_OUT_DOWN_START_DEGREES);
-					// oldFragment.setOutFlipEndDegrees(FlipAnimation.DEFAULT_OUT_DOWN_END_DEGREES);
-					ft.remove(oldFragment);
-				}
-			}
-
-			// If first fragment, or changing booths, then add
-			if (switchFragment)
-			{
-				Boolean isBig = i < NUMBER_OF_BIG_BOOTHS;
-				BoothFragment newFragment = BoothFragment.newInstance(newBoothId, isBig);
-
-				newFragment.setInAnimationDuration(duration);
-				newFragment.setInAnimationInterpolator(AnimationInterpolator.DECELERATE);
-				newFragment.setInFlipStartDegrees(FlipAnimation.DEFAULT_IN_UP_START_DEGREES);
-				newFragment.setInFlipEndDegrees(FlipAnimation.DEFAULT_IN_UP_END_DEGREES);
-
-				// newFragment.setInFlipStartDegrees(FlipAnimation.DEFAULT_IN_DOWN_START_DEGREES);
-				// newFragment.setInFlipEndDegrees(FlipAnimation.DEFAULT_IN_DOWN_END_DEGREES);
-
-				newFragment.setInAnimationDelay(betweenDelay + (oldFragment != null ? duration : 0));
-
-				ft.add(containerId, newFragment);
-
-				betweenDelay += betweenDelayDuration;
-			}
-
-			ft.commit();
-		}
+		this.boothDataChangedListeners.clear();
+		this.boothDataChangedListeners.addAll(BoothFlipHelper.updateBoothViews(
+			NUMBER_OF_BIG_BOOTHS,
+			this.boothIdsToDisplay,
+			duration,
+			betweenDelayDuration,
+			getChildFragmentManager()));
 	}
 
 	/**********************************************************************************************
@@ -350,11 +310,9 @@ public class ListingPageFragment extends BaseFragment implements
 			fragment = BoothListFragment.newInstance();
 			getChildFragmentManager()
 				.beginTransaction()
-				// .setCustomAnimations(arg0, arg1)
 				.add(R.id.boothListContainer, fragment)
 				.commit();
 
-			this.boothListInterface = fragment;
 			this.dataChangedListeners.add(fragment);
 			this.clearFocusListeners.add(fragment);
 		}
@@ -375,10 +333,14 @@ public class ListingPageFragment extends BaseFragment implements
 
 	private void startViewTimer()
 	{
-		if (this.viewUpdateTimer == null)
+		// Memory leak - navigate to profile page, minimize, come back, starts the timer again, but
+		// because not visible GarbageCollector doesn't know to clean up
+		if (this.viewUpdateTimer == null && getAppModeInterface() != null && isVisible())
 		{
 			this.viewUpdateTimer = new Timer();
-			this.viewUpdateTimer.schedule(new ViewTimerTask(this), TIMER_DELAY, TIMER_PERIOD);
+			int delay = getAppModeInterface().getCurrentAppMode().getAnimationStartDelay();
+			int period = getAppModeInterface().getCurrentAppMode().getAnimationPeriod();
+			this.viewUpdateTimer.schedule(new ViewTimerTask(this), delay, period);
 		}
 	}
 
@@ -388,21 +350,6 @@ public class ListingPageFragment extends BaseFragment implements
 		{
 			this.viewUpdateTimer.cancel();
 			this.viewUpdateTimer = null;
-		}
-	}
-
-	private int getContainerId(int index)
-	{
-		switch (index)
-		{
-			case 0:
-				return R.id.topLeftBoothContainer;
-			case 1:
-				return R.id.bottomLeftBoothContainer;
-			case 2:
-				return R.id.bottomMiddleBoothContainer;
-			default:
-				return -1;
 		}
 	}
 }

@@ -43,11 +43,15 @@
 
     <!-- Image Content Descriptions -->
     <string name="logoImageDescription">Company Logo</string>
-    <string name="contactImageDescription">Contact</string>
+    <string name="contactImageDescription">Contact Image</string>
     <string name="proximityImageDescription">Proximity Graphic</string>
     
     <string name="facebookImageDescription">Facebook Icon</string>
     <string name="twitterImageDescription">Twitter Icon</string>
     <string name="linkedInImageDescription">LinkedIn Icon</string>
+    
+    <!-- Image Content Descriptions -->
+    <string name="boothListTabAtoZ">A - Z</string>
+    <string name="boothListTabNearMe">Near Me</string>
 
 </resources>

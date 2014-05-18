@@ -15,6 +15,7 @@ public class CompanyLogoModel
 	{
 		if (logo != null)
 		{
+			// TODO do sample size decoding
 			byte[] logoBytes = logo.getLogoBytes();
 			this.companyLogo = BitmapFactory.decodeByteArray(logoBytes, 0, logoBytes.length);
 		}

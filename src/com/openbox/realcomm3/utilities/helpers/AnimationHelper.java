@@ -16,6 +16,13 @@ import android.view.animation.TranslateAnimation;
 
 public class AnimationHelper
 {
+	public static Animation getNoneAnimation(AnimationInterpolator interpolator, int duration, int delay, CustomAnimationListener listener)
+	{
+		Animation animation = new AlphaAnimation(1, 1);
+		setAnimationValues(animation, interpolator, duration, delay, listener);
+		return animation;
+	}
+
 	public static Animation getFadeInAnimation(AnimationInterpolator interpolator, int duration, int delay, CustomAnimationListener listener)
 	{
 		Animation animation = new AlphaAnimation(0, 1);
