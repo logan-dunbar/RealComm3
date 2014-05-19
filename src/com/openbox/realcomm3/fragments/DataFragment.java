@@ -11,6 +11,7 @@ import java.util.Random;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
+import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.loaders.BoothModelLoader;
@@ -94,7 +95,14 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 		List<BoothModel> sortedList = getListSortedByAccuracy();
 		for (int i = 0; i < getNumberOfBooths(numberOfDisplayBooths); i++)
 		{
-			boothIds.add(sortedList.get(i).getBoothId());
+			BoothModel booth = sortedList.get(i);
+			if (BoothModel.getProximityRegion(booth.getAccuracy()) == ProximityRegion.OUTOFRANGE)
+			{
+				// Stop adding if out of range
+				break;
+			}
+
+			boothIds.add(booth.getBoothId());
 		}
 
 		return boothIds;
@@ -187,7 +195,7 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 				model.updateAccuracyWithDefault();
 			}
 		}
-
+		
 		if (this.dataChangedListener != null)
 		{
 			this.dataChangedListener.onBeaconsUpdated();

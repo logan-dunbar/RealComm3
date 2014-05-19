@@ -13,18 +13,21 @@ import android.widget.Button;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseFragment;
+import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.BoothFlipHelper;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.helpers.ViewTimerTask;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
+import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.TimerTaskCallbacks;
 
 public class BoothExploreFragment extends BaseFragment implements
 	TimerTaskCallbacks,
 	DataChangedCallbacks,
-	AppModeChangedCallbacks
+	AppModeChangedCallbacks,
+	BoothFlipperInterface
 {
 	public static final String TAG = "boothExploreFragment";
 
@@ -175,6 +178,21 @@ public class BoothExploreFragment extends BaseFragment implements
 	@Override
 	public void onBeaconsUpdated()
 	{
+		if (getDataInterface() != null && getAppModeInterface() != null)
+		{
+			AppMode currentAppMode = getAppModeInterface().getCurrentAppMode();
+
+			List<Integer> closestBoothIds = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			if (closestBoothIds.size() < NUMBER_OF_DISPLAY_BOOTHS && currentAppMode == AppMode.ONLINE)
+			{
+				getAppModeInterface().changeAppMode(AppMode.OUTOFRANGE);
+			}
+			else if (closestBoothIds.size() >= NUMBER_OF_DISPLAY_BOOTHS && currentAppMode == AppMode.OUTOFRANGE)
+			{
+				getAppModeInterface().changeAppMode(AppMode.ONLINE);
+			}
+		}
+
 		for (DataChangedCallbacks listener : this.dataChangedListeners)
 		{
 			listener.onBeaconsUpdated();
@@ -194,7 +212,7 @@ public class BoothExploreFragment extends BaseFragment implements
 			@Override
 			public void run()
 			{
-				BoothExploreFragment.this.updateView();
+				updateView();
 			}
 		});
 	}
@@ -230,28 +248,30 @@ public class BoothExploreFragment extends BaseFragment implements
 
 	private void updateViewOffline()
 	{
-		if (getDataInterface() != null)
-		{
-			this.boothIdsToDisplay = getDataInterface().getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
-		}
-
-		updateBoothViews();
+		updateBoothsWithRandom();
 	}
 
 	private void updateViewOnline()
 	{
-		if (getDataInterface() != null)
+		if (getDataInterface() != null && getActivityListener() != null)
 		{
 			this.boothIdsToDisplay = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			updateBoothViews();
 		}
-
-		updateBoothViews();
 	}
 
 	private void updateViewOutOfRange()
 	{
-		LogHelper.Log("updateViewOutOfRange");
-		// TODO Must still implement
+		updateBoothsWithRandom();
+	}
+
+	private void updateBoothsWithRandom()
+	{
+		if (getDataInterface() != null)
+		{
+			this.boothIdsToDisplay = getDataInterface().getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			updateBoothViews();
+		}
 	}
 
 	private void updateBoothViews()
@@ -265,6 +285,19 @@ public class BoothExploreFragment extends BaseFragment implements
 			getChildFragmentManager()));
 	}
 
+	/**********************************************************************************************
+	 * Booth Flipper Interface
+	 **********************************************************************************************/
+	@Override
+	public void resetTimer()
+	{
+		stopViewTimer();
+		startViewTimer();
+	}
+
+	/**********************************************************************************************
+	 * Private helper methods
+	 **********************************************************************************************/
 	private void startViewTimer()
 	{
 		// Memory leak - navigate to profile page, minimize, come back, starts the timer again, but

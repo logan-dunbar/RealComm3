@@ -281,6 +281,7 @@ public class BoothListFragment extends BaseFragment implements
 			{
 				this.boothListSortModeContainer.setVisibility(View.GONE);
 				this.currentSortMode = BoothSortMode.A_TO_Z;
+				updateButtons();
 				updateList();
 			}
 			else if (currentAppMode == AppMode.ONLINE)

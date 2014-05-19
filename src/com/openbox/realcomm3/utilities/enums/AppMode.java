@@ -5,7 +5,7 @@ public enum AppMode
 	INITIALIZING("Initializing", -1, -1),
 	OFFLINE("Offline", 1500, 7000),
 	ONLINE("Online", 1500, 1500),
-	OUTOFRANGE("Out of Range", 1500, 1500),
+	OUTOFRANGE("Out of Range", 1500, 7000),
 	PAUSED("Paused", -1, -1);
 
 	private final String displayName;

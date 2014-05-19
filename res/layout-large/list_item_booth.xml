@@ -18,39 +18,36 @@
             android:background="@drawable/circle_list_item" >
         </FrameLayout>
     </FrameLayout>
-    
-    <FrameLayout 
+
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_height="@dimen/boothListItemHeight"
-        android:layout_weight="9">
-        
-        <LinearLayout 
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical">
-            
-        <TextView
-            android:id="@+id/companyNameTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:includeFontPadding="false"
-            android:minHeight="0dp"
-            android:singleLine="true"
-            android:textSize="@dimen/textSize24" />
+        android:layout_weight="9" >
 
-        <TextView
-            android:id="@+id/boothNumberTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:minHeight="0dp"
-            android:textSize="@dimen/textSize24" />
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/companyNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:includeFontPadding="false"
+                android:minHeight="0dp"
+                android:singleLine="true"
+                android:textSize="@dimen/textSize24" />
+
+            <TextView
+                android:id="@+id/boothNumberTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:minHeight="0dp"
+                android:textSize="@dimen/textSize24" />
         </LinearLayout>
-        
     </FrameLayout>
-    
-    
 
 </LinearLayout>

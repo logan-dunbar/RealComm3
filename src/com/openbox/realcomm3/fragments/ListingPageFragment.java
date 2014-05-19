@@ -8,10 +8,12 @@ import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.animations.FlipAnimation;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
+import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.helpers.BoothFlipHelper;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.helpers.ViewTimerTask;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
+import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.TimerTaskCallbacks;
@@ -26,7 +28,8 @@ public class ListingPageFragment extends BaseFragment implements
 	TimerTaskCallbacks,
 	DataChangedCallbacks,
 	AppModeChangedCallbacks,
-	ClearFocusInterface
+	ClearFocusInterface,
+	BoothFlipperInterface
 {
 	public static final String TAG = "listingPageFragment";
 
@@ -166,6 +169,21 @@ public class ListingPageFragment extends BaseFragment implements
 	@Override
 	public void onBeaconsUpdated()
 	{
+		if (getDataInterface() != null && getAppModeInterface() != null)
+		{
+			AppMode currentAppMode = getAppModeInterface().getCurrentAppMode();
+
+			List<Integer> closestBoothIds = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			if (closestBoothIds.size() < NUMBER_OF_DISPLAY_BOOTHS && currentAppMode == AppMode.ONLINE)
+			{
+				getAppModeInterface().changeAppMode(AppMode.OUTOFRANGE);
+			}
+			else if (closestBoothIds.size() >= NUMBER_OF_DISPLAY_BOOTHS && currentAppMode == AppMode.OUTOFRANGE)
+			{
+				getAppModeInterface().changeAppMode(AppMode.ONLINE);
+			}
+		}
+
 		for (DataChangedCallbacks listener : this.dataChangedListeners)
 		{
 			listener.onBeaconsUpdated();
@@ -257,38 +275,34 @@ public class ListingPageFragment extends BaseFragment implements
 
 	private void updateViewOffline()
 	{
-		if (getDataInterface() != null)
-		{
-			this.boothIdsToDisplay = getDataInterface().getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
-		}
-
-		updateBoothView();
+		updateBoothsWithRandom();
 	}
 
 	private void updateViewOnline()
 	{
-		// TODO: I don't think this is needed (the dataChanged onBoothsUpdated method is doing it already)
-		// if (this.boothListInterface != null)
-		// {
-		// this.boothListInterface.updateList();
-		// }
-
-		if (getDataInterface() != null)
+		if (getDataInterface() != null && getActivityListener() != null)
 		{
 			this.boothIdsToDisplay = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			updateBoothViews();
 		}
-
-		updateBoothView();
 	}
 
 	private void updateViewOutOfRange()
 	{
-		LogHelper.Log("updateViewOutOfRange");
-		// TODO Must still implement
+		updateBoothsWithRandom();
 	}
 
-	// This method does the actual updating of the fragments i.e. doing the fragment switch on ALL of the booths
-	private void updateBoothView()
+	private void updateBoothsWithRandom()
+	{
+		if (getDataInterface() != null)
+		{
+			this.boothIdsToDisplay = getDataInterface().getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
+			updateBoothViews();
+		}
+	}
+
+	// This method does the actual updating of the fragments i.e. doing the fragment switch on ALL (3) of the booths
+	private void updateBoothViews()
 	{
 		this.boothDataChangedListeners.clear();
 		this.boothDataChangedListeners.addAll(BoothFlipHelper.updateBoothViews(
@@ -297,6 +311,16 @@ public class ListingPageFragment extends BaseFragment implements
 			duration,
 			betweenDelayDuration,
 			getChildFragmentManager()));
+	}
+
+	/**********************************************************************************************
+	 * Booth Flipper Interface
+	 **********************************************************************************************/
+	@Override
+	public void resetTimer()
+	{
+		stopViewTimer();
+		startViewTimer();
 	}
 
 	/**********************************************************************************************

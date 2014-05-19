@@ -1,10 +1,14 @@
 package com.openbox.realcomm3.database.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.openbox.realcomm3.database.objects.Contact;
 import com.openbox.realcomm3.database.objects.ContactImage;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 public class ContactModel
 {
@@ -45,16 +49,16 @@ public class ContactModel
 
 	public String getDetails()
 	{
-		// TODO do null checks etc
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(getJobDescription());
-		sb.append("\n");
+		List<String> detailsList = new ArrayList<>();
+		detailsList.add(getJobDescription());
+		detailsList.add(getContactNumber());
+		detailsList.add(getEmail());
 
-		sb.append(getContactNumber());
-		sb.append("\n");
-
-		sb.append(getEmail());
+		String newline = System.getProperty("line.separator");
+		String detailsString = StringHelper.join(detailsList, newline);
+		sb.append(detailsString);
 
 		return sb.toString();
 	}

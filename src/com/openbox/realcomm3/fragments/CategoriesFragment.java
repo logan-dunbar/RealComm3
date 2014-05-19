@@ -52,10 +52,11 @@ public class CategoriesFragment extends BaseProfileFragment
 		String categoryDetailsString = getArguments().getString(CATEGORY_DETAILS_KEY);
 		String[] categoryDetails = categoryDetailsString.split("[\\s]*,[\\s]*");
 
+		String newLine = System.getProperty("line.separator");
 		CharSequence spannedCategories = "";
 		for (String categoryDetail : categoryDetails)
 		{
-			categoryDetail = categoryDetail + "\n";
+			categoryDetail = categoryDetail + newLine;
 			SpannableString span = new SpannableString(categoryDetail);
 			span.setSpan(new BulletSpan(BULLET_SPACING), 0, categoryDetail.length(), 0);
 			spannedCategories = TextUtils.concat(spannedCategories, span);

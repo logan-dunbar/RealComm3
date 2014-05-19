@@ -49,24 +49,7 @@ public class CompanyAddressFragment extends BaseProfileFragment implements Profi
 		CompanyModel model = getCompanyModel();
 		if (model != null)
 		{
-			StringBuilder sb = new StringBuilder();
-
-			// TODO obviously need to do null checks etc, just lazy at the moment
-			sb.append(model.getAddress1());
-			sb.append("\n");
-			sb.append(model.getAddress2());
-			sb.append("\n");
-			sb.append(model.getAddress3());
-			sb.append("\n");
-
-			sb.append(model.getCity() + ", " + model.getState() + ", " + model.getPostalCode());
-			// sb.append("\n");
-
-			// TODO Country?
-			// sb.append(model.getCountry());
-
-			this.companyAddress.setText(sb.toString());
+			this.companyAddress.setText(model.getFormattedAddress());
 		}
 	}
-
 }

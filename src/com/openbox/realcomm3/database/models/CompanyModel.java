@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.Company;
 import com.openbox.realcomm3.database.objects.CompanyLogo;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 public class CompanyModel
 {
@@ -192,6 +193,32 @@ public class CompanyModel
 		}
 
 		return null;
+	}
+	
+	public String getFormattedAddress()
+	{
+		StringBuilder sb = new StringBuilder();
+
+		List<String> addressLinesList = new ArrayList<>();
+		addressLinesList.add(getAddress1());
+		addressLinesList.add(getAddress2());
+		addressLinesList.add(getAddress3());
+		
+		String addressLinesString = StringHelper.join(addressLinesList, "\n");
+		sb.append(addressLinesString);
+
+		List<String> cityStateCodeList = new ArrayList<>();
+		cityStateCodeList.add(getCity());
+		cityStateCodeList.add(getState());
+		cityStateCodeList.add(getPostalCode());
+
+		String cityStateCodeString = StringHelper.join(cityStateCodeList, ", ");
+		sb.append(cityStateCodeString);
+		// sb.append("\n");
+
+		// TODO Country?
+		// sb.append(model.getCountry());
+		return sb.toString();
 	}
 
 	public int getBoothId()

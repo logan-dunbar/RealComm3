@@ -52,6 +52,7 @@ import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 import com.openbox.realcomm3.utilities.interfaces.BeaconManagerBoundCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.BeaconStatusChangeCallbacks;
+import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
@@ -75,7 +76,8 @@ public class RealCommActivity extends BaseActivity implements
 	AppModeChangedCallbacks,
 	AppModeInterface,
 	RangeNotifier,
-	OnClickListener
+	OnClickListener,
+	BoothFlipperInterface
 {
 	private static final String APP_MODE_KEY = "appModeKey";
 	private static final String APP_MODE_SELECTOR_KEY = "appModeSelectorKey";
@@ -112,6 +114,7 @@ public class RealCommActivity extends BaseActivity implements
 	private List<ClearFocusInterface> clearFocusListeners = new ArrayList<>();
 	private List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
 	private BeaconManagerBoundCallbacks beaconManagerBoundListener;
+	private BoothFlipperInterface boothFlipperListener;
 
 	// Globals
 	private SelectedBoothModel selectedBooth;
@@ -800,7 +803,7 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	/**********************************************************************************************
-	 * Activity Interface Implements
+	 * Click Interface Implements
 	 **********************************************************************************************/
 	@Override
 	public void onClick(View v)
@@ -810,7 +813,6 @@ public class RealCommActivity extends BaseActivity implements
 			case R.id.exploreButton:
 				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
 				{
-
 					changePage(RealcommPhonePage.BOOTH_EXPLORE);
 				}
 				break;
@@ -976,6 +978,13 @@ public class RealCommActivity extends BaseActivity implements
 	 * App Mode Interface
 	 **********************************************************************************************/
 	@Override
+	public void changeAppMode(AppMode newAppMode)
+	{
+		this.appModeManager.setPreviousAppMode(this.appModeManager.getCurrentAppMode());
+		this.appModeManager.changeAppMode(newAppMode);
+	}
+
+	@Override
 	public AppMode getCurrentAppMode()
 	{
 		if (this.appModeManager != null)
@@ -1086,6 +1095,18 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	/**********************************************************************************************
+	 * Booth Flipper Implements
+	 **********************************************************************************************/
+	@Override
+	public void resetTimer()
+	{
+		if (this.boothFlipperListener != null)
+		{
+			this.boothFlipperListener.resetTimer();
+		}
+	}
+
+	/**********************************************************************************************
 	 * Private helper methods
 	 **********************************************************************************************/
 	private void initStateManagers(Bundle savedInstanceState)
@@ -1113,7 +1134,7 @@ public class RealCommActivity extends BaseActivity implements
 		}
 
 		BeaconStatusManager beaconStatusManager = new BeaconStatusManager(this, startingBeaconStatus, RealCommApplication.getHasBluetoothLe());
-		this.appModeManager = new AppModeManager(startingAppMode, startingAppModeSelector, beaconStatusManager, this);
+		this.appModeManager = new AppModeManager(startingAppMode, startingAppModeSelector, beaconStatusManager, this, this);
 
 		if (this.isLargeScreen)
 		{
@@ -1148,6 +1169,7 @@ public class RealCommActivity extends BaseActivity implements
 		{
 			listingFragment = ListingPageFragment.newInstance();
 			addAndHideFragment(R.id.realcommFragmentContainer, listingFragment, ListingPageFragment.TAG);
+			this.boothFlipperListener = listingFragment;
 		}
 	}
 
@@ -1160,6 +1182,7 @@ public class RealCommActivity extends BaseActivity implements
 			addAndHideFragment(R.id.realcommFragmentContainer, boothExploreFragment, BoothExploreFragment.TAG);
 			this.dataChangedListeners.add(boothExploreFragment);
 			this.appModeChangedListeners.add(boothExploreFragment);
+			this.boothFlipperListener = boothExploreFragment;
 		}
 	}
 
@@ -1242,12 +1265,6 @@ public class RealCommActivity extends BaseActivity implements
 
 		this.blurRealCommBackground.setAnimation(backgroundImageFadeIn);
 		this.clearRealcommBackground.setAnimation(backgroundImageFadeOut);
-	}
-
-	private void changeAppMode(AppMode newAppMode)
-	{
-		this.appModeManager.setPreviousAppMode(this.appModeManager.getCurrentAppMode());
-		this.appModeManager.changeAppMode(newAppMode);
 	}
 
 	private void determineAppMode()

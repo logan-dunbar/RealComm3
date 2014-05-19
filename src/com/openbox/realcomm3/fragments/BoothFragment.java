@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	private BoothModel boothModel;
 	private CompanyLogoModel companyLogoModel;
 
+	private FrameLayout circleLayout;
 	private ImageView logo;
 	private TextView header;
 	private TextView subHeader;
@@ -108,6 +110,7 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 
+		this.circleLayout = (FrameLayout) view.findViewById(R.id.boothCircleLayout);
 		this.logo = (ImageView) view.findViewById(R.id.boothFragmentLogo);
 		this.header = (TextView) view.findViewById(R.id.boothFragmentHeader);
 		this.subHeader = (TextView) view.findViewById(R.id.boothFragmentSubHeader);
@@ -197,7 +200,11 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 					buttonBg.setColor(color);
 				}
 
-				// TODO: Make a circle and color it properly
+				if (this.circleLayout != null)
+				{
+					GradientDrawable circle = (GradientDrawable) this.circleLayout.getBackground();
+					circle.setColor(color);
+				}
 
 				this.header.setText(this.boothModel.getCompanyName());
 
@@ -246,7 +253,7 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 		{
 			float radius = getResources().getDimension(R.dimen.defaultCornerRadius);
 			int height = (int) getResources().getDimension(R.dimen.boothCompanyLogoHeight);
-			
+
 			double aspectRatio = ((double) this.companyLogoModel.getCompanyLogo().getWidth()) / this.companyLogoModel.getCompanyLogo().getHeight();
 			int width = (int) Math.round(height * aspectRatio);
 

@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/boothMargin"
-    android:background="@drawable/rounded_booth_header" >
+    android:layout_margin="@dimen/boothMargin" >
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/boothHeaderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/boothHeaderHeight"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/rounded_booth_header" >
+
+        <FrameLayout
+            android:id="@+id/boothCircleLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_margin="@dimen/boothCircleMargin"
+            android:background="@drawable/circle_booth" >
+        </FrameLayout>
+    </FrameLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/boothHeaderHeight"
-        android:background="@drawable/rounded_booth_background"
-        android:paddingLeft="@dimen/boothPadding"
-        android:paddingRight="@dimen/boothPadding"
-        android:paddingTop="@dimen/boothCompanyLogoTextSpacing" >
-
-        <LinearLayout
-            android:id="@+id/boothFragmentDetailsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/boothFragmentViewProfileButton"
-            android:gravity="center_horizontal"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/boothFragmentHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="@dimen/textSize24" />
-
-            <TextView
-                android:id="@+id/boothFragmentSubHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/textSize24" />
-
-            <TextView
-                android:id="@+id/boothFragmentDetails"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/boothDetailsMargin"
-                android:layout_marginRight="@dimen/boothDetailsMargin"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:textSize="@dimen/textSize16" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/boothFragmentViewProfileButton"
-            android:layout_width="@dimen/boothViewProfileButtonWidth"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/boothViewProfileButtonSpacing"
-            android:layout_marginTop="@dimen/boothViewProfileButtonSpacing"
-            android:background="@drawable/rounded_booth_button"
-            android:text="@string/boothFragmentViewProfileButtonText"
-            android:textColor="@color/white" />
-    </RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/boothHeaderLayout"
+        android:background="@drawable/rounded_booth_background" >
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/boothFragmentLogo"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/boothCompanyLogoHeight"
-        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/boothCompanyLogoSpacing"
         android:background="@drawable/rounded_booth_company_logo"
         android:contentDescription="@string/logoImageDescription" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/boothFragmentHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/boothFragmentLogo"
+        android:layout_centerHorizontal="true"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textSize="@dimen/textSize24" />
+
+    <TextView
+        android:id="@+id/boothFragmentSubHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/boothFragmentHeader"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textSize="@dimen/textSize20" />
+
+    <TextView
+        android:id="@+id/boothFragmentDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/boothFragmentViewProfileButton"
+        android:layout_below="@+id/boothFragmentSubHeader"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/boothDetailsMargin"
+        android:layout_marginRight="@dimen/boothDetailsMargin"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:textSize="@dimen/textSize16" />
+
+    <Button
+        android:id="@+id/boothFragmentViewProfileButton"
+        android:layout_width="@dimen/boothViewProfileButtonWidth"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/boothViewProfileButtonSpacing"
+        android:layout_marginTop="@dimen/boothViewProfileButtonSpacing"
+        android:background="@drawable/rounded_booth_button"
+        android:text="@string/boothFragmentViewProfileButtonText"
+        android:textColor="@color/white" />
+
+</RelativeLayout>

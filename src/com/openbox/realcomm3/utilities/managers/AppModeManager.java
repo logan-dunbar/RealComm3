@@ -4,6 +4,7 @@ import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.BeaconStatus;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AppModeOfflineInterface;
+import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 
 public class AppModeManager
 {
@@ -12,6 +13,7 @@ public class AppModeManager
 	private AppMode currentAppModeSelector;
 	private BeaconStatusManager beaconStatusManager;
 	private AppModeChangedCallbacks appModeChangedListener;
+	private BoothFlipperInterface boothFlipperListener;
 
 	public AppMode getCurrentAppMode()
 	{
@@ -57,12 +59,14 @@ public class AppModeManager
 		AppMode startingAppMode,
 		AppMode startingAppModeSelector,
 		BeaconStatusManager beaconStatusManager,
-		AppModeChangedCallbacks appModeListener)
+		AppModeChangedCallbacks appModeListener,
+		BoothFlipperInterface boothFlipperListener)
 	{
 		this.currentAppMode = startingAppMode;
 		this.currentAppModeSelector = startingAppModeSelector;
 		this.beaconStatusManager = beaconStatusManager;
 		this.appModeChangedListener = appModeListener;
+		this.boothFlipperListener = boothFlipperListener;
 	}
 
 	public void unbindBeaconManager()
@@ -181,7 +185,7 @@ public class AppModeManager
 		switch (this.currentAppMode)
 		{
 			case INITIALIZING:
-				// TODO: can't do this?
+				// Can't do this
 				break;
 			case OFFLINE:
 				changeOfflineToPaused();
@@ -255,19 +259,19 @@ public class AppModeManager
 
 	private void changeOnlineToOutOfRange()
 	{
-		// TODO
 		updateAppMode(AppMode.OUTOFRANGE, false);
+		this.boothFlipperListener.resetTimer();
 	}
 
 	private void changeOutOfRangeToOnline()
 	{
-		// TODO
 		updateAppMode(AppMode.ONLINE, true);
+		this.boothFlipperListener.resetTimer();
 	}
 
 	private void changeOutOfRangeToPaused()
 	{
-		// TODO
+		// TODO maybe?
 		updateAppMode(AppMode.PAUSED, false);
 	}
 

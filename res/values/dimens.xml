@@ -63,6 +63,8 @@
     <dimen name="boothViewProfileButtonSpacing">@dimen/defaultSpacingMargin</dimen>
     <dimen name="boothCompanyLogoWidth">@dimen/defaultCompanyLogoWidth</dimen>
     <dimen name="boothCompanyLogoHeight">@dimen/defaultCompanyLogoHeight</dimen>
+    <dimen name="boothCircleDiameter">20dp</dimen>
+    <dimen name="boothCircleMargin">15dp</dimen>
 
     <!-- Booth List -->
     <dimen name="boothListMargin">@dimen/defaultMargin</dimen>
