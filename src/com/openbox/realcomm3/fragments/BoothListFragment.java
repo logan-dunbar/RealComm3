@@ -3,10 +3,12 @@ package com.openbox.realcomm3.fragments;
 import java.util.Arrays;
 import java.util.List;
 
+import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.RealcommPage;
 import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
+import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
@@ -28,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class BoothListFragment extends BaseFragment implements
@@ -35,12 +38,14 @@ public class BoothListFragment extends BaseFragment implements
 	OnItemClickListener,
 	ClearFocusInterface,
 	DataChangedCallbacks,
-	OnClickListener
+	OnClickListener,
+	AppModeChangedCallbacks
 {
 	public static final String TAG = "boothListFragment";
 
 	private static final String BOOTH_SORT_MODE_KEY = "boothSortModeKey";
 
+	private LinearLayout boothListSortModeContainer;
 	private Button aToZButton;
 	private Button nearMeButton;
 
@@ -88,6 +93,7 @@ public class BoothListFragment extends BaseFragment implements
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 
+		this.boothListSortModeContainer = (LinearLayout) view.findViewById(R.id.boothListSortModeContainer);
 		this.aToZButton = (Button) view.findViewById(R.id.boothListAtoZButton);
 		this.nearMeButton = (Button) view.findViewById(R.id.boothListNearMeButton);
 		this.aToZButton.setText(BoothSortMode.A_TO_Z.getDisplayName());
@@ -263,5 +269,32 @@ public class BoothListFragment extends BaseFragment implements
 			this.aToZButton.setSelected(false);
 			this.nearMeButton.setSelected(true);
 		}
+	}
+
+	@Override
+	public void onAppModeChanged()
+	{
+		if (getAppModeInterface() != null)
+		{
+			AppMode currentAppMode = getAppModeInterface().getCurrentAppMode();
+			if (currentAppMode == AppMode.OFFLINE || currentAppMode == AppMode.OUTOFRANGE)
+			{
+				this.boothListSortModeContainer.setVisibility(View.GONE);
+				this.currentSortMode = BoothSortMode.A_TO_Z;
+				updateList();
+			}
+			else if (currentAppMode == AppMode.ONLINE)
+			{
+				// TODO maybe change back to NEAR_ME?
+				this.boothListSortModeContainer.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+
+	@Override
+	public void onOnlineModeToOfflineMode()
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

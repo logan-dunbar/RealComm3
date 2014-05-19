@@ -94,11 +94,6 @@ public class CompanyContactsFragment extends BaseProfileFragment implements
 	{
 		updateView();
 	}
-	
-	public void showBorder()
-	{
-		
-	}
 
 	private void updateView()
 	{

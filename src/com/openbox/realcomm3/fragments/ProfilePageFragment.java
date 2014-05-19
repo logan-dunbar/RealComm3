@@ -189,7 +189,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 				.findFragmentById(R.id.companySocialNetworksContainer);
 
 			resetBorderVisibilities();
-			
+
 			boolean fragmentAboveIsVisible = false;
 
 			if (categoriesFragment != null && this.companyModel.getHasCategories())
@@ -200,6 +200,10 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 				{
 					fragmentAboveIsVisible = true;
 				}
+			}
+			else
+			{
+				ft.hide(categoriesFragment);
 			}
 
 			if (addressFragment != null && this.companyModel.getHasAddress())
@@ -214,6 +218,10 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 
 				fragmentAboveIsVisible = true;
 			}
+			else
+			{                                                                                                                                                                                                                                                                        
+				ft.hide(addressFragment);
+			}
 
 			if (contactsFragment != null && this.companyModel.getHasContacts())
 			{
@@ -224,6 +232,10 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 				}
 
 				fragmentAboveIsVisible = true;
+			}
+			else
+			{
+				ft.hide(contactsFragment);
 			}
 
 			if (linksFragment != null && this.companyModel.getHasLinks())
@@ -236,6 +248,10 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 
 				fragmentAboveIsVisible = true;
 			}
+			else
+			{
+				ft.hide(linksFragment);
+			}
 
 			if (socialNetworksFragment != null && this.companyModel.getHasSocialNetworks())
 			{
@@ -244,6 +260,10 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 				{
 					this.companySocialNetworksBorder.setVisibility(View.VISIBLE);
 				}
+			}
+			else
+			{
+				ft.hide(socialNetworksFragment);
 			}
 
 			ft.commit();

@@ -42,7 +42,7 @@ public class DashboardFragment extends BaseFragment implements
 	{
 		super.onViewCreated(view, savedInstanceState);
 
-		createConnectionStatusFragment();
+		//createConnectionStatusFragment();
 		createProximityFragment();
 		createScheduleFragment();
 	}

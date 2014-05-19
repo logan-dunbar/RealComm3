@@ -89,10 +89,13 @@ public class ContactFragment extends BaseProfileFragment
 				// TODO need better here...
 				if (contactModel.getContactImage() != null)
 				{
-
+					this.contactImage.setVisibility(View.VISIBLE);
 					Bitmap contactImage = BitmapHelper.getRoundedBitmap(contactModel.getContactImage(), width, height, radius);
-
 					this.contactImage.setImageBitmap(contactImage);
+				}
+				else
+				{
+					this.contactImage.setVisibility(View.GONE);
 				}
 
 				this.contactName.setText(contactModel.getDisplayName());

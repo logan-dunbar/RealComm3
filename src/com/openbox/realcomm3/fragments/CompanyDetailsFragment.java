@@ -18,6 +18,8 @@ import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 
 public class CompanyDetailsFragment extends BaseProfileFragment implements ProfileDataChangedCallbacks, DataChangedCallbacks
 {
+	private static final String BOOTH_NUMBER_PREFIX = "BOOTH ";
+
 	private ImageView companyLogo;
 	private TextView companyName;
 	private TextView boothNumber;
@@ -40,7 +42,7 @@ public class CompanyDetailsFragment extends BaseProfileFragment implements Profi
 		this.companyName = (TextView) view.findViewById(R.id.companyNameTextView);
 		this.boothNumber = (TextView) view.findViewById(R.id.boothNumberTextView);
 		this.companyDescription = (TextView) view.findViewById(R.id.companyDescriptionTextView);
-		
+
 		this.companyName.setTypeface(application.getExo2Font());
 		this.boothNumber.setTypeface(application.getExo2FontBold());
 		this.companyDescription.setTypeface(application.getExo2Font());
@@ -53,14 +55,20 @@ public class CompanyDetailsFragment extends BaseProfileFragment implements Profi
 		CompanyModel model = getCompanyModel();
 		if (model != null)
 		{
-			float radius = getResources().getDimension(R.dimen.defaultCornerRadius);
-			int width = (int) getResources().getDimension(R.dimen.companyDetailsCompanyLogoWidth);
-			int height = (int) getResources().getDimension(R.dimen.companyDetailsCompanyLogoHeight);
-			Bitmap logo = BitmapHelper.getRoundedBitmap(model.getCompanyLogo(), width, height, radius);
+			if (model.getCompanyLogo() != null)
+			{
+				float radius = getResources().getDimension(R.dimen.defaultCornerRadius);
+				int height = (int) getResources().getDimension(R.dimen.boothCompanyLogoHeight);
 
-			this.companyLogo.setImageBitmap(logo);
+				double aspectRatio = ((double) model.getCompanyLogo().getWidth()) / model.getCompanyLogo().getHeight();
+				int width = (int) Math.round(height * aspectRatio);
+
+				Bitmap logo = BitmapHelper.getRoundedBitmap(model.getCompanyLogo(), width, height, radius);
+				this.companyLogo.setImageBitmap(logo);
+			}
+
 			this.companyName.setText(model.getName());
-			this.boothNumber.setText(String.valueOf(model.getBoothNumber()));
+			this.boothNumber.setText(BOOTH_NUMBER_PREFIX + String.valueOf(model.getBoothNumber()));
 			this.companyDescription.setText(model.getDescription());
 		}
 	}
@@ -81,7 +89,7 @@ public class CompanyDetailsFragment extends BaseProfileFragment implements Profi
 	public void onDataChanged()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

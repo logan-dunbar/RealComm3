@@ -48,7 +48,7 @@ public class ListingPageFragment extends BaseFragment implements
 	// View State
 	private List<Integer> boothIdsToDisplay = new ArrayList<Integer>();
 
-	// Animation contants
+	// Animation constants
 	private static int betweenDelayDuration;
 	private static int duration;
 
@@ -315,6 +315,7 @@ public class ListingPageFragment extends BaseFragment implements
 
 			this.dataChangedListeners.add(fragment);
 			this.clearFocusListeners.add(fragment);
+			this.appModeChangedListeners.add(fragment);
 		}
 	}
 

@@ -7,9 +7,11 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/boothListSortModeContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/boothListButtonsSpacing"
         android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal" >
@@ -53,7 +55,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/boothListButtonsSpacing"
         android:background="@drawable/rounded_booth_header"
         android:orientation="vertical" >
 

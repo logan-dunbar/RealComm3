@@ -31,7 +31,9 @@ public class BitmapHelper
 
 		canvas.drawRoundRect(dstRectF, radius, radius, paint);
 
+		paint.setAntiAlias(true);
 		paint.setFilterBitmap(true);
+		paint.setDither(true);
 		paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
 
 		canvas.drawBitmap(src, srcRect, dstRect, paint);

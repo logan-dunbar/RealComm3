@@ -242,18 +242,16 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	 **********************************************************************************************/
 	private void updateLogo()
 	{
-		if (this.companyLogoModel != null && this.logo != null)
+		if (this.companyLogoModel != null && this.companyLogoModel.getCompanyLogo() != null && this.logo != null)
 		{
-
 			float radius = getResources().getDimension(R.dimen.defaultCornerRadius);
-			int width = (int) getResources().getDimension(R.dimen.boothCompanyLogoWidth);
 			int height = (int) getResources().getDimension(R.dimen.boothCompanyLogoHeight);
+			
+			double aspectRatio = ((double) this.companyLogoModel.getCompanyLogo().getWidth()) / this.companyLogoModel.getCompanyLogo().getHeight();
+			int width = (int) Math.round(height * aspectRatio);
 
-			if (this.companyLogoModel.getCompanyLogo() != null)
-			{
-				Bitmap companyLogo = BitmapHelper.getRoundedBitmap(this.companyLogoModel.getCompanyLogo(), width, height, radius);
-				this.logo.setImageBitmap(companyLogo);
-			}
+			Bitmap companyLogo = BitmapHelper.getRoundedBitmap(this.companyLogoModel.getCompanyLogo(), width, height, radius);
+			this.logo.setImageBitmap(companyLogo);
 		}
 	}
 

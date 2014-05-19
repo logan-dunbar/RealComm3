@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/exhibitionAreaHeader"
+        android:gravity="center"
         android:textColor="@color/white"
         android:textSize="@dimen/textSize30" />
 
@@ -22,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:textColor="@color/white"
         android:textSize="@dimen/textSize24" />
 

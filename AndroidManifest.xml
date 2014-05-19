@@ -59,8 +59,8 @@
                 android:value="true" />
 
             <intent-filter android:priority="1" >
-                <action android:name="com.openbox.realcomm2.DID_RANGING" />
-                <action android:name="com.openbox.realcomm2.DID_MONITORING" />
+                <action android:name="com.openbox.realcomm3.DID_RANGING" />
+                <action android:name="com.openbox.realcomm3.DID_MONITORING" />
             </intent-filter>
         </service>
     </application>

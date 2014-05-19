@@ -43,11 +43,6 @@ public class CompanyAddressFragment extends BaseProfileFragment implements Profi
 	{
 		updateView();
 	}
-	
-	public void showBorder()
-	{
-		
-	}
 
 	private void updateView()
 	{

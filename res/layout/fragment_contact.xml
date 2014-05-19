@@ -8,12 +8,12 @@
         android:id="@+id/contactImageView"
         android:layout_width="@dimen/contactImageSize"
         android:layout_height="@dimen/contactImageSize"
+        android:layout_marginRight="@dimen/contactsSpacingMargin"
         android:contentDescription="@string/contactImageDescription" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/contactsSpacingMargin"
         android:orientation="vertical" >
 
         <TextView

@@ -43,11 +43,6 @@ public class CompanyLinksFragment extends BaseProfileFragment implements Profile
 		updateView();
 	}
 
-	public void showBorder()
-	{
-
-	}
-
 	private void updateView()
 	{
 		CompanyModel model = getCompanyModel();

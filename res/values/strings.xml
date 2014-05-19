@@ -22,7 +22,6 @@
     <string name="lastUpdateLabel">Last Update:</string>
     <string name="lastUpdateInitialValue">N/A</string>
     <string name="proximityLabel">Proximity Sensing:</string>
-    <string name="exhibitionAreaHeader">EXHIBITION AREA</string>
     
     <string name="splashHeader">Realcomm 2014</string>
     <string name="splashSubHeader">Las Vegas</string>

@@ -12,7 +12,7 @@
         android:background="@drawable/rounded_booth_background"
         android:paddingLeft="@dimen/boothPadding"
         android:paddingRight="@dimen/boothPadding"
-        android:paddingTop="@dimen/boothCompanyLogoSpacing" >
+        android:paddingTop="@dimen/boothCompanyLogoTextSpacing" >
 
         <LinearLayout
             android:id="@+id/boothFragmentDetailsContainer"
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="@dimen/textSize30" />
+                android:textSize="@dimen/textSize24" />
 
             <TextView
                 android:id="@+id/boothFragmentSubHeader"
@@ -61,7 +61,7 @@
 
     <ImageView
         android:id="@+id/boothFragmentLogo"
-        android:layout_width="@dimen/boothCompanyLogoWidth"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/boothCompanyLogoHeight"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/boothCompanyLogoSpacing"

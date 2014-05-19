@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
@@ -22,9 +23,16 @@ import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
 public class ProximityFragment extends BaseFragment implements DataChangedCallbacks, AppModeChangedCallbacks
 {
+	private static final String OFFLINE_HEADER = "OFFLINE";
+	private static final String EXHIBITION_AREA_HEADER = "EXHIBITION AREA";
+	private static final String OUT_OF_RANGE = "OUT OF RANGE";
 	private static final String BOOTHS_NEAR_ME_SUFFIX = " BOOTHS NEAR ME";
 	private static final String NO_BOOTHS_NEAR_ME = "NO BOOTHS NEAR ME";
+	private static final String DEVICE_UNSUPPORTED = "DEVICE DOES NOT SUPPORT ONLINE MODE";
+	private static final String PROXIMITY_FEATURES_REQUIRE_BLUETOOTH = "PROXIMITY FEATURES REQUIRE BLUETOOTH TO BE ON";
 
+	private FrameLayout proximityControlPictureLayout;
+	private TextView exhibitionAreaTextView;
 	private TextView boothsNearMeTextView;
 	private TextView immediateTextView;
 	private TextView nearTextView;
@@ -47,6 +55,8 @@ public class ProximityFragment extends BaseFragment implements DataChangedCallba
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 
 		// Active
+		this.proximityControlPictureLayout = (FrameLayout) view.findViewById(R.id.proximityControlPictureLayout);
+		this.exhibitionAreaTextView = (TextView) view.findViewById(R.id.exhibitionAreaTextView);
 		this.boothsNearMeTextView = (TextView) view.findViewById(R.id.boothsNearMeTextView);
 		this.immediateTextView = (TextView) view.findViewById(R.id.proximityImmediateTextView);
 		this.nearTextView = (TextView) view.findViewById(R.id.proximityNearTextView);
@@ -70,10 +80,9 @@ public class ProximityFragment extends BaseFragment implements DataChangedCallba
 		nearLabel.setTypeface(application.getExo2Font());
 		farLabel.setTypeface(application.getExo2Font());
 
-		TextView exhibitionAreaTextView = (TextView) view.findViewById(R.id.exhibitionAreaTextView);
-		if (exhibitionAreaTextView != null)
+		// Not present in phone version of xml
+		if (this.exhibitionAreaTextView != null)
 		{
-			// Not present in phone version of xml
 			exhibitionAreaTextView.setTypeface(application.getExo2Font());
 		}
 
@@ -124,19 +133,41 @@ public class ProximityFragment extends BaseFragment implements DataChangedCallba
 	{
 		if (getDataInterface() != null && getAppModeInterface() != null)
 		{
-			if (getAppModeInterface().getCurrentAppMode() == AppMode.OFFLINE ||
-				(getAppModeInterface().getCurrentAppMode() == AppMode.PAUSED && getAppModeInterface().getPreviousAppMode() == AppMode.OFFLINE))
-			{
-				this.boothsNearMeTextView.setText(NO_BOOTHS_NEAR_ME);
+			AppMode currentMode = getAppModeInterface().getCurrentAppMode();
+			AppMode previousMode = getAppModeInterface().getPreviousAppMode();
+			DataInterface dataInterface = getDataInterface();
 
-				// TODO Potentially remove the circles/counts
-				updateTextView(this.immediateTextView, ProximityRegion.OUTOFRANGE, 0);
-				updateTextView(this.nearTextView, ProximityRegion.OUTOFRANGE, 0);
-				updateTextView(this.farTextView, ProximityRegion.OUTOFRANGE, 0);
-			}
-			else
+			// Reset view to visible
+			this.proximityControlPictureLayout.setVisibility(View.VISIBLE);
+
+			if (currentMode == AppMode.OFFLINE ||
+				(currentMode == AppMode.PAUSED && previousMode == AppMode.OFFLINE))
 			{
-				Map<ProximityRegion, Integer> proximityCounts = getDataInterface().getBoothProximityCounts();
+				if (this.exhibitionAreaTextView != null)
+				{
+					this.exhibitionAreaTextView.setText(OFFLINE_HEADER);
+				}
+
+				if (RealCommApplication.getHasBluetoothLe())
+				{
+					this.boothsNearMeTextView.setText(PROXIMITY_FEATURES_REQUIRE_BLUETOOTH);
+				}
+				else
+				{
+					this.boothsNearMeTextView.setText(DEVICE_UNSUPPORTED);
+				}
+
+				this.proximityControlPictureLayout.setVisibility(View.GONE);
+			}
+			else if (currentMode == AppMode.ONLINE ||
+				(currentMode == AppMode.PAUSED && previousMode == AppMode.ONLINE))
+			{
+				if (this.exhibitionAreaTextView != null)
+				{
+					this.exhibitionAreaTextView.setText(EXHIBITION_AREA_HEADER);
+				}
+
+				Map<ProximityRegion, Integer> proximityCounts = dataInterface.getBoothProximityCounts();
 				if (proximityCounts != null)
 				{
 					int totalCount = proximityCounts.get(ProximityRegion.IMMEDIATE) + proximityCounts.get(ProximityRegion.NEAR)
@@ -148,11 +179,26 @@ public class ProximityFragment extends BaseFragment implements DataChangedCallba
 					updateTextView(this.farTextView, ProximityRegion.FAR, proximityCounts.get(ProximityRegion.FAR));
 				}
 			}
+			else if (currentMode == AppMode.OUTOFRANGE ||
+				(currentMode == AppMode.PAUSED))
+			{
+				if (this.exhibitionAreaTextView != null)
+				{
+					this.exhibitionAreaTextView.setText(OUT_OF_RANGE);
+				}
+
+				this.boothsNearMeTextView.setText(NO_BOOTHS_NEAR_ME);
+
+				this.immediateTextView.setVisibility(View.GONE);
+				this.nearTextView.setVisibility(View.GONE);
+				this.farTextView.setVisibility(View.GONE);
+			}
 		}
 	}
 
 	private void updateTextView(TextView textView, ProximityRegion proximityRegion, int count)
 	{
+		textView.setVisibility(View.VISIBLE);
 		textView.setText(String.valueOf(count));
 		GradientDrawable bg = (GradientDrawable) textView.getBackground();
 		bg.setColor(getResources().getColor(proximityRegion.getColorId()));

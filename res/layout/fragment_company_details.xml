@@ -12,8 +12,9 @@
 
         <ImageView
             android:id="@+id/companyLogoImageView"
-            android:layout_width="@dimen/companyDetailsCompanyLogoWidth"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/companyDetailsCompanyLogoHeight"
+            android:background="@drawable/rounded_booth_company_logo"
             android:contentDescription="@string/logoImageDescription" />
 
         <LinearLayout
