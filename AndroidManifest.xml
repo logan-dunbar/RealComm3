@@ -31,7 +31,7 @@
             android:name="com.openbox.realcomm3.activities.RealCommActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustNothing" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
