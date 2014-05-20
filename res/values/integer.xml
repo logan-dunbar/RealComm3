@@ -7,7 +7,7 @@
     <integer name="splashImageFadeDuration">5000</integer>
     <integer name="splashFragmentFadeInDuration">4000</integer>
     <integer name="splashFragmentToListingFragment">1000</integer>
-    <integer name="listingFragmentToProfileFragment">1000</integer>
+    <integer name="listingFragmentToProfileFragment">750</integer>
     <integer name="profileFragmentToListingFragment">500</integer>
     <integer name="boothFragmentFlipDuration">450</integer>
     <integer name="boothFragmentBetweenDelay">200</integer>

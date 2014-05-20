@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.openbox.realcomm3.R;
+import com.openbox.realcomm3.base.BaseBoothFlipperFragment;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
@@ -23,45 +24,24 @@ import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.TimerTaskCallbacks;
 
-public class BoothExploreFragment extends BaseFragment implements
-	TimerTaskCallbacks,
-	DataChangedCallbacks,
-	AppModeChangedCallbacks,
-	BoothFlipperInterface
+public class BoothExploreFragment extends BaseBoothFlipperFragment implements AppModeChangedCallbacks
 {
 	public static final String TAG = "boothExploreFragment";
-
-	private static final int NUMBER_OF_DISPLAY_BOOTHS = 3;
-	private static final int NUMBER_OF_BIG_BOOTHS = 3;
-
-	// Animation contants
-	private static int betweenDelayDuration;
-	private static int duration;
-
-	// View Timer
-	private Timer viewUpdateTimer;
-
-	// View State
-	private List<Integer> boothIdsToDisplay = new ArrayList<Integer>();
 
 	// Listeners
 	private List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
 	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
-	private List<DataChangedCallbacks> boothDataChangedListeners = new ArrayList<>();
+
+	@Override
+	public int getNumberOfBigBooths()
+	{
+		return 3;
+	}
 
 	public static BoothExploreFragment newInstance()
 	{
 		BoothExploreFragment fragment = new BoothExploreFragment();
 		return fragment;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-
-		betweenDelayDuration = getResources().getInteger(R.integer.boothFragmentBetweenDelay);
-		duration = getResources().getInteger(R.integer.boothFragmentFlipDuration);
 	}
 
 	@Override
@@ -80,50 +60,14 @@ public class BoothExploreFragment extends BaseFragment implements
 		createProximityFragment();
 	}
 
-	private void createProximityFragment()
-	{
-		ProximityFragment fragment = (ProximityFragment) getChildFragmentManager().findFragmentById(R.id.proximityContainer);
-		if (fragment == null)
-		{
-			fragment = ProximityFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commit();
-		}
-
-		this.dataChangedListeners.add(fragment);
-		this.appModeChangedListeners.add(fragment);
-	}
-
 	@Override
-	public void onResume()
+	public void onDetach()
 	{
-		super.onResume();
-
-		// Kick view timer off
-		startViewTimer();
-	}
-
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-
-		// Timers don't follow activity lifecycle, must manage ourselves
-		stopViewTimer();
-	}
-
-	@Override
-	public void onHiddenChanged(boolean hidden)
-	{
-		super.onHiddenChanged(hidden);
-
-		if (hidden)
-		{
-			stopViewTimer();
-		}
-		else
-		{
-			startViewTimer();
-		}
+		super.onDetach();
+		
+		// Clean up
+		this.appModeChangedListeners.clear();
+		this.dataChangedListeners.clear();
 	}
 
 	/**********************************************************************************************
@@ -150,12 +94,9 @@ public class BoothExploreFragment extends BaseFragment implements
 	@Override
 	public void onDataLoaded()
 	{
-		for (DataChangedCallbacks listener : this.dataChangedListeners)
-		{
-			listener.onDataLoaded();
-		}
+		super.onDataLoaded();
 
-		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
 		{
 			listener.onDataLoaded();
 		}
@@ -164,12 +105,9 @@ public class BoothExploreFragment extends BaseFragment implements
 	@Override
 	public void onDataChanged()
 	{
-		for (DataChangedCallbacks listener : this.dataChangedListeners)
-		{
-			listener.onDataChanged();
-		}
+		super.onDataChanged();
 
-		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
 		{
 			listener.onDataChanged();
 		}
@@ -178,145 +116,27 @@ public class BoothExploreFragment extends BaseFragment implements
 	@Override
 	public void onBeaconsUpdated()
 	{
-		if (getDataInterface() != null && getAppModeInterface() != null)
-		{
-			AppMode currentAppMode = getAppModeInterface().getCurrentAppMode();
-
-			List<Integer> closestBoothIds = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
-			if (closestBoothIds.size() < NUMBER_OF_DISPLAY_BOOTHS && currentAppMode == AppMode.ONLINE)
-			{
-				getAppModeInterface().changeAppMode(AppMode.OUTOFRANGE);
-			}
-			else if (closestBoothIds.size() >= NUMBER_OF_DISPLAY_BOOTHS && currentAppMode == AppMode.OUTOFRANGE)
-			{
-				getAppModeInterface().changeAppMode(AppMode.ONLINE);
-			}
-		}
+		super.onBeaconsUpdated();
 
 		for (DataChangedCallbacks listener : this.dataChangedListeners)
 		{
 			listener.onBeaconsUpdated();
 		}
-
-		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
-		{
-			listener.onBeaconsUpdated();
-		}
-	}
-
-	@Override
-	public void onTimerTick()
-	{
-		getActivity().runOnUiThread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				updateView();
-			}
-		});
 	}
 
 	/**********************************************************************************************
-	 * Update View Methods
+	 * Private Helper Methods
 	 **********************************************************************************************/
-	private void updateView()
+	private void createProximityFragment()
 	{
-		if (getAppModeInterface() != null && isVisible())
+		ProximityFragment fragment = (ProximityFragment) getChildFragmentManager().findFragmentById(R.id.proximityContainer);
+		if (fragment == null)
 		{
-			switch (getAppModeInterface().getCurrentAppMode())
-			{
-				case INITIALIZING:
-					// Do nothing
-					break;
-				case OFFLINE:
-					updateViewOffline();
-					break;
-				case ONLINE:
-					updateViewOnline();
-					break;
-				case OUTOFRANGE:
-					updateViewOutOfRange();
-					break;
-				case PAUSED:
-					// Do nothing
-				default:
-					break;
-			}
+			fragment = ProximityFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commit();
 		}
-	}
 
-	private void updateViewOffline()
-	{
-		updateBoothsWithRandom();
-	}
-
-	private void updateViewOnline()
-	{
-		if (getDataInterface() != null && getActivityListener() != null)
-		{
-			this.boothIdsToDisplay = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
-			updateBoothViews();
-		}
-	}
-
-	private void updateViewOutOfRange()
-	{
-		updateBoothsWithRandom();
-	}
-
-	private void updateBoothsWithRandom()
-	{
-		if (getDataInterface() != null)
-		{
-			this.boothIdsToDisplay = getDataInterface().getRandomBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
-			updateBoothViews();
-		}
-	}
-
-	private void updateBoothViews()
-	{
-		this.boothDataChangedListeners.clear();
-		this.boothDataChangedListeners.addAll(BoothFlipHelper.updateBoothViews(
-			NUMBER_OF_BIG_BOOTHS,
-			this.boothIdsToDisplay,
-			duration,
-			betweenDelayDuration,
-			getChildFragmentManager()));
-	}
-
-	/**********************************************************************************************
-	 * Booth Flipper Interface
-	 **********************************************************************************************/
-	@Override
-	public void resetTimer()
-	{
-		stopViewTimer();
-		startViewTimer();
-	}
-
-	/**********************************************************************************************
-	 * Private helper methods
-	 **********************************************************************************************/
-	private void startViewTimer()
-	{
-		// Memory leak - navigate to profile page, minimize, come back, starts the timer again, but
-		// because not visible GarbageCollector doesn't know to clean up. Fixed by only starting if isVisibile()
-		if (this.viewUpdateTimer == null && getAppModeInterface() != null && isVisible())
-		{
-			this.viewUpdateTimer = new Timer();
-			int delay = getAppModeInterface().getCurrentAppMode().getAnimationStartDelay();
-			int period = getAppModeInterface().getCurrentAppMode().getAnimationPeriod();
-			this.viewUpdateTimer.schedule(new ViewTimerTask(this), delay, period);
-		}
-	}
-
-	private void stopViewTimer()
-	{
-		if (this.viewUpdateTimer != null)
-		{
-			this.viewUpdateTimer.cancel();
-			this.viewUpdateTimer = null;
-		}
+		this.dataChangedListeners.add(fragment);
+		this.appModeChangedListeners.add(fragment);
 	}
 }
