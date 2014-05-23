@@ -11,20 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.openbox.realcomm3.R;
-import com.openbox.realcomm3.base.BaseFragment;
+import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.database.models.SelectedBoothModel;
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.Company;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.ProfilePageInterface;
 import com.openbox.realcomm3.utilities.loaders.CompanyModelLoader;
 
-public class ProfilePageFragment extends BaseFragment implements ProfilePageInterface, DataChangedCallbacks
+public class ProfilePageFragment extends BaseProfileFragment implements ProfilePageInterface
 {
 	public static final String TAG = "profilePageFragment";
 	public static final String SELECTED_BOOTH_MODEL_KEY = "selectedBoothModelKey";
@@ -34,8 +33,8 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 	private CompanyModel companyModel;
 
 	private List<ProfileDataChangedCallbacks> profileDataChangedListeners = new ArrayList<>();
-	private List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
 
+	private ScrollView profilePageScrollView;
 	private FrameLayout companyCategoriesBorder;
 	private FrameLayout companyAddressBorder;
 	private FrameLayout companyContactsBorder;
@@ -62,7 +61,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 			this.selectedBoothModel = (SelectedBoothModel) savedInstanceState.getSerializable(SELECTED_BOOTH_MODEL_KEY);
 		}
 
-		restartCompanyLoader();
+		startCompanyLoader();
 	}
 
 	@Override
@@ -78,6 +77,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 	{
 		View view = inflater.inflate(R.layout.fragment_profile_page, container, false);
 
+		this.profilePageScrollView = (ScrollView) view.findViewById(R.id.profilePageScrollView);
 		this.companyCategoriesBorder = (FrameLayout) view.findViewById(R.id.companyCategoriesBorder);
 		this.companyAddressBorder = (FrameLayout) view.findViewById(R.id.companyAddressBorder);
 		this.companyContactsBorder = (FrameLayout) view.findViewById(R.id.companyContactsBorder);
@@ -101,6 +101,15 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 		createCompanySocialNetworksFragment();
 	}
 
+	@Override
+	public void onDetach()
+	{
+		super.onDetach();
+
+		// Clean up
+		this.profileDataChangedListeners.clear();
+	}
+
 	/**********************************************************************************************
 	 * Profile Page Interface Implements
 	 **********************************************************************************************/
@@ -111,48 +120,23 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 	}
 
 	/**********************************************************************************************
-	 * Data Changed Callbacks
-	 **********************************************************************************************/
-	@Override
-	public void onDataLoaded()
-	{
-		for (DataChangedCallbacks listener : this.dataChangedListeners)
-		{
-			listener.onDataLoaded();
-		}
-	}
-
-	@Override
-	public void onDataChanged()
-	{
-		for (DataChangedCallbacks listener : this.dataChangedListeners)
-		{
-			listener.onDataChanged();
-		}
-	}
-
-	@Override
-	public void onBeaconsUpdated()
-	{
-		for (DataChangedCallbacks listener : this.dataChangedListeners)
-		{
-			listener.onBeaconsUpdated();
-		}
-	}
-
-	/**********************************************************************************************
 	 * Public Methods
 	 **********************************************************************************************/
 	public void updateProfilePage(SelectedBoothModel selectedBoothModel)
 	{
+		if (this.profilePageScrollView != null)
+		{
+			this.profilePageScrollView.scrollTo(0, 0);
+		}
+
 		this.selectedBoothModel = selectedBoothModel;
-		restartCompanyLoader();
+		startCompanyLoader();
 	}
 
 	/**********************************************************************************************
 	 * Private Helper Methods
 	 **********************************************************************************************/
-	private void restartCompanyLoader()
+	private void startCompanyLoader()
 	{
 		if (this.selectedBoothModel != null)
 		{
@@ -196,7 +180,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 			{
 				ft.show(categoriesFragment);
 				this.companyCategoriesBorder.setVisibility(View.VISIBLE);
-				if (getActivityListener() != null && !getActivityListener().getIsLargeScreen())
+				if (getActivityInterface() != null && !getActivityInterface().getIsLargeScreen())
 				{
 					fragmentAboveIsVisible = true;
 				}
@@ -211,7 +195,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 				ft.show(addressFragment);
 				if (fragmentAboveIsVisible &&
 					this.companyContactsBorder != null &&
-					getActivityListener() != null && !getActivityListener().getIsLargeScreen())
+					getActivityInterface() != null && !getActivityInterface().getIsLargeScreen())
 				{
 					this.companyAddressBorder.setVisibility(View.VISIBLE);
 				}
@@ -219,7 +203,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 				fragmentAboveIsVisible = true;
 			}
 			else
-			{                                                                                                                                                                                                                                                                        
+			{
 				ft.hide(addressFragment);
 			}
 
@@ -290,7 +274,7 @@ public class ProfilePageFragment extends BaseFragment implements ProfilePageInte
 		{
 			fragment = CompanyDetailsFragment.newInstance();
 			getChildFragmentManager().beginTransaction().add(R.id.companyDetailsContainer, fragment).commit();
-			this.dataChangedListeners.add(fragment);
+			getDataChangedListeners().add(fragment);
 			this.profileDataChangedListeners.add(fragment);
 		}
 	}

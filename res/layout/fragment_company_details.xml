@@ -5,46 +5,39 @@
     android:layout_margin="@dimen/companyDetailsMargin"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/companyLogoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/companyDetailsCompanyLogoHeight"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/rounded_booth_company_logo"
+        android:contentDescription="@string/logoImageDescription" />
+
+    <TextView
+        android:id="@+id/companyNameTextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/companyDetailsSpacingMargin"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="@dimen/companyDetailsCompanyNameTextSize" />
 
-        <ImageView
-            android:id="@+id/companyLogoImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/companyDetailsCompanyLogoHeight"
-            android:background="@drawable/rounded_booth_company_logo"
-            android:contentDescription="@string/logoImageDescription" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/companyDetailsSpacingMargin"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/companyNameTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/companyDetailsCompanyNameTextSize" />
-
-            <TextView
-                android:id="@+id/boothNumberTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/companyDetailsBoothNumberTextSize" />
-        </LinearLayout>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/boothNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:textSize="@dimen/companyDetailsBoothNumberTextSize" />
 
     <TextView
         android:id="@+id/companyDescriptionTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/companyDetailsSpacingMargin"
+        android:gravity="left|right"
         android:textColor="@color/white"
         android:textSize="@dimen/companyDetailsDetailsTextSize" />
 

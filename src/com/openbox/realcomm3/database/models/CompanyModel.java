@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.Company;
 import com.openbox.realcomm3.database.objects.CompanyLogo;
+import com.openbox.realcomm3.utilities.enums.CompanyCategory;
 import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 public class CompanyModel
@@ -219,6 +220,23 @@ public class CompanyModel
 		// TODO Country?
 		// sb.append(model.getCountry());
 		return sb.toString();
+	}
+	
+	public String getCompanyCategoryDetails(CompanyCategory companyCategory)
+	{
+		switch (companyCategory)
+		{
+			case MAIN_CATEGORY:
+				return getMainCatergories();
+			case SUB_CATEGORY:
+				return getSubCategories();
+			case TARGET_MARKET:
+				return getTargetMarkets();
+			case GEOGRAPHIC_MARKET:
+				return getGeographicMarkets();
+			default:
+				return null;
+		}
 	}
 
 	public int getBoothId()

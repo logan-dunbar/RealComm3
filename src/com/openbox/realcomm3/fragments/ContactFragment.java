@@ -60,7 +60,7 @@ public class ContactFragment extends BaseProfileFragment
 
 	private void updateView()
 	{
-		CompanyModel companyModel = getCompanyModel();
+		CompanyModel companyModel = getCompany();
 		if (companyModel != null)
 		{
 			ContactModel contactModel = companyModel.getContact(getArguments().getInt(Contact.CONTACT_ID_COLUMN_NAME));

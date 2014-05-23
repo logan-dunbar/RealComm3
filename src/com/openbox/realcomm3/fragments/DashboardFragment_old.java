@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ListingPageFragment extends BaseBoothFlipperFragment implements
+public class DashboardFragment_old extends BaseBoothFlipperFragment implements
 	AppModeChangedCallbacks,
 	ClearFocusInterface
 {
@@ -45,9 +45,9 @@ public class ListingPageFragment extends BaseBoothFlipperFragment implements
 		return 2;
 	}
 
-	public static ListingPageFragment newInstance()
+	public static DashboardFragment_old newInstance()
 	{
-		ListingPageFragment fragment = new ListingPageFragment();
+		DashboardFragment_old fragment = new DashboardFragment_old();
 		return fragment;
 	}
 
@@ -68,7 +68,7 @@ public class ListingPageFragment extends BaseBoothFlipperFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View view = inflater.inflate(R.layout.fragment_listing_page, container, false);
+		View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
 		return view;
 	}
@@ -79,8 +79,8 @@ public class ListingPageFragment extends BaseBoothFlipperFragment implements
 		super.onViewCreated(view, savedInstanceState);
 
 		createBoothListFragment();
-
-		createDashboardFragment();
+		createProximityFragment();
+		createScheduleFragment();
 	}
 
 	/**********************************************************************************************
@@ -172,16 +172,28 @@ public class ListingPageFragment extends BaseBoothFlipperFragment implements
 		}
 	}
 
-	private void createDashboardFragment()
+	private void createProximityFragment()
 	{
-		DashboardFragment fragment = (DashboardFragment) getChildFragmentManager().findFragmentById(R.id.dashboardContainer);
+		ProximityFragment fragment = (ProximityFragment) getChildFragmentManager().findFragmentById(R.id.proximityContainer);
 		if (fragment == null)
 		{
-			fragment = DashboardFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.dashboardContainer, fragment).commit();
+			fragment = ProximityFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commit();
 		}
 
+		this.dataChangedListeners.add(fragment);
 		this.appModeChangedListeners.add(fragment);
+	}
+
+	private void createScheduleFragment()
+	{
+		ScheduleFragment fragment = (ScheduleFragment) getChildFragmentManager().findFragmentById(R.id.scheduleFragmentContainer);
+		if (fragment == null)
+		{
+			fragment = ScheduleFragment.newInstance();
+			getChildFragmentManager().beginTransaction().add(R.id.scheduleFragmentContainer, fragment).commit();
+		}
+
 		this.dataChangedListeners.add(fragment);
 	}
 }

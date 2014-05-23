@@ -1,6 +1,5 @@
 package com.openbox.realcomm3.fragments;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -24,21 +23,16 @@ import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.database.models.CompanyLogoModel;
 import com.openbox.realcomm3.utilities.enums.RealcommPage;
-import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.BitmapHelper;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.loaders.CompanyLogoLoader;
 
-public class BoothFragment extends BaseFragment implements DataChangedCallbacks// , BoothFrameLayoutCallbacks
+public class BoothFragment extends BaseFragment implements OnClickListener
 {
 	private static final String BOOTH_ID_KEY = "boothIdKey";
 	private static final String IS_BIG_KEY = "isBigKey";
 	private static final String BOOTH_PREFIX = "BOOTH ";
 
 	private static final int COMPANY_LOGO_LOADER_ID = 1;
-
-	private DataInterface dataInterface;
 
 	private BoothModel boothModel;
 	private CompanyLogoModel companyLogoModel;
@@ -71,23 +65,11 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	 * Fragment Lifecycle Implements
 	 **********************************************************************************************/
 	@Override
-	public void onAttach(Activity activity)
-	{
-		super.onAttach(activity);
-
-		if (activity instanceof DataInterface)
-		{
-			this.dataInterface = (DataInterface) activity;
-		}
-	}
-
-	@Override
 	public void onDetach()
 	{
 		super.onDetach();
 
 		// Clean up
-		this.dataInterface = null;
 		this.boothModel = null;
 		if (this.companyLogoModel != null && this.companyLogoModel.getCompanyLogo() != null)
 		{
@@ -95,12 +77,6 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 		}
 
 		this.companyLogoModel = null;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -124,13 +100,13 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 		if (this.viewProfileButton != null)
 		{
 			this.viewProfileButton.setTypeface(application.getExo2Font());
-			this.viewProfileButton.setOnClickListener(this.clickListener);
+			this.viewProfileButton.setOnClickListener(this);
 		}
 
 		RelativeLayout boothClickableLayout = (RelativeLayout) view.findViewById(R.id.boothClickableLayout);
 		if (boothClickableLayout != null)
 		{
-			boothClickableLayout.setOnClickListener(this.clickListener);
+			boothClickableLayout.setOnClickListener(this);
 		}
 
 		ViewTreeObserver observer = details.getViewTreeObserver();
@@ -140,7 +116,7 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 			@Override
 			public void onGlobalLayout()
 			{
-				int maxLines = (int) details.getHeight() / details.getLineHeight();
+				int maxLines = details.getHeight() / details.getLineHeight();
 				details.setMaxLines(maxLines);
 				details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 			}
@@ -150,31 +126,15 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 
 		return view;
 	}
-
-	private void goToProfilePage()
+	
+	/**********************************************************************************************
+	 * Click Implements
+	 **********************************************************************************************/
+	@Override
+	public void onClick(View v)
 	{
-		if (getActivityListener() != null && this.boothModel != null)
-		{
-			getActivityListener().setSelectedBooth(this.boothModel.getBoothId(), this.boothModel.getCompanyId());
-			if (getActivityListener().getIsLargeScreen())
-			{
-				getActivityListener().changePage(RealcommPage.PROFILE_PAGE);
-			}
-			else
-			{
-				getActivityListener().changePage(RealcommPhonePage.PROFILE_PAGE);
-			}
-		}
+		goToProfilePage();
 	}
-
-	private OnClickListener clickListener = new OnClickListener()
-	{
-		@Override
-		public void onClick(View v)
-		{
-			goToProfilePage();
-		}
-	};
 
 	/**********************************************************************************************
 	 * Public Methods
@@ -182,9 +142,9 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	public void updateBooth()
 	{
 		// TODO check how many times this method gets called
-		if (this.dataInterface != null)
+		if (getDataInterface() != null)
 		{
-			this.boothModel = this.dataInterface.getBoothModelForBoothId(getArguments().getInt(BOOTH_ID_KEY));
+			this.boothModel = getDataInterface().getBoothModelForBoothId(getArguments().getInt(BOOTH_ID_KEY));
 			if (this.boothModel != null)
 			{
 				if (this.logo != null)
@@ -272,6 +232,15 @@ public class BoothFragment extends BaseFragment implements DataChangedCallbacks/
 	{
 		this.companyLogoModel = results;
 		updateLogo();
+	}
+
+	private void goToProfilePage()
+	{
+		if (getActivityInterface() != null && this.boothModel != null)
+		{
+			getActivityInterface().setSelectedBooth(this.boothModel.getBoothId(), this.boothModel.getCompanyId());
+			getActivityInterface().changePage(RealcommPage.PROFILE_PAGE);
+		}
 	}
 
 	/**********************************************************************************************

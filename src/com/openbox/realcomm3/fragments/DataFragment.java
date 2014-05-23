@@ -11,7 +11,6 @@ import java.util.Random;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
-import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.loaders.BoothModelLoader;

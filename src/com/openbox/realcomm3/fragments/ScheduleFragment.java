@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +23,12 @@ import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
-import com.openbox.realcomm3.base.BaseFragment;
+import com.openbox.realcomm3.base.BaseScheduleFragment;
 import com.openbox.realcomm3.database.models.TalkDayModel;
 import com.openbox.realcomm3.database.models.VenueModel;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.ScheduleDataInterface;
 import com.openbox.realcomm3.utilities.loaders.ScheduleLoader;
 
-public class ScheduleFragment extends BaseFragment implements DataChangedCallbacks, ScheduleDataInterface
+public class ScheduleFragment extends BaseScheduleFragment
 {
 	public static final String TAG = "scheduleFragment";
 	
@@ -57,12 +54,12 @@ public class ScheduleFragment extends BaseFragment implements DataChangedCallbac
 	{
 		super.onCreate(savedInstanceState);
 
-		initScheduleLoader();
+		startScheduleLoader();
 	}
 
-	private void initScheduleLoader()
+	private void startScheduleLoader()
 	{
-		getLoaderManager().initLoader(SCHEDULE_LOADER_ID, null, this.scheduleLoaderCallbacks);
+		getLoaderManager().restartLoader(SCHEDULE_LOADER_ID, null, this.scheduleLoaderCallbacks);
 	}
 
 	@Override
@@ -79,29 +76,9 @@ public class ScheduleFragment extends BaseFragment implements DataChangedCallbac
 	 * Data Changed Callbacks
 	 **********************************************************************************************/
 	@Override
-	public void onDataLoaded()
-	{
-		// Stub. Not needed.
-	}
-
-	@Override
 	public void onDataChanged()
 	{
-		Loader<List<TalkDayModel>> scheduleLoader = getLoaderManager().getLoader(SCHEDULE_LOADER_ID);
-		if (scheduleLoader == null)
-		{
-			initScheduleLoader();
-		}
-		else
-		{
-			scheduleLoader.onContentChanged();
-		}
-	}
-
-	@Override
-	public void onBeaconsUpdated()
-	{
-		// Stub. Not needed
+		startScheduleLoader();
 	}
 
 	/**********************************************************************************************
@@ -213,7 +190,7 @@ public class ScheduleFragment extends BaseFragment implements DataChangedCallbac
 
 			LinearLayout ll = new LinearLayout(getActivity());
 			ll.setOrientation(LinearLayout.VERTICAL);
-			this.scheduleTabHost.addView(ll, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+			this.scheduleTabHost.addView(ll, new FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT));
 
 			TabWidget tw = new TabWidget(getActivity());
 			tw.setId(android.R.id.tabs);
@@ -314,7 +291,10 @@ public class ScheduleFragment extends BaseFragment implements DataChangedCallbac
 
 		return distinctDateList;
 	}
-
+	
+	/**********************************************************************************************
+	 * Loader Callbacks
+	 **********************************************************************************************/
 	private LoaderCallbacks<List<TalkDayModel>> scheduleLoaderCallbacks = new LoaderCallbacks<List<TalkDayModel>>()
 	{
 		@Override

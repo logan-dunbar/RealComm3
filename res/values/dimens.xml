@@ -91,6 +91,7 @@
 
     <!-- Profile -->
     <dimen name="profileBorderWidth">@dimen/defaultBorderWidth</dimen>
+    <dimen name="profilePadding">@dimen/defaultPadding</dimen>
     <dimen name="profilePaddingTopBottom">50dp</dimen>
     <dimen name="profilePaddingLeftRight">80dp</dimen>
     <dimen name="profileItemMargin">@dimen/defaultMargin</dimen>

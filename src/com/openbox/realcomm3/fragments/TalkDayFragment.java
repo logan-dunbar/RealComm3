@@ -9,18 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.openbox.realcomm3.R;
-import com.openbox.realcomm3.base.BaseFragment;
+import com.openbox.realcomm3.base.BaseScheduleFragment;
 import com.openbox.realcomm3.database.models.TalkDayModel;
-import com.openbox.realcomm3.database.models.VenueModel;
 import com.openbox.realcomm3.utilities.adapters.VenueFragmentAdapter;
-import com.openbox.realcomm3.utilities.interfaces.ScheduleDataInterface;
 import com.viewpagerindicator.LinePageIndicator;
 
-public class TalkDayFragment extends BaseFragment implements ScheduleDataInterface
+public class TalkDayFragment extends BaseScheduleFragment
 {
 	public static final String TALK_DATE_KEY = "talkDateKey";
-
-	private ScheduleDataInterface scheduleDataInterface;
 
 	private ViewPager venuePager;
 
@@ -28,26 +24,6 @@ public class TalkDayFragment extends BaseFragment implements ScheduleDataInterfa
 	{
 		TalkDayFragment fragment = new TalkDayFragment();
 		return fragment;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-
-		if (getParentFragment() instanceof ScheduleDataInterface)
-		{
-			this.scheduleDataInterface = (ScheduleDataInterface) getParentFragment();
-		}
-	}
-
-	@Override
-	public void onDetach()
-	{
-		super.onDetach();
-
-		// Clean up
-		this.scheduleDataInterface = null;
 	}
 
 	@Override
@@ -63,10 +39,10 @@ public class TalkDayFragment extends BaseFragment implements ScheduleDataInterfa
 		LinePageIndicator indicator = (LinePageIndicator) view.findViewById(R.id.venuePagerIndicator);
 		indicator.setViewPager(this.venuePager);
 
-		if (this.scheduleDataInterface != null)
+		if (getScheduleDataInterface() != null)
 		{
 			Date talkDate = (Date) getArguments().getSerializable(TALK_DATE_KEY);
-			TalkDayModel talkDay = this.scheduleDataInterface.getTalkDayForDate(talkDate);
+			TalkDayModel talkDay = getScheduleDataInterface().getTalkDayForDate(talkDate);
 			if (talkDay != null)
 			{
 				venueAdapter.setItems(talkDate, talkDay.getVenueList());
@@ -83,27 +59,5 @@ public class TalkDayFragment extends BaseFragment implements ScheduleDataInterfa
 
 		// TODO maybe do something clever, rather than just always to the start?
 		this.venuePager.setCurrentItem(0);
-	}
-
-	@Override
-	public TalkDayModel getTalkDayForDate(Date talkDate)
-	{
-		if (this.scheduleDataInterface != null)
-		{
-			return this.scheduleDataInterface.getTalkDayForDate(talkDate);
-		}
-
-		return null;
-	}
-
-	@Override
-	public VenueModel getVenueForDate(Date talkDate, int venueId)
-	{
-		if (this.scheduleDataInterface != null)
-		{
-			return this.scheduleDataInterface.getVenueForDate(talkDate, venueId);
-		}
-
-		return null;
 	}
 }

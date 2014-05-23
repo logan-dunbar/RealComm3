@@ -29,8 +29,8 @@ public class RealcommPageManager
 			case SPLASH_SCREEN:
 				changePageToSplashScreen(newPage);
 				break;
-			case LISTING_PAGE:
-				changePageToListingPage(newPage);
+			case DASHBOARD_PAGE:
+				changePageToDashboard(newPage);
 				break;
 			case PROFILE_PAGE:
 				changePageToProfilePage(newPage);
@@ -51,7 +51,7 @@ public class RealcommPageManager
 			case SPLASH_SCREEN:
 				// Stay here
 				break;
-			case LISTING_PAGE:
+			case DASHBOARD_PAGE:
 				// Shouldn't need this
 				break;
 			case PROFILE_PAGE:
@@ -62,7 +62,7 @@ public class RealcommPageManager
 		}
 	}
 
-	private void changePageToListingPage(RealcommPage newPage)
+	private void changePageToDashboard(RealcommPage newPage)
 	{
 		switch (this.currentPage)
 		{
@@ -70,14 +70,14 @@ public class RealcommPageManager
 				// Shouldn't need this
 				break;
 			case SPLASH_SCREEN:
-				changeSplashScreenToListingPage();
+				changeSplashScreenToDashboard();
 				changePage(newPage);
 				break;
-			case LISTING_PAGE:
+			case DASHBOARD_PAGE:
 				// Stay here
 				break;
 			case PROFILE_PAGE:
-				changeProfilePageToListingPage();
+				changeProfilePageToDashboard();
 				changePage(newPage);
 				break;
 			default:
@@ -95,8 +95,8 @@ public class RealcommPageManager
 			case SPLASH_SCREEN:
 				// Shouldn't need this
 				break;
-			case LISTING_PAGE:
-				changeListingPageToProfilePage();
+			case DASHBOARD_PAGE:
+				changeDashboardToProfilePage();
 				changePage(newPage);
 				break;
 			case PROFILE_PAGE:
@@ -118,31 +118,31 @@ public class RealcommPageManager
 		this.currentPage = RealcommPage.SPLASH_SCREEN;
 	}
 
-	private void changeSplashScreenToListingPage()
+	private void changeSplashScreenToDashboard()
 	{
 		if (this.activityListener != null)
 		{
-			this.activityListener.showListingPageAndRemoveSplashScreen();
+			this.activityListener.showDashboardAndRemoveSplashScreen();
 		}
 
-		this.currentPage = RealcommPage.LISTING_PAGE;
+		this.currentPage = RealcommPage.DASHBOARD_PAGE;
 	}
 
-	private void changeProfilePageToListingPage()
+	private void changeProfilePageToDashboard()
 	{
 		if (this.activityListener != null)
 		{
-			this.activityListener.showListingPageAndHideProfilePage();
+			this.activityListener.showDashboardAndHideProfilePage();
 		}
 
-		this.currentPage = RealcommPage.LISTING_PAGE;
+		this.currentPage = RealcommPage.DASHBOARD_PAGE;
 	}
 
-	private void changeListingPageToProfilePage()
+	private void changeDashboardToProfilePage()
 	{
 		if (this.activityListener != null)
 		{
-			this.activityListener.showProfilePageAndHideListingPage();
+			this.activityListener.showProfilePageAndHideDashboard();
 		}
 
 		this.currentPage = RealcommPage.PROFILE_PAGE;

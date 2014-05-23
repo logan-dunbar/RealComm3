@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <!-- Can probably take out the parent frame layout, unless we get fancy with the navigation drawer -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/phonePageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/navigationDrawerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drawerHeight"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/exploreButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/tab_selector"
+                android:text="Explore"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+
+            <Button
+                android:id="@+id/findButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/tab_selector"
+                android:text="Find"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+
+            <Button
+                android:id="@+id/scheduleButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/tab_selector"
+                android:text="Schedule"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+
+            <Button
+                android:id="@+id/infoButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/tab_selector"
+                android:text="Info"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

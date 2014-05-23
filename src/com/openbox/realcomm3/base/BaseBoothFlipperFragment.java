@@ -86,30 +86,29 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 		}
 	}
 
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser)
+	{
+		super.setUserVisibleHint(isVisibleToUser);
+
+//		if (isVisibleToUser)
+//		{
+//			startViewTimer();
+//		}
+//		else
+//		{
+//			stopViewTimer();
+//		}
+	}
+
 	/**********************************************************************************************
 	 * Data Changed Interface Implements
 	 **********************************************************************************************/
 	@Override
-	public void onDataLoaded()
-	{
-		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
-		{
-			listener.onDataLoaded();
-		}
-	}
-
-	@Override
-	public void onDataChanged()
-	{
-		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
-		{
-			listener.onDataChanged();
-		}
-	}
-
-	@Override
 	public void onBeaconsUpdated()
 	{
+		super.onBeaconsUpdated();
+
 		if (getDataInterface() != null && getAppModeInterface() != null)
 		{
 			AppMode currentAppMode = getAppModeInterface().getCurrentAppMode();
@@ -123,11 +122,6 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 			{
 				getAppModeInterface().changeAppMode(AppMode.ONLINE);
 			}
-		}
-
-		for (DataChangedCallbacks listener : this.boothDataChangedListeners)
-		{
-			listener.onBeaconsUpdated();
 		}
 	}
 
@@ -193,7 +187,7 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 
 	private void updateViewOnline()
 	{
-		if (getDataInterface() != null && getActivityListener() != null)
+		if (getDataInterface() != null && getActivityInterface() != null)
 		{
 			this.boothIdsToDisplay = getDataInterface().getClosestBoothIds(NUMBER_OF_DISPLAY_BOOTHS);
 			updateBoothViews();

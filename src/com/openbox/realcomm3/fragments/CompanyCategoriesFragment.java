@@ -12,9 +12,8 @@ import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.utilities.enums.CompanyCategory;
-import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 
-public class CompanyCategoriesFragment extends BaseProfileFragment implements ProfileDataChangedCallbacks
+public class CompanyCategoriesFragment extends BaseProfileFragment
 {
 	private static final String CURRENTLY_ADDED_FRAGMENTS_KEY = "currentlyAddedFragmentsKey";
 	List<String> currentlyAddedFragments = new ArrayList<>();
@@ -60,63 +59,49 @@ public class CompanyCategoriesFragment extends BaseProfileFragment implements Pr
 	{
 		removeCurrentlyAddedFragments();
 
-		CompanyModel model = getCompanyModel();
+		CompanyModel model = getCompany();
 		if (model != null)
 		{
-			FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-
-			CategoriesFragment mainCategoriesFragment = (CategoriesFragment) getChildFragmentManager().findFragmentByTag(
-				CompanyCategory.MAIN_CATEGORY.getFragmentTag());
+			CategoriesFragment mainCategoriesFragment = getCategoriesFragment(CompanyCategory.MAIN_CATEGORY);
 			if (model.getHasMainCategories() && mainCategoriesFragment == null)
 			{
-				mainCategoriesFragment = CategoriesFragment.newInstance(CompanyCategory.MAIN_CATEGORY.getHeader(), model.getMainCatergories());
-				addCategoryFragment(ft, mainCategoriesFragment, CompanyCategory.MAIN_CATEGORY.getFragmentTag());
+				mainCategoriesFragment = CategoriesFragment.newInstance(CompanyCategory.MAIN_CATEGORY);
+				addCategoryFragment(mainCategoriesFragment, CompanyCategory.MAIN_CATEGORY.getFragmentTag());
 			}
 
-			CategoriesFragment subCategoriesFragment = (CategoriesFragment) getChildFragmentManager().findFragmentByTag(
-				CompanyCategory.SUB_CATEGORY.getFragmentTag());
+			CategoriesFragment subCategoriesFragment = getCategoriesFragment(CompanyCategory.SUB_CATEGORY);
 			if (model.getHasSubCategories() && subCategoriesFragment == null)
 			{
-				subCategoriesFragment = CategoriesFragment.newInstance(CompanyCategory.SUB_CATEGORY.getHeader(), model.getSubCategories());
-				addCategoryFragment(ft, subCategoriesFragment, CompanyCategory.SUB_CATEGORY.getFragmentTag());
+				subCategoriesFragment = CategoriesFragment.newInstance(CompanyCategory.SUB_CATEGORY);
+				addCategoryFragment(subCategoriesFragment, CompanyCategory.SUB_CATEGORY.getFragmentTag());
 			}
 
-			CategoriesFragment targetMarketFragment = (CategoriesFragment) getChildFragmentManager().findFragmentByTag(
-				CompanyCategory.TARGET_MARKET.getFragmentTag());
+			CategoriesFragment targetMarketFragment = getCategoriesFragment(CompanyCategory.TARGET_MARKET);
 			if (model.getHasTargetMarkets() && targetMarketFragment == null)
 			{
-				targetMarketFragment = CategoriesFragment.newInstance(CompanyCategory.TARGET_MARKET.getHeader(), model.getTargetMarkets());
-				addCategoryFragment(ft, targetMarketFragment, CompanyCategory.TARGET_MARKET.getFragmentTag());
+				targetMarketFragment = CategoriesFragment.newInstance(CompanyCategory.TARGET_MARKET);
+				addCategoryFragment(targetMarketFragment, CompanyCategory.TARGET_MARKET.getFragmentTag());
 			}
 
-			CategoriesFragment geographicMarketFragment = (CategoriesFragment) getChildFragmentManager().findFragmentByTag(
-				CompanyCategory.GEOGRAPHIC_MARKET.getFragmentTag());
+			CategoriesFragment geographicMarketFragment = getCategoriesFragment(CompanyCategory.GEOGRAPHIC_MARKET);
 			if (model.getHasGeographicMarkets() && geographicMarketFragment == null)
 			{
-				geographicMarketFragment = CategoriesFragment.newInstance(CompanyCategory.GEOGRAPHIC_MARKET.getHeader(), model.getGeographicMarkets());
-				addCategoryFragment(ft, geographicMarketFragment, CompanyCategory.GEOGRAPHIC_MARKET.getFragmentTag());
+				geographicMarketFragment = CategoriesFragment.newInstance(CompanyCategory.GEOGRAPHIC_MARKET);
+				addCategoryFragment(geographicMarketFragment, CompanyCategory.GEOGRAPHIC_MARKET.getFragmentTag());
 			}
 
-			ft.commit();
+			getChildFragmentManager().executePendingTransactions();
+			if (this.currentlyAddedFragments.size() > 0)
+			{
+				int lastFragmentIndex = this.currentlyAddedFragments.size() - 1;
+				CategoriesFragment lastFragment = (CategoriesFragment) getChildFragmentManager().findFragmentByTag(
+					this.currentlyAddedFragments.get(lastFragmentIndex));
+				if (lastFragment != null)
+				{
+					lastFragment.updateIsLast();
+				}
+			}
 		}
-	}
-
-	private void addCategoryFragment(FragmentTransaction ft, Fragment fragment, String tag)
-	{
-		int containerId;
-		if (getActivityListener() != null && getActivityListener().getIsLargeScreen())
-		{
-			// Want to go First -> Second -> First -> Second
-			containerId = currentlyAddedFragments.size() % 2 == 0 ? R.id.companyCategoriesFirstContainer : R.id.companyCategoriesSecondContainer;
-		}
-		else
-		{
-			// Just one container for phones
-			containerId = R.id.companyCategoriesFirstContainer;
-		}
-
-		ft.add(containerId, fragment, tag);
-		this.currentlyAddedFragments.add(tag);
 	}
 
 	private void removeCurrentlyAddedFragments()
@@ -134,5 +119,28 @@ public class CompanyCategoriesFragment extends BaseProfileFragment implements Pr
 		ft.commit();
 		getChildFragmentManager().executePendingTransactions();
 		this.currentlyAddedFragments.clear();
+	}
+
+	private CategoriesFragment getCategoriesFragment(CompanyCategory companyCategory)
+	{
+		return (CategoriesFragment) getChildFragmentManager().findFragmentByTag(companyCategory.getFragmentTag());
+	}
+
+	private void addCategoryFragment(Fragment fragment, String tag)
+	{
+		int containerId;
+		if (getActivityInterface() != null && getActivityInterface().getIsLargeScreen())
+		{
+			// Want to go First -> Second -> First -> Second
+			containerId = currentlyAddedFragments.size() % 2 == 0 ? R.id.companyCategoriesFirstContainer : R.id.companyCategoriesSecondContainer;
+		}
+		else
+		{
+			// Just one container for phones
+			containerId = R.id.companyCategoriesFirstContainer;
+		}
+
+		getChildFragmentManager().beginTransaction().add(containerId, fragment, tag).commit();
+		this.currentlyAddedFragments.add(tag);
 	}
 }

@@ -10,9 +10,8 @@ import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
-import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 
-public class CompanyAddressFragment extends BaseProfileFragment implements ProfileDataChangedCallbacks
+public class CompanyAddressFragment extends BaseProfileFragment
 {
 	private TextView companyAddress;
 
@@ -46,7 +45,7 @@ public class CompanyAddressFragment extends BaseProfileFragment implements Profi
 
 	private void updateView()
 	{
-		CompanyModel model = getCompanyModel();
+		CompanyModel model = getCompany();
 		if (model != null)
 		{
 			this.companyAddress.setText(model.getFormattedAddress());

@@ -11,20 +11,17 @@ import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
-import com.openbox.realcomm3.base.BaseFragment;
+import com.openbox.realcomm3.base.BaseScheduleFragment;
 import com.openbox.realcomm3.database.models.VenueModel;
 import com.openbox.realcomm3.utilities.adapters.TalkListAdapter;
-import com.openbox.realcomm3.utilities.interfaces.ScheduleDataInterface;
 
-public class VenueFragment extends BaseFragment
+public class VenueFragment extends BaseScheduleFragment
 {
 	private static final String VENUE_ID_KEY = "venueIdKey";
 
 	private TextView venueTextView;
 	private ListView talkListView;
 	private TalkListAdapter talkAdapter;
-
-	private ScheduleDataInterface scheduleDataInterface;
 
 	public static VenueFragment newInstance(Date talkDate, int venueId)
 	{
@@ -36,26 +33,6 @@ public class VenueFragment extends BaseFragment
 		fragment.setArguments(args);
 
 		return fragment;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-
-		if (getParentFragment() instanceof ScheduleDataInterface)
-		{
-			this.scheduleDataInterface = (ScheduleDataInterface) getParentFragment();
-		}
-	}
-
-	@Override
-	public void onDetach()
-	{
-		super.onDetach();
-
-		// Clean up
-		this.scheduleDataInterface = null;
 	}
 
 	@Override
@@ -72,11 +49,12 @@ public class VenueFragment extends BaseFragment
 		this.talkAdapter = new TalkListAdapter(getActivity(), application);
 		this.talkListView.setAdapter(this.talkAdapter);
 
-		if (this.scheduleDataInterface != null)
+		if (getScheduleDataInterface() != null)
 		{
-			Bundle args = getArguments();
-			VenueModel venue = this.scheduleDataInterface
-				.getVenueForDate((Date) args.getSerializable(TalkDayFragment.TALK_DATE_KEY), args.getInt(VENUE_ID_KEY));
+			VenueModel venue = getScheduleDataInterface().getVenueForDate(
+				(Date) getArguments().getSerializable(TalkDayFragment.TALK_DATE_KEY),
+				getArguments().getInt(VENUE_ID_KEY));
+
 			if (venue != null)
 			{
 				this.venueTextView.setText(venue.getRoom());

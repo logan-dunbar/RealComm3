@@ -2,7 +2,6 @@ package com.openbox.realcomm3.fragments;
 
 import java.util.Map;
 
-import android.app.Activity;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,12 +15,9 @@ import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
-import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
-public class ProximityFragment extends BaseFragment implements DataChangedCallbacks, AppModeChangedCallbacks
+public class ProximityFragment extends BaseFragment
 {
 	private static final String OFFLINE_HEADER = "OFFLINE";
 	private static final String EXHIBITION_AREA_HEADER = "EXHIBITION AREA";
@@ -100,12 +96,6 @@ public class ProximityFragment extends BaseFragment implements DataChangedCallba
 	}
 
 	@Override
-	public void onDataChanged()
-	{
-		// Stub. Not needed
-	}
-
-	@Override
 	public void onBeaconsUpdated()
 	{
 		updateView();
@@ -120,17 +110,12 @@ public class ProximityFragment extends BaseFragment implements DataChangedCallba
 		updateView();
 	}
 
-	@Override
-	public void onOnlineModeToOfflineMode()
-	{
-		// Stub. Not needed
-	}
-
 	/**********************************************************************************************
 	 * Private Helper Methods
 	 **********************************************************************************************/
 	private void updateView()
 	{
+		// TODO possibly re-do this
 		if (getDataInterface() != null && getAppModeInterface() != null)
 		{
 			AppMode currentMode = getAppModeInterface().getCurrentAppMode();

@@ -1,8 +1,6 @@
 package com.openbox.realcomm3.utilities.helpers;
 
 import com.openbox.realcomm3.utilities.animations.FlipAnimation;
-import com.openbox.realcomm3.utilities.animations.FlipAnimation.FlipDirection;
-import com.openbox.realcomm3.utilities.animations.FlipAnimation.ScaleUpDownEnum;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 
 import android.view.animation.AccelerateDecelerateInterpolator;

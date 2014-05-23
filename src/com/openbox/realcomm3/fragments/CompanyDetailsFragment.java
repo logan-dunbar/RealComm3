@@ -13,10 +13,8 @@ import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.utilities.helpers.BitmapHelper;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 
-public class CompanyDetailsFragment extends BaseProfileFragment implements ProfileDataChangedCallbacks, DataChangedCallbacks
+public class CompanyDetailsFragment extends BaseProfileFragment
 {
 	private static final String BOOTH_NUMBER_PREFIX = "BOOTH ";
 
@@ -52,7 +50,7 @@ public class CompanyDetailsFragment extends BaseProfileFragment implements Profi
 
 	private void updateView()
 	{
-		CompanyModel model = getCompanyModel();
+		CompanyModel model = getCompany();
 		if (model != null)
 		{
 			if (model.getCompanyLogo() != null)
@@ -77,24 +75,5 @@ public class CompanyDetailsFragment extends BaseProfileFragment implements Profi
 	public void onCompanyLoaded()
 	{
 		updateView();
-	}
-
-	@Override
-	public void onDataLoaded()
-	{
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void onDataChanged()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onBeaconsUpdated()
-	{
-		// TODO Do color stuff to be cool
 	}
 }

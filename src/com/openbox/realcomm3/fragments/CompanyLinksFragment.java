@@ -10,9 +10,8 @@ import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
-import com.openbox.realcomm3.utilities.interfaces.ProfileDataChangedCallbacks;
 
-public class CompanyLinksFragment extends BaseProfileFragment implements ProfileDataChangedCallbacks
+public class CompanyLinksFragment extends BaseProfileFragment
 {
 	private TextView companyLinks;
 
@@ -45,7 +44,7 @@ public class CompanyLinksFragment extends BaseProfileFragment implements Profile
 
 	private void updateView()
 	{
-		CompanyModel model = getCompanyModel();
+		CompanyModel model = getCompany();
 		if (model != null)
 		{
 			StringBuilder sb = new StringBuilder();

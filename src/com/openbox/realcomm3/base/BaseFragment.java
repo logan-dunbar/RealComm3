@@ -1,27 +1,46 @@
 package com.openbox.realcomm3.base;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.CustomAnimationListener;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
+import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
+import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
+import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
 import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 
-public class BaseFragment extends Fragment
+public class BaseFragment extends Fragment implements
+	DataChangedCallbacks,
+	AppModeChangedCallbacks,
+	ClearFocusInterface
 {
 	public static final int DEFAULT_ANIMATION_DURATION = 0;
 	public static final int DEFAULT_DELAY = 0;
 
-	private ActivityInterface activityListener;
+	/**********************************************************************************************
+	 * Fields
+	 **********************************************************************************************/
+	// Listeners/Interfaces
+	private ActivityInterface activityInterface;
 	private DataInterface dataInterface;
 	private AppModeInterface appModeInterface;
 
+	private final List<DataChangedCallbacks> dataChangedListeners = new ArrayList<>();
+	private final List<AppModeChangedCallbacks> appModeChangedListeners = new ArrayList<>();
+	private final List<ClearFocusInterface> clearFocusListeners = new ArrayList<>();
+
+	// TODO Wrap these into an AnimationValues object. This is just gross
 	private int inAnimationDuration = DEFAULT_ANIMATION_DURATION;
 	private int outAnimationDuration = DEFAULT_ANIMATION_DURATION;
 	private int inAnimationDelay = DEFAULT_DELAY;
@@ -35,9 +54,12 @@ public class BaseFragment extends Fragment
 	private int outFlipStartDegrees;
 	private int outFlipEndDegrees;
 
-	public ActivityInterface getActivityListener()
+	/**********************************************************************************************
+	 * Getters/Setters
+	 **********************************************************************************************/
+	public ActivityInterface getActivityInterface()
 	{
-		return activityListener;
+		return activityInterface;
 	}
 
 	public DataInterface getDataInterface()
@@ -48,6 +70,21 @@ public class BaseFragment extends Fragment
 	public AppModeInterface getAppModeInterface()
 	{
 		return appModeInterface;
+	}
+
+	public List<DataChangedCallbacks> getDataChangedListeners()
+	{
+		return dataChangedListeners;
+	}
+
+	public List<AppModeChangedCallbacks> getAppModeChangedListeners()
+	{
+		return appModeChangedListeners;
+	}
+
+	public List<ClearFocusInterface> getClearFocusListeners()
+	{
+		return clearFocusListeners;
 	}
 
 	public void setInAnimationDuration(int inAnimationDuration)
@@ -130,6 +167,9 @@ public class BaseFragment extends Fragment
 		this.outFlipEndDegrees = outFlipEndDegrees;
 	}
 
+	/**********************************************************************************************
+	 * Fragment Lifecycle Implements
+	 **********************************************************************************************/
 	@Override
 	public void onAttach(Activity activity)
 	{
@@ -137,7 +177,7 @@ public class BaseFragment extends Fragment
 
 		if (activity instanceof ActivityInterface)
 		{
-			this.activityListener = (ActivityInterface) activity;
+			this.activityInterface = (ActivityInterface) activity;
 		}
 
 		if (activity instanceof DataInterface)
@@ -157,59 +197,42 @@ public class BaseFragment extends Fragment
 		super.onDetach();
 
 		// Clean up
-		this.activityListener = null;
+		this.activityInterface = null;
 		this.dataInterface = null;
 		this.appModeInterface = null;
-	}
 
-	private static Animation createNoneAnimation(Fragment fragment, boolean enter)
-	{
-		Animation animation = null;
-		Fragment nextParentFragment;
-
-		// Get top most fragment (which has the animation)
-		while ((nextParentFragment = fragment.getParentFragment()) != null)
-		{
-			fragment = nextParentFragment;
-		}
-
-		// Create the None animation (which is AlphaAnimation from 1.0 to 1.0)
-		if (fragment instanceof BaseFragment && fragment.isRemoving())
-		{
-			BaseFragment baseFrag = (BaseFragment) fragment;
-
-			int duration;
-			int delay;
-			if (enter)
-			{
-				duration = baseFrag.getInAnimationDuration();
-				delay = baseFrag.getInAnimationDelay();
-			}
-			else
-			{
-				duration = baseFrag.getOutAnimationDuration();
-				delay = baseFrag.getOutAnimationDelay();
-			}
-
-			animation = AnimationHelper.getNoneAnimation(AnimationInterpolator.LINEAR, duration, delay, null);
-		}
-
-		return animation;
+		this.dataChangedListeners.clear();
+		this.appModeChangedListeners.clear();
+		this.clearFocusListeners.clear();
 	}
 
 	@Override
 	public Animation onCreateAnimation(int transit, boolean enter, int nextAnim)
 	{
 		// Hack to prevent child fragments from disappearing when the parent is removed (for the profile page).
-		if (isVisible() && getParentFragment() != null && this instanceof BaseProfileFragment)
-		{
-			return createNoneAnimation(getParentFragment(), enter);
-		}
+		// if (isVisible() && getParentFragment() != null && this instanceof BaseProfileFragment)
+		// {
+		// return createNoneAnimation(getParentFragment(), enter);
+		// }
 
 		Animation animation;
 		// TODO going to need to check this, how to get values/parameters in here, check what transit is?
 		switch (nextAnim)
 		{
+			case R.id.noneInAnimation:
+				animation = AnimationHelper.getNoneAnimation(
+					this.inAnimationInterpolator,
+					this.inAnimationDuration,
+					this.inAnimationDelay,
+					this.inAnimationCompleteListener);
+				break;
+			case R.id.noneOutAnimation:
+				animation = AnimationHelper.getNoneAnimation(
+					this.outAnimationInterpolator,
+					this.outAnimationDuration,
+					this.outAnimationDelay,
+					this.outAnimationCompleteListener);
+				break;
 			case R.id.fadeInAnimation:
 				animation = AnimationHelper.getFadeInAnimation(
 					this.inAnimationInterpolator,
@@ -294,4 +317,101 @@ public class BaseFragment extends Fragment
 		return set;
 	}
 
+	/**********************************************************************************************
+	 * Data Changed Callbacks Implements
+	 **********************************************************************************************/
+	@Override
+	public void onDataChanged()
+	{
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onDataChanged();
+		}
+	}
+
+	@Override
+	public void onDataLoaded()
+	{
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onDataLoaded();
+		}
+	}
+
+	@Override
+	public void onBeaconsUpdated()
+	{
+		for (DataChangedCallbacks listener : this.dataChangedListeners)
+		{
+			listener.onBeaconsUpdated();
+		}
+	}
+
+	/**********************************************************************************************
+	 * App Mode Changed Callbacks Implements
+	 **********************************************************************************************/
+	@Override
+	public void onAppModeChanged()
+	{
+		for (AppModeChangedCallbacks listener : this.appModeChangedListeners)
+		{
+			listener.onAppModeChanged();
+		}
+	}
+
+	@Override
+	public void onOnlineModeToOfflineMode()
+	{
+		// TODO not needed and should be removed
+	}
+
+	/**********************************************************************************************
+	 * Clear Focus Interface Implements
+	 **********************************************************************************************/
+	@Override
+	public List<View> getViewsToClearFocus()
+	{
+		List<View> views = new ArrayList<>();
+		for (ClearFocusInterface listener : this.clearFocusListeners)
+		{
+			views.addAll(listener.getViewsToClearFocus());
+		}
+
+		return views;
+	}
+
+	private static Animation createNoneAnimation(Fragment fragment, boolean enter)
+	{
+		Animation animation = null;
+		Fragment nextParentFragment;
+
+		// Get top most fragment (which has the animation)
+		while ((nextParentFragment = fragment.getParentFragment()) != null)
+		{
+			fragment = nextParentFragment;
+		}
+
+		// Create the None animation (which is AlphaAnimation from 1.0 to 1.0)
+		if (fragment instanceof BaseFragment && fragment.isRemoving())
+		{
+			BaseFragment baseFrag = (BaseFragment) fragment;
+
+			int duration;
+			int delay;
+			if (enter)
+			{
+				duration = baseFrag.getInAnimationDuration();
+				delay = baseFrag.getInAnimationDelay();
+			}
+			else
+			{
+				duration = baseFrag.getOutAnimationDuration();
+				delay = baseFrag.getOutAnimationDelay();
+			}
+
+			animation = AnimationHelper.getNoneAnimation(AnimationInterpolator.LINEAR, duration, delay, null);
+		}
+
+		return animation;
+	}
 }

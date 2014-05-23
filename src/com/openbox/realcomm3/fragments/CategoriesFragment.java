@@ -7,26 +7,28 @@ import android.text.style.BulletSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
+import com.openbox.realcomm3.database.models.CompanyModel;
+import com.openbox.realcomm3.utilities.enums.CompanyCategory;
 
 public class CategoriesFragment extends BaseProfileFragment
 {
-	private static final String CATEGORY_HEADER_KEY = "categoryHeaderKey";
-	private static final String CATEGORY_DETAILS_KEY = "categoryDetailsKey";
+	private static final String COMPANY_CATEGORY_KEY = "companyCategoryKey";
 
 	private static final int BULLET_SPACING = 10;
 
-	public static CategoriesFragment newInstance(String categoryHeader, String categoryDetails)
+	public static CategoriesFragment newInstance(CompanyCategory companyCategory)
 	{
 		CategoriesFragment fragment = new CategoriesFragment();
 
 		Bundle args = new Bundle();
-		args.putString(CATEGORY_HEADER_KEY, categoryHeader);
-		args.putString(CATEGORY_DETAILS_KEY, categoryDetails);
+		args.putSerializable(COMPANY_CATEGORY_KEY, companyCategory);
 		fragment.setArguments(args);
 
 		return fragment;
@@ -36,7 +38,7 @@ public class CategoriesFragment extends BaseProfileFragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		// This allows multiple fragments to be added without covering each other
-		View view = inflater.inflate(R.layout.fragment_categories, null);
+		View view = inflater.inflate(R.layout.fragment_categories, container, false);
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 
@@ -46,24 +48,39 @@ public class CategoriesFragment extends BaseProfileFragment
 		header.setTypeface(application.getExo2FontBold());
 		details.setTypeface(application.getExo2Font());
 
-		// Do stuff here
-		header.setText(getArguments().getString(CATEGORY_HEADER_KEY));
-
-		String categoryDetailsString = getArguments().getString(CATEGORY_DETAILS_KEY);
-		String[] categoryDetails = categoryDetailsString.split("[\\s]*,[\\s]*");
-
-		String newLine = System.getProperty("line.separator");
-		CharSequence spannedCategories = "";
-		for (String categoryDetail : categoryDetails)
+		CompanyCategory companyCategory = (CompanyCategory) getArguments().getSerializable(COMPANY_CATEGORY_KEY);
+		CompanyModel model = getCompany();
+		if (companyCategory != null && model != null)
 		{
-			categoryDetail = categoryDetail + newLine;
-			SpannableString span = new SpannableString(categoryDetail);
-			span.setSpan(new BulletSpan(BULLET_SPACING), 0, categoryDetail.length(), 0);
-			spannedCategories = TextUtils.concat(spannedCategories, span);
+			header.setText(companyCategory.getHeader());
+
+			String categoryDetailsString = model.getCompanyCategoryDetails(companyCategory).trim();
+			String[] categoryDetails = categoryDetailsString.split("[\\s]*,[\\s]*");
+
+			String newLine = System.getProperty("line.separator");
+			CharSequence spannedCategories = "";
+			for (int i = 0; i < categoryDetails.length; i++)
+			{
+				if (categoryDetails.length > 1 && i < categoryDetails.length - 1)
+				{
+					categoryDetails[i] = categoryDetails[i] + newLine;
+				}
+
+				SpannableString span = new SpannableString(categoryDetails[i]);
+				span.setSpan(new BulletSpan(BULLET_SPACING), 0, categoryDetails[i].length(), 0);
+				spannedCategories = TextUtils.concat(spannedCategories, span);
+			}
+
+			details.setText(spannedCategories);
 		}
 
-		details.setText(spannedCategories);
-
 		return view;
+	}
+
+	public void updateIsLast()
+	{
+		MarginLayoutParams params = (MarginLayoutParams) getView().getLayoutParams();
+		params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, 0);
+		getView().requestLayout();
 	}
 }

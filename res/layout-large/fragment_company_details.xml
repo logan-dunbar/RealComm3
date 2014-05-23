@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/companyDetailsMargin"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/companyLogoImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/companyDetailsCompanyLogoHeight"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="@dimen/companyDetailsSpacingMargin"
+            android:background="@drawable/rounded_booth_company_logo"
+            android:contentDescription="@string/logoImageDescription" />
+
+        <TextView
+            android:id="@+id/companyNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/companyLogoImageView"
+            android:textColor="@color/white"
+            android:textSize="@dimen/companyDetailsCompanyNameTextSize" />
+
+        <TextView
+            android:id="@+id/boothNumberTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/companyNameTextView"
+            android:layout_toRightOf="@+id/companyLogoImageView"
+            android:textColor="@color/white"
+            android:textSize="@dimen/companyDetailsBoothNumberTextSize" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/companyDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/companyDetailsSpacingMargin"
+        android:textColor="@color/white"
+        android:textSize="@dimen/companyDetailsDetailsTextSize" />
+
+</LinearLayout>

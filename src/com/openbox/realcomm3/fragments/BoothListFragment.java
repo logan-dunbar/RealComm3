@@ -6,12 +6,7 @@ import java.util.List;
 import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.RealcommPage;
-import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
-import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseFragment;
@@ -19,7 +14,6 @@ import com.openbox.realcomm3.controls.ClearableEditText;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.utilities.adapters.BoothListAdapter;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -36,10 +30,7 @@ import android.widget.ListView;
 public class BoothListFragment extends BaseFragment implements
 	TextWatcher,
 	OnItemClickListener,
-	ClearFocusInterface,
-	DataChangedCallbacks,
-	OnClickListener,
-	AppModeChangedCallbacks
+	OnClickListener
 {
 	public static final String TAG = "boothListFragment";
 
@@ -55,8 +46,6 @@ public class BoothListFragment extends BaseFragment implements
 
 	private BoothSortMode currentSortMode;
 
-	private DataInterface dataInterface;
-
 	public static BoothListFragment newInstance()
 	{
 		BoothListFragment fragment = new BoothListFragment();
@@ -66,26 +55,6 @@ public class BoothListFragment extends BaseFragment implements
 	/**********************************************************************************************
 	 * Fragment Lifecycle Implements
 	 **********************************************************************************************/
-	@Override
-	public void onAttach(Activity activity)
-	{
-		super.onAttach(activity);
-
-		if (activity instanceof DataInterface)
-		{
-			this.dataInterface = (DataInterface) activity;
-		}
-	}
-
-	@Override
-	public void onDetach()
-	{
-		super.onDetach();
-
-		// Clean up
-		this.dataInterface = null;
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -116,7 +85,6 @@ public class BoothListFragment extends BaseFragment implements
 		this.boothAdapter = new BoothListAdapter(getActivity(), (RealCommApplication) getActivity().getApplication());
 		this.boothListView.setAdapter(this.boothAdapter);
 
-		// TODO: check this default
 		this.currentSortMode = BoothSortMode.NEAR_ME;
 		if (savedInstanceState != null)
 		{
@@ -149,27 +117,7 @@ public class BoothListFragment extends BaseFragment implements
 	}
 
 	/**********************************************************************************************
-	 * Booth List Interface Implements
-	 **********************************************************************************************/
-	// @Override
-	public void updateList()
-	{
-		// TODO maybe check how many times this is being run, so as not to be wasting processing power
-		if (this.dataInterface != null && this.boothAdapter != null)
-		{
-			this.boothAdapter.setItems(this.dataInterface.getBoothModelList(this.currentSortMode));
-		}
-	}
-
-	// @Override
-	public void toggleSortMode()
-	{
-		this.currentSortMode = this.currentSortMode == BoothSortMode.NEAR_ME ? BoothSortMode.A_TO_Z : BoothSortMode.NEAR_ME;
-		updateList();
-	}
-
-	/**********************************************************************************************
-	 * Data Changed Callbacks
+	 * Data Changed Callbacks Implements
 	 **********************************************************************************************/
 	@Override
 	public void onDataLoaded()
@@ -190,23 +138,16 @@ public class BoothListFragment extends BaseFragment implements
 	}
 
 	/**********************************************************************************************
-	 * OnItemClick Implements
+	 * Click Implements
 	 **********************************************************************************************/
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 	{
 		BoothModel booth = this.boothAdapter.getItem(position);
-		if (getActivityListener() != null && booth != null)
+		if (getActivityInterface() != null && booth != null)
 		{
-			getActivityListener().setSelectedBooth(booth.getBoothId(), booth.getCompanyId());
-			if (getActivityListener().getIsLargeScreen())
-			{
-				getActivityListener().changePage(RealcommPage.PROFILE_PAGE);
-			}
-			else
-			{
-				getActivityListener().changePage(RealcommPhonePage.PROFILE_PAGE);
-			}
+			getActivityInterface().setSelectedBooth(booth.getBoothId(), booth.getCompanyId());
+			getActivityInterface().changePage(RealcommPage.PROFILE_PAGE);
 		}
 	}
 
@@ -256,21 +197,10 @@ public class BoothListFragment extends BaseFragment implements
 	{
 		return Arrays.asList((View) this.boothFilter);
 	}
-
-	private void updateButtons()
-	{
-		if (this.currentSortMode == BoothSortMode.A_TO_Z)
-		{
-			this.aToZButton.setSelected(true);
-			this.nearMeButton.setSelected(false);
-		}
-		else if (this.currentSortMode == BoothSortMode.NEAR_ME)
-		{
-			this.aToZButton.setSelected(false);
-			this.nearMeButton.setSelected(true);
-		}
-	}
-
+	
+	/**********************************************************************************************
+	 * App Mode Changed Callbacks Implements
+	 **********************************************************************************************/
 	@Override
 	public void onAppModeChanged()
 	{
@@ -292,10 +222,29 @@ public class BoothListFragment extends BaseFragment implements
 		}
 	}
 
-	@Override
-	public void onOnlineModeToOfflineMode()
+	/**********************************************************************************************
+	 * Private Helper Methods
+	 **********************************************************************************************/
+	private void updateButtons()
 	{
-		// TODO Auto-generated method stub
+		if (this.currentSortMode == BoothSortMode.A_TO_Z)
+		{
+			this.aToZButton.setSelected(true);
+			this.nearMeButton.setSelected(false);
+		}
+		else if (this.currentSortMode == BoothSortMode.NEAR_ME)
+		{
+			this.aToZButton.setSelected(false);
+			this.nearMeButton.setSelected(true);
+		}
+	}
 
+	private void updateList()
+	{
+		// TODO maybe check how many times this is being run, so as not to be wasting processing power
+		if (getDataInterface() != null && this.boothAdapter != null)
+		{
+			this.boothAdapter.setItems(getDataInterface().getBoothModelList(this.currentSortMode));
+		}
 	}
 }

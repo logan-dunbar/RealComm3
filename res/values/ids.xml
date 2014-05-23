@@ -5,6 +5,8 @@
     <item name="scheduleTabContent" type="id"></item>
     <item name="frontFragment" type="id"></item>
     <item name="backFragment" type="id"></item>
+    <item name="noneInAnimation" type="id"></item>
+    <item name="noneOutAnimation" type="id"></item>
     <item name="fadeInAnimation" type="id"></item>
     <item name="fadeOutAnimation" type="id"></item>
     <item name="slideInRightAnimation" type="id"></item>
