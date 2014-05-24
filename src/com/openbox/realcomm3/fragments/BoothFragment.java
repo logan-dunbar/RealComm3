@@ -109,24 +109,27 @@ public class BoothFragment extends BaseFragment implements OnClickListener
 			boothClickableLayout.setOnClickListener(this);
 		}
 
-		ViewTreeObserver observer = details.getViewTreeObserver();
-		observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
+		if (getArguments().getBoolean(IS_BIG_KEY))
 		{
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onGlobalLayout()
+			ViewTreeObserver observer = details.getViewTreeObserver();
+			observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
 			{
-				int maxLines = details.getHeight() / details.getLineHeight();
-				details.setMaxLines(maxLines);
-				details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-			}
-		});
+				@SuppressWarnings("deprecation")
+				@Override
+				public void onGlobalLayout()
+				{
+					int maxLines = details.getHeight() / details.getLineHeight();
+					details.setMaxLines(maxLines);
+					details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				}
+			});
+		}
 
 		updateBooth();
 
 		return view;
 	}
-	
+
 	/**********************************************************************************************
 	 * Click Implements
 	 **********************************************************************************************/
