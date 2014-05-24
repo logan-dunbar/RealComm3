@@ -37,7 +37,6 @@ public class CategoriesFragment extends BaseProfileFragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		// This allows multiple fragments to be added without covering each other
 		View view = inflater.inflate(R.layout.fragment_categories, container, false);
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
