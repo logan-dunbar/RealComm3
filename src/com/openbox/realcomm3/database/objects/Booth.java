@@ -11,7 +11,7 @@ public class Booth implements Serializable
 {
 	// Generated Serializable UID
 	private static final long serialVersionUID = 3994085026109724657L;
-	
+
 	public static final Class<?> ID_CLASS = Integer.class;
 
 	/**********************************************************************************************
@@ -31,6 +31,10 @@ public class Booth implements Serializable
 	@SerializedName(BOOTH_ID_COLUMN_NAME)
 	private int boothId;
 
+	@DatabaseField(columnName = Company.COMPANY_ID_COLUMN_NAME)
+	@SerializedName(Company.COMPANY_ID_COLUMN_NAME)
+	private int companyId;
+
 	@DatabaseField(columnName = UUID_COLUMN_NAME)
 	@SerializedName(UUID_COLUMN_NAME)
 	private String UUID;
@@ -46,7 +50,7 @@ public class Booth implements Serializable
 	@DatabaseField(columnName = NAME_COLUMN_NAME)
 	@SerializedName(NAME_COLUMN_NAME)
 	private String name;
-	
+
 	@DatabaseField(columnName = BOOTH_NUMBER_COLUMN_NAME)
 	@SerializedName(BOOTH_NUMBER_COLUMN_NAME)
 	private int boothNumber;
@@ -70,6 +74,17 @@ public class Booth implements Serializable
 		this.boothId = boothId;
 	}
 
+	// CompanyId
+	public int getCompanyId()
+	{
+		return companyId;
+	}
+
+	public void setCompanyId(int companyId)
+	{
+		this.companyId = companyId;
+	}
+
 	// UUID
 	public String getUUID()
 	{
@@ -80,7 +95,7 @@ public class Booth implements Serializable
 	{
 		this.UUID = UUID;
 	}
-	
+
 	// Major
 	public int getMajor()
 	{

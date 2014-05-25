@@ -20,7 +20,11 @@ public class Company implements Serializable
 	public static final String COMPANY_ID_COLUMN_NAME = "CompanyId";
 	public static final String NAME_COLUMN_NAME = "Name";
 	public static final String DESCRIPTION_COLUMN_NAME = "Description";
+	public static final String SHORT_DESCRIPTION_COLUMN_NAME = "ShortDescription";
 	public static final String WEBSITE_COLUMN_NAME = "Website";
+	public static final String RELATED_LINKS_COLUMN_NAME = "RelatedLinks";
+	public static final String CONFERENCE_NAME_COLUMN_NAME = "ConferenceName";
+	public static final String COUNTRY_COLUMN_NAME = "Country";
 	public static final String CITY_COLUMN_NAME = "City";
 	public static final String STATE_COLUMN_NAME = "State";
 	public static final String ADDRESS_1_COLUMN_NAME = "Address1";
@@ -28,11 +32,13 @@ public class Company implements Serializable
 	public static final String ADDRESS_3_COLUMN_NAME = "Address3";
 	public static final String POSTAL_CODE_COLUMN_NAME = "PostalCode";
 	public static final String FACEBOOK_COLUMN_NAME = "Facebook";
+	public static final String FACEBOOK_PROFILE_ID_COLUMN_NAME = "FacebookProfileId";
 	public static final String TWITTER_COLUMN_NAME = "Twitter";
 	public static final String LINKEDIN_COLUMN_NAME = "LinkedIn";
 	public static final String MAIN_CATEGORIES_COLUMN_NAME = "MainCategories";
 	public static final String SUB_CATEGORIES_COLUMN_NAME = "SubCategories";
 	public static final String TARGET_MARKETS_COLUMN_NAME = "TargetMarkets";
+	public static final String CLIENT_SAMPLING_COLUMN_NAME = "ClientSampling";
 	public static final String GEOGRAPHIC_MARKETS_COLUMN_NAME = "GeographicMarkets";
 
 	/**********************************************************************************************
@@ -50,9 +56,25 @@ public class Company implements Serializable
 	@SerializedName(DESCRIPTION_COLUMN_NAME)
 	private String description;
 
+	@DatabaseField(columnName = SHORT_DESCRIPTION_COLUMN_NAME)
+	@SerializedName(SHORT_DESCRIPTION_COLUMN_NAME)
+	private String shortDescription;
+
 	@DatabaseField(columnName = WEBSITE_COLUMN_NAME)
 	@SerializedName(WEBSITE_COLUMN_NAME)
 	private String website;
+
+	@DatabaseField(columnName = RELATED_LINKS_COLUMN_NAME)
+	@SerializedName(RELATED_LINKS_COLUMN_NAME)
+	private String relatedLinks;
+
+	@DatabaseField(columnName = CONFERENCE_NAME_COLUMN_NAME)
+	@SerializedName(CONFERENCE_NAME_COLUMN_NAME)
+	private String conferenceName;
+
+	@DatabaseField(columnName = COUNTRY_COLUMN_NAME)
+	@SerializedName(COUNTRY_COLUMN_NAME)
+	private String country;
 
 	@DatabaseField(columnName = CITY_COLUMN_NAME)
 	@SerializedName(CITY_COLUMN_NAME)
@@ -77,31 +99,39 @@ public class Company implements Serializable
 	@DatabaseField(columnName = POSTAL_CODE_COLUMN_NAME)
 	@SerializedName(POSTAL_CODE_COLUMN_NAME)
 	private String postalCode;
-	
+
 	@DatabaseField(columnName = FACEBOOK_COLUMN_NAME)
 	@SerializedName(FACEBOOK_COLUMN_NAME)
 	private String facebook;
-	
+
+	@DatabaseField(columnName = FACEBOOK_PROFILE_ID_COLUMN_NAME)
+	@SerializedName(FACEBOOK_PROFILE_ID_COLUMN_NAME)
+	private String facebookProfileId;
+
 	@DatabaseField(columnName = TWITTER_COLUMN_NAME)
 	@SerializedName(TWITTER_COLUMN_NAME)
 	private String twitter;
-	
+
 	@DatabaseField(columnName = LINKEDIN_COLUMN_NAME)
 	@SerializedName(LINKEDIN_COLUMN_NAME)
 	private String linkedIn;
-	
+
 	@DatabaseField(columnName = MAIN_CATEGORIES_COLUMN_NAME)
 	@SerializedName(MAIN_CATEGORIES_COLUMN_NAME)
 	private String mainCategories;
-	
+
 	@DatabaseField(columnName = SUB_CATEGORIES_COLUMN_NAME)
 	@SerializedName(SUB_CATEGORIES_COLUMN_NAME)
 	private String subCategories;
-	
+
 	@DatabaseField(columnName = TARGET_MARKETS_COLUMN_NAME)
 	@SerializedName(TARGET_MARKETS_COLUMN_NAME)
 	private String targetMarkets;
-	
+
+	@DatabaseField(columnName = CLIENT_SAMPLING_COLUMN_NAME)
+	@SerializedName(CLIENT_SAMPLING_COLUMN_NAME)
+	private String clientSampling;
+
 	@DatabaseField(columnName = GEOGRAPHIC_MARKETS_COLUMN_NAME)
 	@SerializedName(GEOGRAPHIC_MARKETS_COLUMN_NAME)
 	private String geographicMarkets;
@@ -144,6 +174,16 @@ public class Company implements Serializable
 		this.description = description;
 	}
 
+	public String getShortDescription()
+	{
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription)
+	{
+		this.shortDescription = shortDescription;
+	}
+
 	public String getWebsite()
 	{
 		return website;
@@ -152,6 +192,36 @@ public class Company implements Serializable
 	public void setWebsite(String website)
 	{
 		this.website = website;
+	}
+
+	public String getRelatedLinks()
+	{
+		return relatedLinks;
+	}
+
+	public void setRelatedLinks(String relatedLinks)
+	{
+		this.relatedLinks = relatedLinks;
+	}
+
+	public String getConferenceName()
+	{
+		return conferenceName;
+	}
+
+	public void setConferenceName(String conferenceName)
+	{
+		this.conferenceName = conferenceName;
+	}
+
+	public String getCountry()
+	{
+		return country;
+	}
+
+	public void setCountry(String country)
+	{
+		this.country = country;
 	}
 
 	public String getCity()
@@ -224,6 +294,16 @@ public class Company implements Serializable
 		this.facebook = facebook;
 	}
 
+	public String getFacebookProfileId()
+	{
+		return facebookProfileId;
+	}
+
+	public void setFacebookProfileId(String facebookProfileId)
+	{
+		this.facebookProfileId = facebookProfileId;
+	}
+
 	public String getTwitter()
 	{
 		return twitter;
@@ -272,6 +352,16 @@ public class Company implements Serializable
 	public void setTargetMarkets(String targetMarkets)
 	{
 		this.targetMarkets = targetMarkets;
+	}
+
+	public String getClientSampling()
+	{
+		return clientSampling;
+	}
+
+	public void setClientSampling(String clientSampling)
+	{
+		this.clientSampling = clientSampling;
 	}
 
 	public String getGeographicMarkets()

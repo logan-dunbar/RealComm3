@@ -12,12 +12,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.openbox.realcomm3.R;
-import com.openbox.realcomm3.base.BaseBoothFlipperFragment;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.FragmentHelper;
-import com.openbox.realcomm3.utilities.helpers.ToastHelper;
 import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.DashboardPhoneInterface;
 import com.openbox.realcomm3.utilities.managers.RealcommPhonePageManager;
@@ -174,6 +172,31 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 	}
 
 	@Override
+	public void showBoothExploreAndHideInfoPage()
+	{
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getChildFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+
+		if (infoFragment != null && infoFragment.isVisible() && boothExploreFragment != null)
+		{
+			// Out
+			infoFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			infoFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			FragmentHelper.showAndHideFragments(
+				getChildFragmentManager(),
+				boothExploreFragment,
+				infoFragment,
+				R.id.fadeInAnimation,
+				R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
 	public void showBoothListAndHideBoothExplore()
 	{
 		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getChildFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
@@ -218,6 +241,31 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 				getChildFragmentManager(),
 				boothListFragment,
 				scheduleFragment,
+				R.id.fadeInAnimation,
+				R.id.fadeOutAnimation);
+		}
+	}
+
+	@Override
+	public void showBoothListAndHideInfoPage()
+	{
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
+		BoothListFragment boothListFragment = (BoothListFragment) getChildFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+
+		if (infoFragment != null && infoFragment.isVisible() && boothListFragment != null)
+		{
+			// Out
+			infoFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			infoFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothListFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			FragmentHelper.showAndHideFragments(
+				getChildFragmentManager(),
+				boothListFragment,
+				infoFragment,
 				R.id.fadeInAnimation,
 				R.id.fadeOutAnimation);
 		}
@@ -274,52 +322,105 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 	}
 
 	@Override
-	public void resetTimer()
+	public void showSchedulePageAndHideInfoPage()
 	{
-		if (this.boothFlipperListener != null)
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getChildFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+
+		if (infoFragment != null && infoFragment.isVisible() && scheduleFragment != null)
 		{
-			this.boothFlipperListener.resetTimer();
+			// Out
+			infoFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			infoFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			scheduleFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			scheduleFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			FragmentHelper.showAndHideFragments(
+				getChildFragmentManager(),
+				scheduleFragment,
+				infoFragment,
+				R.id.fadeInAnimation,
+				R.id.fadeOutAnimation);
+		}
+
+	}
+
+	@Override
+	public void showInfoPageAndHideBoothExplore()
+	{
+		BoothExploreFragment boothExploreFragment = (BoothExploreFragment) getChildFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
+
+		if (boothExploreFragment != null && boothExploreFragment.isVisible() && infoFragment != null)
+		{
+			// Out
+			boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			infoFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			infoFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			FragmentHelper.showAndHideFragments(
+				getChildFragmentManager(),
+				infoFragment,
+				boothExploreFragment,
+				R.id.fadeInAnimation,
+				R.id.fadeOutAnimation);
 		}
 	}
 
-	// @Override
-	public void initNavigationDrawer(View view)
+	@Override
+	public void showInfoPageAndHideBoothList()
 	{
-		this.navigationDrawer = (LinearLayout) view.findViewById(R.id.navigationDrawerContainer);
+		BoothListFragment boothListFragment = (BoothListFragment) getChildFragmentManager().findFragmentByTag(BoothListFragment.TAG);
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
 
-		Button exploreButton = (Button) view.findViewById(R.id.exploreButton);
-		Button findButton = (Button) view.findViewById(R.id.findButton);
-		Button scheduleButton = (Button) view.findViewById(R.id.scheduleButton);
-		Button infoButton = (Button) view.findViewById(R.id.infoButton);
+		if (boothListFragment != null && boothListFragment.isVisible() && infoFragment != null)
+		{
+			// Out
+			boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
 
-		exploreButton.setOnClickListener(this);
-		findButton.setOnClickListener(this);
-		scheduleButton.setOnClickListener(this);
-		infoButton.setOnClickListener(this);
+			// In
+			infoFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			infoFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
 
-		this.navigationButtons.add(exploreButton);
-		this.navigationButtons.add(findButton);
-		this.navigationButtons.add(scheduleButton);
-		this.navigationButtons.add(infoButton);
+			FragmentHelper.showAndHideFragments(
+				getChildFragmentManager(),
+				infoFragment,
+				boothListFragment,
+				R.id.fadeInAnimation,
+				R.id.fadeOutAnimation);
+		}
 	}
 
-	// @Override
-	// public void showNavigationDrawer()
-	// {
-	// // if (this.navigationDrawer != null)
-	// // {
-	// // this.navigationDrawer.setVisibility(View.VISIBLE);
-	// // }
-	// }
-	//
-	// @Override
-	// public void hideNavigationDrawer()
-	// {
-	// // if (this.navigationDrawer != null)
-	// // {
-	// // this.navigationDrawer.setVisibility(View.GONE);
-	// // }
-	// }
+	@Override
+	public void showInfoPageAndHideSchedulePage()
+	{
+		ScheduleFragment scheduleFragment = (ScheduleFragment) getChildFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
+
+		if (scheduleFragment != null && scheduleFragment.isVisible() && infoFragment != null)
+		{
+			// Out
+			scheduleFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			scheduleFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			// In
+			infoFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
+			infoFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+
+			FragmentHelper.showAndHideFragments(
+				getChildFragmentManager(),
+				infoFragment,
+				scheduleFragment,
+				R.id.fadeInAnimation,
+				R.id.fadeOutAnimation);
+		}
+	}
 
 	@Override
 	public void selectPageButton()
@@ -335,6 +436,18 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 			{
 				button.setSelected(false);
 			}
+		}
+	}
+
+	/**********************************************************************************************
+	 * Booth Flipper Interface Implements
+	 **********************************************************************************************/
+	@Override
+	public void resetTimer()
+	{
+		if (this.boothFlipperListener != null)
+		{
+			this.boothFlipperListener.resetTimer();
 		}
 	}
 
@@ -365,8 +478,10 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 				}
 				break;
 			case R.id.infoButton:
-				// TODO
-				ToastHelper.showLongMessage(getActivity(), "Still implementing...");
+				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.INFO_PAGE)
+				{
+					changePage(RealcommPhonePage.INFO_PAGE);
+				}
 				break;
 		}
 	}
@@ -382,11 +497,32 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 		this.phonePageManager = new RealcommPhonePageManager(startingPhonePage, this);
 	}
 
+	private void initNavigationDrawer(View view)
+	{
+		this.navigationDrawer = (LinearLayout) view.findViewById(R.id.navigationDrawerContainer);
+
+		Button exploreButton = (Button) view.findViewById(R.id.exploreButton);
+		Button findButton = (Button) view.findViewById(R.id.findButton);
+		Button scheduleButton = (Button) view.findViewById(R.id.scheduleButton);
+		Button infoButton = (Button) view.findViewById(R.id.infoButton);
+
+		exploreButton.setOnClickListener(this);
+		findButton.setOnClickListener(this);
+		scheduleButton.setOnClickListener(this);
+		infoButton.setOnClickListener(this);
+
+		this.navigationButtons.add(exploreButton);
+		this.navigationButtons.add(findButton);
+		this.navigationButtons.add(scheduleButton);
+		this.navigationButtons.add(infoButton);
+	}
+
 	private void initializeFragments()
 	{
 		initializeBoothExploreFragment();
 		initializeBoothListFragment();
 		initializeScheduleFragment();
+		initializeInfoFragment();
 		getChildFragmentManager().executePendingTransactions();
 	}
 
@@ -414,6 +550,7 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 
 			getDataChangedListeners().add(boothListFragment);
 			getClearFocusListeners().add(boothListFragment);
+			getAppModeChangedListeners().add(boothListFragment);
 		}
 	}
 
@@ -426,6 +563,16 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 			FragmentHelper.addAndHideFragment(getChildFragmentManager(), R.id.phonePageContainer, scheduleFragment, ScheduleFragment.TAG);
 
 			getDataChangedListeners().add(scheduleFragment);
+		}
+	}
+
+	private void initializeInfoFragment()
+	{
+		InfoFragment infoFragment = (InfoFragment) getChildFragmentManager().findFragmentByTag(InfoFragment.TAG);
+		if (infoFragment == null)
+		{
+			infoFragment = InfoFragment.newInstance();
+			FragmentHelper.addAndHideFragment(getChildFragmentManager(), R.id.phonePageContainer, infoFragment, InfoFragment.TAG);
 		}
 	}
 }

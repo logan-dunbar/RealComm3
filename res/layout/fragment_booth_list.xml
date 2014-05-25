@@ -52,40 +52,34 @@
         </FrameLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/boothHeaderHeight"
+        android:background="@drawable/rounded_booth_header"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true" >
+
+        <com.openbox.realcomm3.controls.ClearableEditText
+            android:id="@+id/boothFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/icon_search"
+            android:hint="@string/boothFilterHint"
+            android:imeOptions="actionDone"
+            android:inputType="textCapWords|textNoSuggestions"
+            android:textColor="@color/opaque_blue"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/textSize20"
+            custom:clearable="true" >
+        </com.openbox.realcomm3.controls.ClearableEditText>
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/boothListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/rounded_booth_header"
-        android:orientation="vertical" >
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/boothHeaderHeight"
-            android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true" >
-
-            <com.openbox.realcomm3.controls.ClearableEditText
-                android:id="@+id/boothFilter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:drawableLeft="@drawable/icon_search"
-                android:hint="@string/boothFilterHint"
-                android:imeOptions="actionDone"
-                android:inputType="textCapWords|textNoSuggestions"
-                android:textColor="@color/opaque_blue"
-                android:textCursorDrawable="@null"
-                android:textSize="@dimen/textSize20"
-                custom:clearable="true" >
-            </com.openbox.realcomm3.controls.ClearableEditText>
-        </FrameLayout>
-
-        <ListView
-            android:id="@+id/boothListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/rounded_booth_background" >
-        </ListView>
-    </LinearLayout>
+        android:background="@drawable/rounded_booth_background" >
+    </ListView>
 
 </LinearLayout>

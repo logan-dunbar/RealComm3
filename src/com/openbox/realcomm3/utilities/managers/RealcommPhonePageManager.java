@@ -37,53 +37,22 @@ public class RealcommPhonePageManager
 			case INITIALIZING:
 				// Should not get here
 				break;
-			// case SPLASH_SCREEN:
-			// changePageToSplashScreen(newPage);
-			// break;
 			case BOOTH_EXPLORE:
 				changePageToBoothExplore(newPage);
 				break;
 			case BOOTH_LIST:
 				changePageToBoothList(newPage);
 				break;
-			// case PROFILE_PAGE:
-			// changePageToProfilePage(newPage);
-			// break;
 			case SCHEDULE_PAGE:
 				changePageToSchedulePage(newPage);
+				break;
+			case INFO_PAGE:
+				changePageToInfoPage(newPage);
 				break;
 			default:
 				break;
 		}
 	}
-
-	// private void changePageToSplashScreen(RealcommPhonePage newPage)
-	// {
-	// switch (this.currentPage)
-	// {
-	// // case INITIALIZING:
-	// // changeInitializingToSplashScreen();
-	// // changePage(newPage);
-	// // break;
-	// // case SPLASH_SCREEN:
-	// // // Stay here
-	// // break;
-	// case BOOTH_EXPLORE:
-	// // Shouldn't need this
-	// break;
-	// case BOOTH_LIST:
-	// // Shouldn't need this
-	// break;
-	// // case PROFILE_PAGE:
-	// // // Shouldn't need this
-	// // break;
-	// case SCHEDULE_PAGE:
-	// // Shouldn't need this
-	// break;
-	// default:
-	// break;
-	// }
-	// }
 
 	private void changePageToBoothExplore(RealcommPhonePage newPage)
 	{
@@ -93,10 +62,6 @@ public class RealcommPhonePageManager
 				changeInitializingToBoothExplore();
 				changePage(newPage);
 				break;
-			// case SPLASH_SCREEN:
-			// changeSplashScreenToBoothExplore();
-			// changePage(newPage);
-			// break;
 			case BOOTH_EXPLORE:
 				// Stay here
 				break;
@@ -104,12 +69,12 @@ public class RealcommPhonePageManager
 				changeBoothListToBoothExplore();
 				changePage(newPage);
 				break;
-			// case PROFILE_PAGE:
-			// changeProfilePageToBoothExplore();
-			// changePage(newPage);
-			// break;
 			case SCHEDULE_PAGE:
 				changeSchedulePageToBoothExplore();
+				changePage(newPage);
+				break;
+			case INFO_PAGE:
+				changeInfoPageToBoothExplore();
 				changePage(newPage);
 				break;
 			default:
@@ -124,9 +89,6 @@ public class RealcommPhonePageManager
 			case INITIALIZING:
 				// Shouldn't need this
 				break;
-			// case SPLASH_SCREEN:
-			// // Shouldn't need this
-			// break;
 			case BOOTH_EXPLORE:
 				changeBoothExploreToBoothList();
 				changePage(newPage);
@@ -134,47 +96,18 @@ public class RealcommPhonePageManager
 			case BOOTH_LIST:
 				// Stay here
 				break;
-			// case PROFILE_PAGE:
-			// changeProfilePageToBoothList();
-			// changePage(newPage);
-			// break;
 			case SCHEDULE_PAGE:
 				changeSchedulePageToBoothList();
+				changePage(newPage);
+				break;
+			case INFO_PAGE:
+				changeInfoPageToBoothList();
 				changePage(newPage);
 				break;
 			default:
 				break;
 		}
 	}
-
-	// private void changePageToProfilePage(RealcommPhonePage newPage)
-	// {
-	// switch (this.currentPage)
-	// {
-	// // case INITIALIZING:
-	// // // Shouldn't need this
-	// // break;
-	// // case SPLASH_SCREEN:
-	// // // Shouldn't need this
-	// // break;
-	// case BOOTH_EXPLORE:
-	// changeBoothExploreToProfilePage();
-	// changePage(newPage);
-	// break;
-	// case BOOTH_LIST:
-	// changeBoothListToProfilePage();
-	// changePage(newPage);
-	// break;
-	// // case PROFILE_PAGE:
-	// // // Stay here
-	// // break;
-	// case SCHEDULE_PAGE:
-	// // Shouldn't need this
-	// break;
-	// default:
-	// break;
-	// }
-	// }
 
 	private void changePageToSchedulePage(RealcommPhonePage newPage)
 	{
@@ -183,9 +116,6 @@ public class RealcommPhonePageManager
 			case INITIALIZING:
 				// Shouldn't need this
 				break;
-			// case SPLASH_SCREEN:
-			// // Shouldn't need this
-			// break;
 			case BOOTH_EXPLORE:
 				changeBoothExploreToSchedulePage();
 				changePage(newPage);
@@ -194,10 +124,38 @@ public class RealcommPhonePageManager
 				changeBoothListToSchedulePage();
 				changePage(newPage);
 				break;
-			// case PROFILE_PAGE:
-			// // Shouldn't need this
-			// break;
 			case SCHEDULE_PAGE:
+				// Stay here
+				break;
+			case INFO_PAGE:
+				changeInfoPageToSchedulePage();
+				changePage(newPage);
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void changePageToInfoPage(RealcommPhonePage newPage)
+	{
+		switch (this.currentPage)
+		{
+			case INITIALIZING:
+				// Shouldn't need this
+				break;
+			case BOOTH_EXPLORE:
+				changeBoothExploreToInfoPage();
+				changePage(newPage);
+				break;
+			case BOOTH_LIST:
+				changeBoothListToInfoPage();
+				changePage(newPage);
+				break;
+			case SCHEDULE_PAGE:
+				changeSchedulePageToInfoPage();
+				changePage(newPage);
+				break;
+			case INFO_PAGE:
 				// Stay here
 				break;
 			default:
@@ -205,47 +163,13 @@ public class RealcommPhonePageManager
 		}
 	}
 
-	// private void changeInitializingToSplashScreen()
-	// {
-	// // this.currentPage = RealcommPhonePage.SPLASH_SCREEN;
-	//
-	// if (this.dashboardPhoneListener != null)
-	// {
-	// // this.dashboardPhoneListener.showSplashScreenFragment();
-	// // this.dashboardPhoneListener.initializeFragments();
-	// }
-	// }
-
-	// private void changeSplashScreenToBoothExplore()
-	// {
-	// this.currentPage = RealcommPhonePage.BOOTH_EXPLORE;
-	//
-	// if (this.dashboardPhoneListener != null)
-	// {
-	// this.dashboardPhoneListener.initNavigationDrawer();
-	//
-	// // TODO could potentially animate or do something here.
-	// // although the entire fragment will be animating... something to think about
-	// // wait for the animation to finish and then animate it in?
-	// this.dashboardPhoneListener.selectPageButton();
-	// this.dashboardPhoneListener.showNavigationDrawer();
-	// this.dashboardPhoneListener.showBoothExploreAndRemoveSplashScreen();
-	// }
-	// }
-
 	private void changeInitializingToBoothExplore()
 	{
 		this.currentPage = RealcommPhonePage.BOOTH_EXPLORE;
 
 		if (this.dashboardPhoneListener != null)
 		{
-			// this.dashboardPhoneListener.initNavigationDrawer();
-
-			// TODO could potentially animate or do something here.
-			// although the entire fragment will be animating... something to think about
-			// wait for the animation to finish and then animate it in?
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showBoothExploreFromInitializing();
 		}
 	}
@@ -257,22 +181,9 @@ public class RealcommPhonePageManager
 		if (this.dashboardPhoneListener != null)
 		{
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showBoothExploreAndHideBoothList();
 		}
 	}
-
-	// private void changeProfilePageToBoothExplore()
-	// {
-	// this.currentPage = RealcommPhonePage.BOOTH_EXPLORE;
-	//
-	// if (this.dashboardPhoneListener != null)
-	// {
-	// this.dashboardPhoneListener.selectPageButton();
-	// this.dashboardPhoneListener.showNavigationDrawer();
-	// this.dashboardPhoneListener.showBoothExploreAndRemoveProfilePage();
-	// }
-	// }
 
 	private void changeSchedulePageToBoothExplore()
 	{
@@ -281,9 +192,20 @@ public class RealcommPhonePageManager
 		if (this.dashboardPhoneListener != null)
 		{
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showBoothExploreAndHideSchedulePage();
 		}
+	}
+
+	private void changeInfoPageToBoothExplore()
+	{
+		this.currentPage = RealcommPhonePage.BOOTH_EXPLORE;
+
+		if (this.dashboardPhoneListener != null)
+		{
+			this.dashboardPhoneListener.selectPageButton();
+			this.dashboardPhoneListener.showBoothExploreAndHideInfoPage();
+		}
+
 	}
 
 	private void changeBoothExploreToBoothList()
@@ -293,22 +215,9 @@ public class RealcommPhonePageManager
 		if (this.dashboardPhoneListener != null)
 		{
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showBoothListAndHideBoothExplore();
 		}
 	}
-
-	// private void changeProfilePageToBoothList()
-	// {
-	// this.currentPage = RealcommPhonePage.BOOTH_LIST;
-	//
-	// if (this.dashboardPhoneListener != null)
-	// {
-	// this.dashboardPhoneListener.selectPageButton();
-	// this.dashboardPhoneListener.showNavigationDrawer();
-	// this.dashboardPhoneListener.showBoothListAndHideProfilePage();
-	// }
-	// }
 
 	private void changeSchedulePageToBoothList()
 	{
@@ -317,32 +226,21 @@ public class RealcommPhonePageManager
 		if (this.dashboardPhoneListener != null)
 		{
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showBoothListAndHideSchedulePage();
 		}
 	}
 
-	// private void changeBoothExploreToProfilePage()
-	// {
-	// // this.currentPage = RealcommPhonePage.PROFILE_PAGE;
-	//
-	// if (this.dashboardPhoneListener != null)
-	// {
-	// this.dashboardPhoneListener.hideNavigationDrawer();
-	// this.dashboardPhoneListener.showProfilePageAndHideBoothExplore();
-	// }
-	// }
+	private void changeInfoPageToBoothList()
+	{
+		this.currentPage = RealcommPhonePage.BOOTH_LIST;
 
-	// private void changeBoothListToProfilePage()
-	// {
-	// // this.currentPage = RealcommPhonePage.PROFILE_PAGE;
-	//
-	// if (this.dashboardPhoneListener != null)
-	// {
-	// this.dashboardPhoneListener.hideNavigationDrawer();
-	// this.dashboardPhoneListener.showProfilePageAndHideBoothList();
-	// }
-	// }
+		if (this.dashboardPhoneListener != null)
+		{
+			this.dashboardPhoneListener.selectPageButton();
+			this.dashboardPhoneListener.showBoothListAndHideInfoPage();
+		}
+
+	}
 
 	private void changeBoothExploreToSchedulePage()
 	{
@@ -351,7 +249,6 @@ public class RealcommPhonePageManager
 		if (this.dashboardPhoneListener != null)
 		{
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showSchedulePageAndHideBoothExplore();
 		}
 	}
@@ -363,29 +260,51 @@ public class RealcommPhonePageManager
 		if (this.dashboardPhoneListener != null)
 		{
 			this.dashboardPhoneListener.selectPageButton();
-//			this.dashboardPhoneListener.showNavigationDrawer();
 			this.dashboardPhoneListener.showSchedulePageAndHideBoothList();
 		}
 	}
 
-	// private void template()
-	// {
-	// switch (this.currentPage)
-	// {
-	// case INITIALIZING:
-	// break;
-	// case SPLASH_SCREEN:
-	// break;
-	// case BOOTH_EXPLORE:
-	// break;
-	// case BOOTH_LIST:
-	// break;
-	// case PROFILE_PAGE:
-	// break;
-	// case SCHEDULE_PAGE:
-	// break;
-	// default:
-	// break;
-	// }
-	// }
+	private void changeInfoPageToSchedulePage()
+	{
+		this.currentPage = RealcommPhonePage.SCHEDULE_PAGE;
+
+		if (this.dashboardPhoneListener != null)
+		{
+			this.dashboardPhoneListener.selectPageButton();
+			this.dashboardPhoneListener.showSchedulePageAndHideInfoPage();
+		}
+	}
+
+	private void changeBoothExploreToInfoPage()
+	{
+		this.currentPage = RealcommPhonePage.INFO_PAGE;
+
+		if (this.dashboardPhoneListener != null)
+		{
+			this.dashboardPhoneListener.selectPageButton();
+			this.dashboardPhoneListener.showInfoPageAndHideBoothExplore();
+		}
+	}
+
+	private void changeBoothListToInfoPage()
+	{
+		this.currentPage = RealcommPhonePage.INFO_PAGE;
+
+		if (this.dashboardPhoneListener != null)
+		{
+			this.dashboardPhoneListener.selectPageButton();
+			this.dashboardPhoneListener.showInfoPageAndHideBoothList();
+		}
+	}
+
+	private void changeSchedulePageToInfoPage()
+	{
+		this.currentPage = RealcommPhonePage.INFO_PAGE;
+
+		if (this.dashboardPhoneListener != null)
+		{
+			this.dashboardPhoneListener.selectPageButton();
+			this.dashboardPhoneListener.showInfoPageAndHideSchedulePage();
+		}
+	}
 }

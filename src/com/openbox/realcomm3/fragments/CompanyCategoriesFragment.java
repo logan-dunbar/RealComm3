@@ -62,44 +62,27 @@ public class CompanyCategoriesFragment extends BaseProfileFragment
 		CompanyModel model = getCompany();
 		if (model != null)
 		{
-			CategoriesFragment mainCategoriesFragment = getCategoriesFragment(CompanyCategory.MAIN_CATEGORY);
-			if (model.getHasMainCategories() && mainCategoriesFragment == null)
+			CategoriesFragment lastFragment = null;
+			CompanyCategory[] categories = CompanyCategory.values();
+			for (int i = 0; i < categories.length; i++)
 			{
-				mainCategoriesFragment = CategoriesFragment.newInstance(CompanyCategory.MAIN_CATEGORY);
-				addCategoryFragment(mainCategoriesFragment, CompanyCategory.MAIN_CATEGORY.getFragmentTag());
-			}
-
-			CategoriesFragment subCategoriesFragment = getCategoriesFragment(CompanyCategory.SUB_CATEGORY);
-			if (model.getHasSubCategories() && subCategoriesFragment == null)
-			{
-				subCategoriesFragment = CategoriesFragment.newInstance(CompanyCategory.SUB_CATEGORY);
-				addCategoryFragment(subCategoriesFragment, CompanyCategory.SUB_CATEGORY.getFragmentTag());
-			}
-
-			CategoriesFragment targetMarketFragment = getCategoriesFragment(CompanyCategory.TARGET_MARKET);
-			if (model.getHasTargetMarkets() && targetMarketFragment == null)
-			{
-				targetMarketFragment = CategoriesFragment.newInstance(CompanyCategory.TARGET_MARKET);
-				addCategoryFragment(targetMarketFragment, CompanyCategory.TARGET_MARKET.getFragmentTag());
-			}
-
-			CategoriesFragment geographicMarketFragment = getCategoriesFragment(CompanyCategory.GEOGRAPHIC_MARKET);
-			if (model.getHasGeographicMarkets() && geographicMarketFragment == null)
-			{
-				geographicMarketFragment = CategoriesFragment.newInstance(CompanyCategory.GEOGRAPHIC_MARKET);
-				addCategoryFragment(geographicMarketFragment, CompanyCategory.GEOGRAPHIC_MARKET.getFragmentTag());
-			}
-
-			getChildFragmentManager().executePendingTransactions();
-			if (this.currentlyAddedFragments.size() > 0)
-			{
-				int lastFragmentIndex = this.currentlyAddedFragments.size() - 1;
-				CategoriesFragment lastFragment = (CategoriesFragment) getChildFragmentManager().findFragmentByTag(
-					this.currentlyAddedFragments.get(lastFragmentIndex));
-				if (lastFragment != null)
+				CategoriesFragment fragment = getCategoriesFragment(categories[i]);
+				if (model.getHasCategories(categories[i]) && fragment == null)
 				{
-					lastFragment.updateIsLast();
+					fragment = CategoriesFragment.newInstance(categories[i]);
+					addCategoryFragment(fragment, categories[i].getFragmentTag());
+					
+					if (i == categories.length - 1)
+					{
+						lastFragment = fragment;
+					}
 				}
+			}
+			
+			getChildFragmentManager().executePendingTransactions();
+			if (lastFragment != null)
+			{
+				lastFragment.updateIsLast();
 			}
 		}
 	}

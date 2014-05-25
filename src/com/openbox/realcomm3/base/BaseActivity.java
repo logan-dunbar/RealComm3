@@ -1,30 +1,15 @@
 package com.openbox.realcomm3.base;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
-import com.openbox.realcomm3.database.models.BoothModel;
+import com.openbox.realcomm3.dialogfragments.InfoDialogFragment;
 import com.openbox.realcomm3.services.WebService;
-import com.openbox.realcomm3.utilities.enums.BoothSortMode;
-import com.openbox.realcomm3.utilities.enums.ProximityRegion;
 import com.openbox.realcomm3.utilities.helpers.ToastHelper;
-import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AsyncTaskInterface;
-import com.openbox.realcomm3.utilities.interfaces.BeaconManagerBoundCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
-import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
-import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.interfaces.DatabaseSyncReceiverInterface;
 import com.openbox.realcomm3.utilities.interfaces.WebServiceConnectionInterface;
-import com.radiusnetworks.ibeacon.IBeacon;
-
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -35,14 +20,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.AsyncTask.Status;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 public class BaseActivity extends FragmentActivity implements
 	AsyncTaskInterface,
@@ -121,8 +103,8 @@ public class BaseActivity extends FragmentActivity implements
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Careful when this is called in the Lifecycle
-		// MenuInflater inflater = getMenuInflater();
-		// inflater.inflate(R.menu.main_menu, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
 		// this.updateMenuItem = menu.findItem(R.id.refreshMenuItem);
 		// updateUpdateMenuItemVisibility();
 		return super.onCreateOptionsMenu(menu);
@@ -134,22 +116,31 @@ public class BaseActivity extends FragmentActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		// switch (item.getItemId())
-		// {
-		// case R.id.refreshMenuItem:
-		// this.updateMenuItem.setEnabled(false);
-		// downloadDatabase();
-		// break;
-		// case R.id.settingsMenuItem:
-		// startSettingsActivity();
-		// break;
-		// case R.id.dataCaptureMenuItem:
-		// startDataCaptureActivity();
-		// break;
-		// default:
-		// break;
-		// }
+		switch (item.getItemId())
+		{
+			case R.id.infoMenuItem:
+				showInfoDialogFragment();
+				break;
+			// case R.id.refreshMenuItem:
+			// this.updateMenuItem.setEnabled(false);
+			// downloadDatabase();
+			// break;
+			// case R.id.settingsMenuItem:
+			// startSettingsActivity();
+			// break;
+			// case R.id.dataCaptureMenuItem:
+			// startDataCaptureActivity();
+			// break;
+			default:
+				break;
+		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void showInfoDialogFragment()
+	{
+		InfoDialogFragment infoDialogFragment = new InfoDialogFragment();
+		infoDialogFragment.show(getSupportFragmentManager(), InfoDialogFragment.TAG);
 	}
 
 	/**********************************************************************************************
@@ -232,7 +223,14 @@ public class BaseActivity extends FragmentActivity implements
 
 	protected void unbindWebService()
 	{
-		unbindService(this.serviceConnection);
+		try
+		{
+			unbindService(this.serviceConnection);
+		}
+		catch (IllegalArgumentException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/**********************************************************************************************

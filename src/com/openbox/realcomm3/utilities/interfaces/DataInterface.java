@@ -12,6 +12,8 @@ import com.radiusnetworks.ibeacon.IBeacon;
 public interface DataInterface
 {
 	BoothModel getBoothModelForBoothId(int boothId);
+	
+	BoothModel getBoothModelForCompanyName(String companyName);
 
 	List<Integer> getClosestBoothIds(int numberOfDisplayBooths);
 

@@ -18,6 +18,7 @@ import android.os.RemoteException;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
@@ -120,10 +121,14 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState);
-		getWindow().setBackgroundDrawable(null); // Dark background not needed anymore
 		setIsLargeScreen();
+		setTheme();
+		setupActionBar(); // Crashes saying "call requestFeature() before setting content"
+
+		super.onCreate(savedInstanceState);
+
 		setScreenOrientation();
+		getWindow().setBackgroundDrawable(null); // Dark background not needed anymore
 		setContentView(R.layout.activity_realcomm);
 
 		getWindow().getDecorView().getRootView().setOnTouchListener(new ClearFocusTouchListener(this, this));
@@ -240,7 +245,6 @@ public class RealCommActivity extends BaseActivity implements
 	public void onBackPressed()
 	{
 		// Intercept the back button to do a custom transition when on the ProfilePage
-		// TODO check if this condition breaks on SplashScreen
 		if (this.pageManager.getCurrentPage() == RealcommPage.PROFILE_PAGE)
 		{
 			changePage(RealcommPage.DASHBOARD_PAGE);
@@ -260,34 +264,6 @@ public class RealCommActivity extends BaseActivity implements
 		{
 			super.onBackPressed();
 		}
-
-		// if (this.isLargeScreen)
-		// {
-		// if (this.pageManager.getCurrentPage() != RealcommPage.DASHBOARD_PAGE)
-		// {
-		// changePage(RealcommPage.DASHBOARD_PAGE);
-		// }
-		// else
-		// {
-		// super.onBackPressed();
-		// }
-		// }
-		// else
-		// {
-		// // TODO custom back stuff for phone pages
-		// if (this.phonePageManager.getCurrentPage() == RealcommPhonePage.PROFILE_PAGE)
-		// {
-		// changePage(this.phonePageManager.getPreviousPage());
-		// }
-		// else if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
-		// {
-		// changePage(RealcommPhonePage.BOOTH_EXPLORE);
-		// }
-		// else
-		// {
-		// super.onBackPressed();
-		// }
-		// }
 	}
 
 	@Override
@@ -302,8 +278,6 @@ public class RealCommActivity extends BaseActivity implements
 			}
 			else
 			{
-				// TODO: needed?
-				// ToastHelper.showLongMessage(this, "Enable Bluetooth for Proximity Scanning");
 				changeAppMode(AppMode.OFFLINE);
 			}
 		}
@@ -583,256 +557,6 @@ public class RealCommActivity extends BaseActivity implements
 		}
 	}
 
-	// @Override
-	// public void showBoothExploreAndRemoveSplashScreen()
-	// {
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	// SplashScreenFragment splashScreenFragment = (SplashScreenFragment)
-	// getSupportFragmentManager().findFragmentByTag(SplashScreenFragment.TAG);
-	//
-	// if (splashScreenFragment != null && splashScreenFragment.isVisible() && boothExploreFragment != null)
-	// {
-	// // Out
-	// splashScreenFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneSplashToBoothExplore));
-	// splashScreenFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneSplashToBoothExplore));
-	// boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndRemoveFragments(boothExploreFragment, splashScreenFragment, R.id.slideUpInAnimation,
-	// R.id.slideUpOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showBoothExploreAndHideBoothList()
-	// {
-	// BoothListFragment boothListFragment = (BoothListFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	//
-	// if (boothListFragment != null && boothListFragment.isVisible() && boothExploreFragment != null)
-	// {
-	// // Out
-	// boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndHideFragments(boothExploreFragment, boothListFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showBoothExploreAndRemoveProfilePage()
-	// {
-	// ProfilePageFragment profilePageFragment = (ProfilePageFragment)
-	// getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	//
-	// if (profilePageFragment != null && profilePageFragment.isVisible() && boothExploreFragment != null)
-	// {
-	// // Out
-	// profilePageFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
-	// profilePageFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// // In
-	// boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
-	// boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// showAndHideFragments(boothExploreFragment, profilePageFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showBoothExploreAndHideSchedulePage()
-	// {
-	// ScheduleFragment scheduleFragment = (ScheduleFragment)
-	// getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	//
-	// if (scheduleFragment != null && scheduleFragment.isVisible() && boothExploreFragment != null)
-	// {
-	// // Out
-	// scheduleFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// scheduleFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// boothExploreFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothExploreFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndHideFragments(boothExploreFragment, scheduleFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showBoothListAndHideBoothExplore()
-	// {
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	// BoothListFragment boothListFragment = (BoothListFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
-	//
-	// if (boothExploreFragment != null && boothExploreFragment.isVisible() && boothListFragment != null)
-	// {
-	// // Out
-	// boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothListFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndHideFragments(boothListFragment, boothExploreFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showBoothListAndHideProfilePage()
-	// {
-	// BoothListFragment boothListFragment = (BoothListFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
-	// ProfilePageFragment profilePageFragment = (ProfilePageFragment)
-	// getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
-	//
-	// if (profilePageFragment != null && profilePageFragment.isVisible() && boothListFragment != null)
-	// {
-	// // Out
-	// profilePageFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
-	// profilePageFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// // In
-	// boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationFromProfileDuration));
-	// boothListFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// showAndHideFragments(boothListFragment, profilePageFragment, R.id.slideInLeftAnimation,
-	// R.id.slideOutRightAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showBoothListAndHideSchedulePage()
-	// {
-	// ScheduleFragment scheduleFragment = (ScheduleFragment)
-	// getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
-	// BoothListFragment boothListFragment = (BoothListFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
-	//
-	// if (scheduleFragment != null && scheduleFragment.isVisible() && boothListFragment != null)
-	// {
-	// // Out
-	// scheduleFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// scheduleFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// boothListFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothListFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndHideFragments(boothListFragment, scheduleFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showProfilePageAndHideBoothExplore()
-	// {
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	// ProfilePageFragment profilePageFragment = (ProfilePageFragment)
-	// getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
-	//
-	// if (boothExploreFragment != null && boothExploreFragment.isVisible() && profilePageFragment != null)
-	// {
-	// profilePageFragment.updateProfilePage(this.selectedBooth);
-	//
-	// // Out
-	// profilePageFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
-	// profilePageFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// // In
-	// boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
-	// boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// showAndHideFragments(profilePageFragment, boothExploreFragment, R.id.slideInRightAnimation,
-	// R.id.slideOutLeftAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showProfilePageAndHideBoothList()
-	// {
-	// BoothListFragment boothListFragment = (BoothListFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
-	// ProfilePageFragment profilePageFragment = (ProfilePageFragment)
-	// getSupportFragmentManager().findFragmentByTag(ProfilePageFragment.TAG);
-	//
-	// if (boothListFragment != null && boothListFragment.isVisible() && profilePageFragment != null)
-	// {
-	// profilePageFragment.updateProfilePage(this.selectedBooth);
-	//
-	// // Out
-	// profilePageFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
-	// profilePageFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// // In
-	// boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationToProfileDuration));
-	// boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-	//
-	// showAndHideFragments(profilePageFragment, boothListFragment, R.id.slideInRightAnimation,
-	// R.id.slideOutLeftAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showSchedulePageAndHideBoothExplore()
-	// {
-	// BoothExploreFragment boothExploreFragment = (BoothExploreFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothExploreFragment.TAG);
-	// ScheduleFragment scheduleFragment = (ScheduleFragment)
-	// getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
-	//
-	// if (boothExploreFragment != null && boothExploreFragment.isVisible() && scheduleFragment != null)
-	// {
-	// // Out
-	// boothExploreFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothExploreFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// scheduleFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// scheduleFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndHideFragments(scheduleFragment, boothExploreFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-	//
-	// @Override
-	// public void showSchedulePageAndHideBoothList()
-	// {
-	// BoothListFragment boothListFragment = (BoothListFragment)
-	// getSupportFragmentManager().findFragmentByTag(BoothListFragment.TAG);
-	// ScheduleFragment scheduleFragment = (ScheduleFragment)
-	// getSupportFragmentManager().findFragmentByTag(ScheduleFragment.TAG);
-	//
-	// if (boothListFragment != null && boothListFragment.isVisible() && scheduleFragment != null)
-	// {
-	// // Out
-	// boothListFragment.setOutAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// boothListFragment.setOutAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// // In
-	// scheduleFragment.setInAnimationDuration(getResources().getInteger(R.integer.phoneNavigationDuration));
-	// scheduleFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
-	//
-	// showAndHideFragments(scheduleFragment, boothListFragment, R.id.fadeInAnimation, R.id.fadeOutAnimation);
-	// }
-	// }
-
 	/**********************************************************************************************
 	 * Data Interface Implements
 	 **********************************************************************************************/
@@ -842,6 +566,17 @@ public class RealCommActivity extends BaseActivity implements
 		if (this.dataInterface != null)
 		{
 			return this.dataInterface.getBoothModelForBoothId(boothId);
+		}
+
+		return null;
+	}
+
+	@Override
+	public BoothModel getBoothModelForCompanyName(String companyName)
+	{
+		if (this.dataInterface != null)
+		{
+			return this.dataInterface.getBoothModelForCompanyName(companyName);
 		}
 
 		return null;
@@ -1132,6 +867,22 @@ public class RealCommActivity extends BaseActivity implements
 		// Lookup Configuration#screenLayout for more details
 		this.isLargeScreen =
 			(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+	}
+
+	private void setTheme()
+	{
+		if (this.isLargeScreen)
+		{
+			setTheme(R.style.TabletTheme);
+		}
+	}
+
+	private void setupActionBar()
+	{
+		if (isLargeScreen)
+		{
+			getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+		}
 	}
 
 	private void showSplashScreen()

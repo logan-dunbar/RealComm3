@@ -1,6 +1,5 @@
 package com.openbox.realcomm3.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
 
 public class ConnectionStatusFragment extends BaseFragment implements
 	AppModeChangedCallbacks

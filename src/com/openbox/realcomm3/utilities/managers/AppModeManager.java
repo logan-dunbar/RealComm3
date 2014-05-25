@@ -3,7 +3,6 @@ package com.openbox.realcomm3.utilities.managers;
 import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.BeaconStatus;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.AppModeOfflineInterface;
 import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 
 public class AppModeManager

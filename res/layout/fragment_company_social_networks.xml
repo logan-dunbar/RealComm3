@@ -7,28 +7,31 @@
     android:layout_marginTop="0dp"
     android:orientation="horizontal" >
 
-    <ImageView
-        android:id="@+id/twitterImageView"
+    <ImageButton
+        android:id="@+id/twitterImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/socialNetworksSpacingMargin"
+        android:background="@null"
         android:contentDescription="@string/twitterImageDescription"
         android:src="@drawable/icon_social_twitter"
         android:visibility="invisible" />
 
-    <ImageView
-        android:id="@+id/facebookImageView"
+    <ImageButton
+        android:id="@+id/facebookImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/socialNetworksSpacingMargin"
+        android:layout_marginRight="@dimen/socialNetworksSpacingMargin"
+        android:background="@null"
         android:contentDescription="@string/facebookImageDescription"
         android:src="@drawable/icon_social_facebook"
         android:visibility="invisible" />
 
-    <ImageView
-        android:id="@+id/linkedInImageView"
+    <ImageButton
+        android:id="@+id/linkedInImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/socialNetworksSpacingMargin"
+        android:background="@null"
         android:contentDescription="@string/linkedInImageDescription"
         android:src="@drawable/icon_social_linkedin"
         android:visibility="invisible" />

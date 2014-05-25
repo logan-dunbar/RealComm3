@@ -3,8 +3,6 @@ package com.openbox.realcomm3.database.models;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.openbox.realcomm3.database.objects.Booth;
-import com.openbox.realcomm3.database.objects.Company;
 import com.openbox.realcomm3.database.objects.CompanyLogo;
 
 public class CompanyLogoModel

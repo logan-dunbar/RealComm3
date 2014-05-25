@@ -109,25 +109,56 @@ public class BoothFragment extends BaseFragment implements OnClickListener
 			boothClickableLayout.setOnClickListener(this);
 		}
 
+		setupViewTreeObservers();
+
+		updateBooth();
+
+		return view;
+	}
+
+	private void setupViewTreeObservers()
+	{
+		ViewTreeObserver headerObserver = this.header.getViewTreeObserver();
+		headerObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
+		{
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onGlobalLayout()
+			{
+				int maxLines = BoothFragment.this.header.getHeight() / BoothFragment.this.header.getLineHeight();
+				BoothFragment.this.header.setMaxLines(maxLines);
+				BoothFragment.this.header.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			}
+		});
+
+		ViewTreeObserver subHeaderObserver = this.subHeader.getViewTreeObserver();
+		subHeaderObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
+		{
+			@SuppressWarnings("deprecation")
+			@Override
+			public void onGlobalLayout()
+			{
+				int maxLines = BoothFragment.this.subHeader.getHeight() / BoothFragment.this.subHeader.getLineHeight();
+				BoothFragment.this.subHeader.setMaxLines(maxLines);
+				BoothFragment.this.subHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+			}
+		});
+
 		if (getArguments().getBoolean(IS_BIG_KEY))
 		{
-			ViewTreeObserver observer = details.getViewTreeObserver();
+			ViewTreeObserver observer = this.details.getViewTreeObserver();
 			observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
 			{
 				@SuppressWarnings("deprecation")
 				@Override
 				public void onGlobalLayout()
 				{
-					int maxLines = details.getHeight() / details.getLineHeight();
-					details.setMaxLines(maxLines);
-					details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+					int maxLines = BoothFragment.this.details.getHeight() / BoothFragment.this.details.getLineHeight();
+					BoothFragment.this.details.setMaxLines(maxLines);
+					BoothFragment.this.details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 				}
 			});
 		}
-
-		updateBooth();
-
-		return view;
 	}
 
 	/**********************************************************************************************
@@ -169,14 +200,21 @@ public class BoothFragment extends BaseFragment implements OnClickListener
 					circle.setColor(color);
 				}
 
-				this.header.setText(this.boothModel.getCompanyName());
+				this.header.setText(this.boothModel.getCompanyName().trim());
 
 				this.subHeader.setTextColor(color);
-				this.subHeader.setText(BOOTH_PREFIX + this.boothModel.getBoothNumber());
+
+				String subHeaderText = BOOTH_PREFIX + this.boothModel.getBoothNumber();
+				if (this.boothModel.getHasConferenceName())
+				{
+					subHeaderText += " - " + this.boothModel.getConferenceName().trim();
+				}
+
+				this.subHeader.setText(subHeaderText);
 
 				if (getArguments().getBoolean(IS_BIG_KEY))
 				{
-					this.details.setText(this.boothModel.getCompanyDescription());
+					this.details.setText(this.boothModel.getCompanyDescription().trim());
 				}
 				else
 				{

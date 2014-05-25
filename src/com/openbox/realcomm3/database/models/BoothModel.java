@@ -35,6 +35,8 @@ public class BoothModel
 	private int companyId;
 	private String companyName;
 	private String companyDescription;
+	private String companyShortDescription;
+	private String conferenceName;
 
 	/**********************************************************************************************
 	 * Constructor
@@ -55,6 +57,8 @@ public class BoothModel
 			this.companyId = company.getCompanyId();
 			this.companyName = company.getName();
 			this.companyDescription = company.getDescription();
+			this.companyShortDescription = company.getShortDescription();
+			this.conferenceName = company.getConferenceName();
 		}
 	}
 
@@ -202,6 +206,11 @@ public class BoothModel
 		return accuracy;
 	}
 
+	public boolean getHasConferenceName()
+	{
+		return this.conferenceName != null && this.conferenceName != "";
+	}
+
 	/**********************************************************************************************
 	 * Getters and Setters
 	 **********************************************************************************************/
@@ -283,5 +292,25 @@ public class BoothModel
 	public void setCompanyDescription(String companyDescription)
 	{
 		this.companyDescription = companyDescription;
+	}
+
+	public String getCompanyShortDescription()
+	{
+		return companyShortDescription;
+	}
+
+	public void setCompanyShortDescription(String companyShortDescription)
+	{
+		this.companyShortDescription = companyShortDescription;
+	}
+
+	public String getConferenceName()
+	{
+		return conferenceName;
+	}
+
+	public void setConferenceName(String conferenceName)
+	{
+		this.conferenceName = conferenceName;
 	}
 }

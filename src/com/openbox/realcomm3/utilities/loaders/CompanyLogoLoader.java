@@ -1,7 +1,6 @@
 package com.openbox.realcomm3.utilities.loaders;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.openbox.realcomm3.database.DatabaseManager;

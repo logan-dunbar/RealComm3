@@ -39,6 +39,12 @@ public class ContactFragmentAdapter extends FragmentStatePagerAdapter
 	}
 
 	@Override
+	public int getItemPosition(Object object)
+	{
+		return POSITION_NONE;
+	}
+
+	@Override
 	public int getCount()
 	{
 		return this.contactIds.size();

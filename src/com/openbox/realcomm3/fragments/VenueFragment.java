@@ -49,6 +49,9 @@ public class VenueFragment extends BaseScheduleFragment
 		this.talkAdapter = new TalkListAdapter(getActivity(), application);
 		this.talkListView.setAdapter(this.talkAdapter);
 
+		int dividerHeight = (int) getResources().getDimension(R.dimen.talkListItemDividerHeight);
+		this.talkListView.setDividerHeight(dividerHeight);
+
 		if (getScheduleDataInterface() != null)
 		{
 			VenueModel venue = getScheduleDataInterface().getVenueForDate(

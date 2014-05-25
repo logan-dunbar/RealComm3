@@ -6,7 +6,7 @@ public interface DashboardPhoneInterface
 {
 	// Page related
 	boolean onBackBressed();
-	
+
 	// Page related
 	void changePage(RealcommPhonePage page);
 
@@ -17,17 +17,25 @@ public interface DashboardPhoneInterface
 
 	void showBoothExploreAndHideSchedulePage();
 
+	void showBoothExploreAndHideInfoPage();
+
 	void showBoothListAndHideBoothExplore();
 
 	void showBoothListAndHideSchedulePage();
+
+	void showBoothListAndHideInfoPage();
 
 	void showSchedulePageAndHideBoothExplore();
 
 	void showSchedulePageAndHideBoothList();
 
-	// void showNavigationDrawer();
-	//
-	// void hideNavigationDrawer();
+	void showSchedulePageAndHideInfoPage();
+
+	void showInfoPageAndHideBoothExplore();
+
+	void showInfoPageAndHideBoothList();
+
+	void showInfoPageAndHideSchedulePage();
 
 	void selectPageButton();
 }

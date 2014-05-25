@@ -7,7 +7,8 @@ public enum RealcommPhonePage
 	INITIALIZING(-1),
 	BOOTH_EXPLORE(R.id.exploreButton),
 	BOOTH_LIST(R.id.findButton),
-	SCHEDULE_PAGE(R.id.scheduleButton);
+	SCHEDULE_PAGE(R.id.scheduleButton),
+	INFO_PAGE(R.id.infoButton);
 
 	private int buttonId;
 

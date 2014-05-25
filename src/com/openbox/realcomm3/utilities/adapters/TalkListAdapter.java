@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 public class TalkListAdapter extends ArrayAdapter<TalkModel>
 {
+	private static final String TALK_TRACK_PREFIX = "Track: ";
+
 	private LayoutInflater layoutInflater;
 	private RealCommApplication application;
 
@@ -45,9 +47,11 @@ public class TalkListAdapter extends ArrayAdapter<TalkModel>
 			holder = new ViewHolder();
 
 			holder.talkTime = (TextView) row.findViewById(R.id.talkTime);
+			holder.talkTrack = (TextView) row.findViewById(R.id.talkTrack);
 			holder.talkName = (TextView) row.findViewById(R.id.talkName);
 
 			holder.talkTime.setTypeface(this.application.getExo2FontBold());
+			holder.talkTrack.setTypeface(this.application.getExo2FontBold());
 			holder.talkName.setTypeface(this.application.getExo2Font());
 
 			row.setTag(holder);
@@ -61,6 +65,7 @@ public class TalkListAdapter extends ArrayAdapter<TalkModel>
 		TalkModel talk = getItem(position);
 
 		holder.talkTime.setText(talk.getTalkTimeString());
+		holder.talkTrack.setText(TALK_TRACK_PREFIX + talk.getTalkTrack());
 		holder.talkName.setText(talk.getName());
 
 		return row;
@@ -81,6 +86,7 @@ public class TalkListAdapter extends ArrayAdapter<TalkModel>
 	class ViewHolder
 	{
 		TextView talkTime;
+		TextView talkTrack;
 		TextView talkName;
 	}
 }

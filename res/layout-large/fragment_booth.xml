@@ -29,48 +29,49 @@
         android:background="@drawable/rounded_booth_background" >
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/boothFragmentLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/boothCompanyLogoHeight"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/boothFragmentViewProfileButton"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/boothCompanyLogoSpacing"
-        android:background="@drawable/rounded_booth_company_logo"
-        android:contentDescription="@string/logoImageDescription" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/boothFragmentHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/boothFragmentLogo"
-        android:layout_centerHorizontal="true"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:singleLine="true"
-        android:textSize="@dimen/textSize24" />
+        <ImageView
+            android:id="@+id/boothFragmentLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/boothCompanyLogoHeight"
+            android:layout_marginTop="@dimen/boothCompanyLogoSpacing"
+            android:background="@drawable/rounded_booth_company_logo"
+            android:contentDescription="@string/logoImageDescription" />
 
-    <TextView
-        android:id="@+id/boothFragmentSubHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/boothFragmentHeader"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:textSize="@dimen/textSize20" />
+        <TextView
+            android:id="@+id/boothFragmentHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:textSize="@dimen/textSize24" />
 
-    <TextView
-        android:id="@+id/boothFragmentDetails"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/boothFragmentViewProfileButton"
-        android:layout_below="@+id/boothFragmentSubHeader"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="@dimen/boothDetailsMargin"
-        android:layout_marginRight="@dimen/boothDetailsMargin"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:textSize="@dimen/textSize16" />
+        <TextView
+            android:id="@+id/boothFragmentSubHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/textSize20" />
+
+        <TextView
+            android:id="@+id/boothFragmentDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/boothDetailsMargin"
+            android:layout_marginRight="@dimen/boothDetailsMargin"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:textSize="@dimen/textSize16" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/boothFragmentViewProfileButton"

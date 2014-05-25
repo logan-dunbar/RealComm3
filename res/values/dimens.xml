@@ -45,6 +45,11 @@
     <dimen name="splashDetailInnerMargin">@dimen/defaultSpacingMargin</dimen>
     <dimen name="splashDetailsTextWidth">200dp</dimen>
     <dimen name="splashCircleDiameter">20dp</dimen>
+    
+    <!-- Info Dialog -->
+    <dimen name="infoPadding">@dimen/defaultPadding</dimen>
+    <dimen name="infoSpacing">10dp</dimen>
+    <dimen name="infoLogoHeight">@dimen/defaultCompanyLogoHeight</dimen>
 
     <!-- Listing Page -->
     <dimen name="listingPagePadding">20dp</dimen>
@@ -88,6 +93,7 @@
 
     <!-- Talk List Item -->
     <dimen name="talkListItemMargin">@dimen/defaultMargin</dimen>
+    <dimen name="talkListItemDividerHeight">@dimen/defaultMargin</dimen>
 
     <!-- Profile -->
     <dimen name="profileBorderWidth">@dimen/defaultBorderWidth</dimen>

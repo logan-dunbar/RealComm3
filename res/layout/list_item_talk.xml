@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:paddingRight="@dimen/talkListItemMargin" >
 
     <TextView
         android:id="@+id/talkTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize14" />
+
+    <TextView
+        android:id="@+id/talkTrack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:textColor="@color/white"
         android:textSize="@dimen/textSize14" />
 
@@ -15,9 +26,10 @@
         android:id="@+id/talkName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/talkListItemMargin"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/talkTime"
         android:gravity="center_vertical"
         android:textColor="@color/white"
         android:textSize="@dimen/textSize16" />
 
-</LinearLayout>
+</RelativeLayout>

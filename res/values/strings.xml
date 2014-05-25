@@ -6,9 +6,12 @@
     <!-- Menu -->
     <string name="updateMenuItemTitle">Update</string>
     <string name="settingsMenuItemTitle">Settings</string>
-    
+
     <!-- EditTexts -->
     <string name="boothFilterHint">Filter by name or number</string>
+    
+    <!-- Menu -->
+    <string name="menuInfo">Info</string>
 
     <!-- Buttons -->
     <string name="button1Text">Start AsyncTask</string>
@@ -22,7 +25,6 @@
     <string name="lastUpdateLabel">Last Update:</string>
     <string name="lastUpdateInitialValue">N/A</string>
     <string name="proximityLabel">Proximity Sensing:</string>
-    
     <string name="splashHeader">Realcomm 2014</string>
     <string name="splashSubHeader">Las Vegas</string>
     <string name="splashExploreTitle">Explore</string>
@@ -31,10 +33,11 @@
     <string name="splashFindDesc">Search a complete directory of exhibitors</string>
     <string name="splashAttendTitle">Attend</string>
     <string name="splashAttendDesc">Up-to-the-minute schedule of conference events</string>
-    
     <string name="companyAddressTitle">ADDRESS</string>
     <string name="companyContactTitle">CONTACT</string>
     <string name="companyLinksTitle">LINKS</string>
+    <string name="infoDevelopedBy">Developed by:</string>
+    <string name="infoImageCourtesyOf">Background image courtesy of</string>
 
     <!-- Preferences -->
     <string name="enableProximityTitle">Enable Proximity Sensing</string>
@@ -44,11 +47,10 @@
     <string name="logoImageDescription">Company Logo</string>
     <string name="contactImageDescription">Contact Image</string>
     <string name="proximityImageDescription">Proximity Graphic</string>
-    
     <string name="facebookImageDescription">Facebook Icon</string>
     <string name="twitterImageDescription">Twitter Icon</string>
     <string name="linkedInImageDescription">LinkedIn Icon</string>
-    
+
     <!-- Image Content Descriptions -->
     <string name="boothListTabAtoZ">A - Z</string>
     <string name="boothListTabNearMe">Near Me</string>

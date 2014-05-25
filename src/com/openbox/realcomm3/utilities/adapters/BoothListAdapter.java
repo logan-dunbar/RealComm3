@@ -7,8 +7,6 @@ import java.util.Locale;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.database.models.BoothModel;
-import com.openbox.realcomm3.database.models.BoothListModel;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;

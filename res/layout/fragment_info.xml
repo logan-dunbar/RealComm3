@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/infoPadding" >
+
+    <TextView
+        android:id="@+id/infoDevelopedByTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/infoDevelopedBy"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize20" />
+
+    <com.openbox.realcomm3.controls.FixedRatioImageView
+        android:id="@+id/infoLogoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/infoLogoHeight"
+        android:layout_marginTop="@dimen/infoSpacing"
+        android:src="@drawable/logo_ob" />
+
+    <Button
+        android:id="@+id/infoViewProfileButton"
+        android:layout_width="@dimen/boothViewProfileButtonWidth"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/infoSpacing"
+        android:background="@drawable/rounded_booth_button"
+        android:text="@string/boothFragmentViewProfileButtonText" />
+
+    <TextView
+        android:id="@+id/infoVersionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/infoSpacing"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize20" />
+
+    <TextView
+        android:id="@+id/infoLastUpdatedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/infoSpacing"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize20" />
+
+    <TextView
+        android:id="@+id/infoCourtesyOfTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/infoSpacing"
+        android:text="@string/infoImageCourtesyOf"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize20" />
+
+    <TextView
+        android:id="@+id/infoAuthorLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/infoSpacing"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textSize20" />
+
+</LinearLayout>

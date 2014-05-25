@@ -14,14 +14,17 @@ import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 public class CompanyModel
 {
-
 	private int boothId;
 	private int boothNumber;
 
 	private int companyId;
 	private String name;
 	private String description;
+	private String shortDescription;
 	private String website;
+	private String relatedLinks;
+	private String conferenceName;
+	private String country;
 	private String city;
 	private String state;
 	private String address1;
@@ -29,11 +32,13 @@ public class CompanyModel
 	private String address3;
 	private String postalCode;
 	private String facebook;
+	private String facebookProfileId;
 	private String twitter;
 	private String linkedIn;
 	private String mainCatergories;
 	private String subCategories;
 	private String targetMarkets;
+	private String clientSampling;
 	private String geographicMarkets;
 
 	private List<ContactModel> contactList = new ArrayList<>();
@@ -53,7 +58,11 @@ public class CompanyModel
 			this.companyId = company.getCompanyId();
 			this.name = company.getName();
 			this.description = company.getDescription();
+			this.shortDescription = company.getShortDescription();
 			this.website = company.getWebsite();
+			this.relatedLinks = company.getRelatedLinks();
+			this.conferenceName = company.getConferenceName();
+			this.country = company.getCountry();
 			this.city = company.getCity();
 			this.state = company.getState();
 			this.address1 = company.getAddress1();
@@ -61,11 +70,13 @@ public class CompanyModel
 			this.address3 = company.getAddress3();
 			this.postalCode = company.getPostalCode();
 			this.facebook = company.getFacebook();
+			this.facebookProfileId = company.getFacebookProfileId();
 			this.twitter = company.getTwitter();
 			this.linkedIn = company.getLinkedIn();
 			this.mainCatergories = company.getMainCategories();
 			this.subCategories = company.getSubCategories();
 			this.targetMarkets = company.getTargetMarkets();
+			this.clientSampling = company.getClientSampling();
 			this.geographicMarkets = company.getGeographicMarkets();
 		}
 
@@ -84,7 +95,26 @@ public class CompanyModel
 
 	public boolean getHasCategories()
 	{
-		return getHasMainCategories() || getHasSubCategories() || getHasTargetMarkets() || getHasGeographicMarkets();
+		return getHasMainCategories() || getHasSubCategories() || getHasTargetMarkets() || getHasClientSampling() || getHasGeographicMarkets();
+	}
+
+	public boolean getHasCategories(CompanyCategory category)
+	{
+		switch (category)
+		{
+			case MAIN_CATEGORY:
+				return getHasMainCategories();
+			case SUB_CATEGORY:
+				return getHasSubCategories();
+			case TARGET_MARKET:
+				return getHasTargetMarkets();
+			case CLIENT_SAMPLING:
+				return getHasClientSampling();
+			case GEOGRAPHIC_MARKET:
+				return getHasGeographicMarkets();
+			default:
+				return false;
+		}
 	}
 
 	public boolean getHasMainCategories()
@@ -102,14 +132,29 @@ public class CompanyModel
 		return this.targetMarkets != null && this.targetMarkets != "";
 	}
 
+	public boolean getHasClientSampling()
+	{
+		return this.clientSampling != null && this.clientSampling != "";
+	}
+
 	public boolean getHasGeographicMarkets()
 	{
 		return this.geographicMarkets != null && this.geographicMarkets != "";
 	}
 
+	public boolean getHasConferenceName()
+	{
+		return this.conferenceName != null && this.conferenceName != "";
+	}
+
 	public boolean getHasAddress()
 	{
-		return getHasCity() || getHasState() || getHasAddress1() || getHasAddress2() || getHasAddress3() || getHasPostalCode();
+		return getHasCountry() || getHasCity() || getHasState() || getHasAddress1() || getHasAddress2() || getHasAddress3() || getHasPostalCode();
+	}
+
+	public boolean getHasCountry()
+	{
+		return this.country != null && this.country != "";
 	}
 
 	public boolean getHasCity()
@@ -141,15 +186,20 @@ public class CompanyModel
 	{
 		return this.postalCode != null && this.postalCode != "";
 	}
-	
+
 	public boolean getHasContacts()
 	{
 		return this.contactList.size() > 0;
 	}
-	
-	public boolean getHasLinks()
+
+	public boolean getHasWebsite()
 	{
 		return this.website != null && this.website != "";
+	}
+
+	public boolean getHasRelatedLinks()
+	{
+		return this.relatedLinks != null && this.relatedLinks != "";
 	}
 
 	public boolean getHasSocialNetworks()
@@ -160,6 +210,11 @@ public class CompanyModel
 	public boolean getHasFacebook()
 	{
 		return this.facebook != null && this.facebook != "";
+	}
+
+	public boolean getHasFacebookProfileId()
+	{
+		return this.facebookProfileId != null && this.facebookProfileId != "";
 	}
 
 	public boolean getHasTwitter()
@@ -195,33 +250,54 @@ public class CompanyModel
 
 		return null;
 	}
-	
+
 	public String getFormattedAddress()
 	{
 		StringBuilder sb = new StringBuilder();
+		boolean addNewLine = false;
 
-		List<String> addressLinesList = new ArrayList<>();
-		addressLinesList.add(getAddress1());
-		addressLinesList.add(getAddress2());
-		addressLinesList.add(getAddress3());
-		
-		String addressLinesString = StringHelper.join(addressLinesList, "\n");
-		sb.append(addressLinesString);
+		if (getHasAddress1() || getHasAddress2() || getHasAddress3())
+		{
+			List<String> addressLinesList = new ArrayList<>();
+			addressLinesList.add(getAddress1());
+			addressLinesList.add(getAddress2());
+			addressLinesList.add(getAddress3());
 
-		List<String> cityStateCodeList = new ArrayList<>();
-		cityStateCodeList.add(getCity());
-		cityStateCodeList.add(getState());
-		cityStateCodeList.add(getPostalCode());
+			String addressLinesString = StringHelper.join(addressLinesList, "\n");
+			sb.append(addressLinesString);
+			addNewLine = true;
+		}
 
-		String cityStateCodeString = StringHelper.join(cityStateCodeList, ", ");
-		sb.append(cityStateCodeString);
-		// sb.append("\n");
+		if (getHasCity() || getHasState() || getHasPostalCode())
+		{
+			if (addNewLine)
+			{
+				sb.append("\n");
+			}
 
-		// TODO Country?
-		// sb.append(model.getCountry());
+			List<String> cityStateCodeList = new ArrayList<>();
+			cityStateCodeList.add(getCity());
+			cityStateCodeList.add(getState());
+			cityStateCodeList.add(getPostalCode());
+
+			String cityStateCodeString = StringHelper.join(cityStateCodeList, ", ");
+			sb.append(cityStateCodeString);
+			addNewLine = true;
+		}
+
+		if (getHasCountry())
+		{
+			if (addNewLine)
+			{
+				sb.append("\n");
+			}
+
+			sb.append(getCountry());
+		}
+
 		return sb.toString();
 	}
-	
+
 	public String getCompanyCategoryDetails(CompanyCategory companyCategory)
 	{
 		switch (companyCategory)
@@ -232,6 +308,8 @@ public class CompanyModel
 				return getSubCategories();
 			case TARGET_MARKET:
 				return getTargetMarkets();
+			case CLIENT_SAMPLING:
+				return getClientSampling();
 			case GEOGRAPHIC_MARKET:
 				return getGeographicMarkets();
 			default:
@@ -289,6 +367,16 @@ public class CompanyModel
 		this.description = description;
 	}
 
+	public String getShortDescription()
+	{
+		return shortDescription;
+	}
+
+	public void setShortDescription(String shortDescription)
+	{
+		this.shortDescription = shortDescription;
+	}
+
 	public String getWebsite()
 	{
 		return website;
@@ -297,6 +385,36 @@ public class CompanyModel
 	public void setWebsite(String website)
 	{
 		this.website = website;
+	}
+
+	public String getRelatedLinks()
+	{
+		return relatedLinks;
+	}
+
+	public void setRelatedLinks(String relatedLinks)
+	{
+		this.relatedLinks = relatedLinks;
+	}
+
+	public String getConferenceName()
+	{
+		return conferenceName;
+	}
+
+	public void setConferenceName(String conferenceName)
+	{
+		this.conferenceName = conferenceName;
+	}
+
+	public String getCountry()
+	{
+		return country;
+	}
+
+	public void setCountry(String country)
+	{
+		this.country = country;
 	}
 
 	public String getCity()
@@ -369,6 +487,16 @@ public class CompanyModel
 		this.facebook = facebook;
 	}
 
+	public String getFacebookProfileId()
+	{
+		return facebookProfileId;
+	}
+
+	public void setFacebookProfileId(String facebookProfileId)
+	{
+		this.facebookProfileId = facebookProfileId;
+	}
+
 	public String getTwitter()
 	{
 		return twitter;
@@ -419,6 +547,16 @@ public class CompanyModel
 		this.targetMarkets = targetMarkets;
 	}
 
+	public String getClientSampling()
+	{
+		return clientSampling;
+	}
+
+	public void setClientSampling(String clientSampling)
+	{
+		this.clientSampling = clientSampling;
+	}
+
 	public String getGeographicMarkets()
 	{
 		return geographicMarkets;
@@ -448,5 +586,4 @@ public class CompanyModel
 	{
 		this.companyLogo = companyLogo;
 	}
-
 }

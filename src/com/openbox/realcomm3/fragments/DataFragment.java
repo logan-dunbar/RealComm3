@@ -86,6 +86,19 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 
 		return null;
 	}
+	
+	public BoothModel getBoothModelForCompanyName(String companyName)
+	{
+		for (BoothModel model : this.boothModelList)
+		{
+			if (model.getCompanyName().equalsIgnoreCase(companyName))
+			{
+				return model;
+			}
+		}
+		
+		return null;
+	}
 
 	@Override
 	public List<Integer> getClosestBoothIds(int numberOfDisplayBooths)
