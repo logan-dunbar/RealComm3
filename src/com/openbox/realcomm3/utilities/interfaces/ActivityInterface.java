@@ -5,8 +5,6 @@ import com.openbox.realcomm3.utilities.enums.RealcommPage;
 public interface ActivityInterface
 {
 	// Page related
-	boolean getIsLargeScreen();
-
 	void setSelectedBooth(int boothId, int companyId);
 
 	void changePage(RealcommPage page);

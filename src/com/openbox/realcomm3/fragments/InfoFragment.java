@@ -28,8 +28,6 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 {
 	public static final String TAG = "infoFragmentTag";
 
-	private static final String OPEN_BOX_COMPANY_NAME = "Open Box Software";
-
 	private static final String VERSION_PREFIX = "Version: ";
 	private static final String LAST_UPDATE_DATE_PREFIX = "Last updated: ";
 	private static final String AUTHOR_HYPERLINK = "<a href=\"http://earthincolors.wordpress.com/\">Moyan Brenn</a>";
@@ -112,7 +110,7 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 	{
 		if (getActivityInterface() != null && getDataInterface() != null)
 		{
-			BoothModel openBoxModel = getDataInterface().getBoothModelForCompanyName(OPEN_BOX_COMPANY_NAME);
+			BoothModel openBoxModel = getDataInterface().getBoothModelForCompanyName(getResources().getString(R.string.openBoxCompanyName));
 			if (openBoxModel != null)
 			{
 				getActivityInterface().setSelectedBooth(openBoxModel.getBoothId(), openBoxModel.getCompanyId());

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
@@ -86,7 +87,7 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 
 		return null;
 	}
-	
+
 	public BoothModel getBoothModelForCompanyName(String companyName)
 	{
 		for (BoothModel model : this.boothModelList)
@@ -96,7 +97,7 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 				return model;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -123,21 +124,52 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	@Override
 	public List<Integer> getRandomBoothIds(int numberOfDisplayBooths)
 	{
+		// Shameless plug for Open Box
+		// Open Box or Open Lease needs to show up in one of the booth spaces when in Offline mode.
+		// Horrendous, but whatevs, the powers that be have spoken.
+		BoothModel openBoxModel = getBoothModelForCompanyName(getResources().getString(R.string.openBoxCompanyName));
+		BoothModel openLeaseModel = getBoothModelForCompanyName(getResources().getString(R.string.openLeaseCompanyName));
+
+		List<BoothModel> remainingBooths = new ArrayList<>(this.boothModelList);
+		List<Integer> openIds = new ArrayList<>();
+
+		if (openBoxModel != null)
+		{
+			openIds.add(openBoxModel.getBoothId());
+			remainingBooths.remove(openBoxModel);
+		}
+
+		if (openLeaseModel != null)
+		{
+			openIds.add(openLeaseModel.getBoothId());
+			remainingBooths.remove(openLeaseModel);
+		}
+
 		Random random = new Random();
-		List<Integer> randomList = new ArrayList<Integer>();
+		int openPosition = random.nextInt(numberOfDisplayBooths);
+
 		List<Integer> boothIds = new ArrayList<Integer>();
 		for (int i = 0; i < getNumberOfBooths(numberOfDisplayBooths); i++)
 		{
-			int position;
-			do
+			int boothId;
+			if (i == openPosition && openIds.size() > 0)
 			{
-				// Make sure to random on full list
-				position = random.nextInt(this.boothModelList.size());
+				int position = random.nextInt(openIds.size());
+				boothId = openIds.get(position);
 			}
-			while (randomList.contains(position));
+			else
+			{
+				do
+				{
+					// Make sure to random on full (remaining) list
+					int position = random.nextInt(remainingBooths.size());
+					boothId = remainingBooths.get(position).getBoothId();
 
-			randomList.add(position);
-			boothIds.add(this.boothModelList.get(position).getBoothId());
+				}
+				while (boothIds.contains(boothId));
+			}
+
+			boothIds.add(boothId);
 		}
 
 		return boothIds;
@@ -207,7 +239,7 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 				model.updateAccuracyWithDefault();
 			}
 		}
-		
+
 		if (this.dataChangedListener != null)
 		{
 			this.dataChangedListener.onBeaconsUpdated();

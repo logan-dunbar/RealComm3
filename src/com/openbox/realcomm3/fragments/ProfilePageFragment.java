@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
 import com.openbox.realcomm3.R;
+import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.database.models.SelectedBoothModel;
@@ -180,7 +181,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 			{
 				ft.show(categoriesFragment);
 				this.companyCategoriesBorder.setVisibility(View.VISIBLE);
-				if (getActivityInterface() != null && !getActivityInterface().getIsLargeScreen())
+				if (getActivityInterface() != null && !RealCommApplication.getIsLargeScreen())
 				{
 					fragmentAboveIsVisible = true;
 				}
@@ -195,7 +196,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 				ft.show(addressFragment);
 				if (fragmentAboveIsVisible &&
 					this.companyContactsBorder != null &&
-					getActivityInterface() != null && !getActivityInterface().getIsLargeScreen())
+					getActivityInterface() != null && !RealCommApplication.getIsLargeScreen())
 				{
 					this.companyAddressBorder.setVisibility(View.VISIBLE);
 				}

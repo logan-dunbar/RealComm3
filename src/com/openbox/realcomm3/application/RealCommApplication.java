@@ -1,6 +1,5 @@
 package com.openbox.realcomm3.application;
 
-
 import com.openbox.realcomm3.database.DatabaseManager;
 import com.openbox.realcomm3.services.WebService;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
@@ -10,6 +9,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.app.FragmentManager;
@@ -22,7 +22,8 @@ public class RealCommApplication extends Application
 	public static Boolean updateNeeded = false;
 	public static Boolean downloadAndWriteDatabaseSucceeded = false;
 	private static Boolean hasBluetoothLE = false;
-	
+	private static boolean isLargeScreen = false;
+
 	private Typeface exo2Font;
 	private Typeface exo2FontBold;
 	private Typeface nunitoFont;
@@ -33,11 +34,16 @@ public class RealCommApplication extends Application
 		return hasBluetoothLE;
 	}
 	
+	public static boolean getIsLargeScreen()
+	{
+		return isLargeScreen;
+	}
+
 	public Typeface getExo2Font()
 	{
 		return this.exo2Font;
 	}
-	
+
 	public Typeface getExo2FontBold()
 	{
 		return exo2FontBold;
@@ -53,23 +59,25 @@ public class RealCommApplication extends Application
 		return nunitoFontBold;
 	}
 
-//	public static final RealCommMenuItem[] menuItems =
-//	{
-//		new RealCommMenuItem("Listing", ListingPageActivity.class),
-//		new RealCommMenuItem("Settings", SettingsPageActivity.class)
-//	};
+	// public static final RealCommMenuItem[] menuItems =
+	// {
+	// new RealCommMenuItem("Listing", ListingPageActivity.class),
+	// new RealCommMenuItem("Settings", SettingsPageActivity.class)
+	// };
 
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
 
+		setIsLargeScreen();
+
 		this.exo2Font = Typeface.createFromAsset(getAssets(), "fonts/Exo_2/Exo2-Regular.ttf");
 		this.exo2FontBold = Typeface.createFromAsset(getAssets(), "fonts/Exo_2/Exo2-Bold.ttf");
-		
+
 		this.nunitoFont = Typeface.createFromAsset(getAssets(), "fonts/Nunito/Nunito-Regular.ttf");
 		this.nunitoFontBold = Typeface.createFromAsset(getAssets(), "fonts/Nunito/Nunito-Bold.ttf");
-		
+
 		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2)
 		{
 			hasBluetoothLE = true;
@@ -84,11 +92,18 @@ public class RealCommApplication extends Application
 		Intent service = new Intent(getApplicationContext(), WebService.class);
 		startService(service);
 	}
-	
+
+	private void setIsLargeScreen()
+	{
+		// Lookup Configuration#screenLayout for more details
+		isLargeScreen =
+			(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+	}
+
 	public static Boolean isBluetoothEnabled(Context context)
 	{
 		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		
+
 		if (bluetoothAdapter == null)
 		{
 			return false;

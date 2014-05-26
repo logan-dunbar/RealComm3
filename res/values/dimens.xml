@@ -22,7 +22,7 @@
 
     <!-- Tabs -->
     <dimen name="tabWidth">80dp</dimen>
-    <dimen name="tabHeight">30dp</dimen>
+    <dimen name="tabHeight">35dp</dimen>
     <dimen name="tabSpacing">@dimen/defaultSpacingMargin</dimen>
     <dimen name="tabPadding">5dp</dimen>
     <dimen name="tabTextSize">@dimen/textSize18</dimen>
@@ -76,9 +76,10 @@
     <dimen name="boothListButtonsSpacing">@dimen/defaultSpacingMargin</dimen>
 
     <!-- Booth List Item -->
-    <dimen name="boothListItemCircleMargin">@dimen/defaultMargin</dimen>
-    <dimen name="boothListItemHeight">80dp</dimen>
+    <dimen name="boothListItemMargin">@dimen/defaultMargin</dimen>
+    <dimen name="boothListItemHeight">60dp</dimen>
     <dimen name="boothListItemCircleDiameter">25dp</dimen>
+    <dimen name="boothListItemRectangleWidth">15dp</dimen>
 
     <!-- Connection Status -->
     <dimen name="connectionStatusMargin">@dimen/defaultMargin</dimen>
@@ -93,7 +94,7 @@
 
     <!-- Talk List Item -->
     <dimen name="talkListItemMargin">@dimen/defaultMargin</dimen>
-    <dimen name="talkListItemDividerHeight">@dimen/defaultMargin</dimen>
+    <dimen name="talkListItemDividerHeight">20dp</dimen>
 
     <!-- Profile -->
     <dimen name="profileBorderWidth">@dimen/defaultBorderWidth</dimen>
@@ -147,4 +148,9 @@
     <!-- Social Networks -->
     <dimen name="socialNetworksMargin">@dimen/profileItemMargin</dimen>
     <dimen name="socialNetworksSpacingMargin">@dimen/profileItemSpacingMargin</dimen>
+    
+    <!-- Dashboard Phone -->
+    <dimen name="dashboardPhoneIconSize">24dp</dimen>
+    <dimen name="dashboardPhoneSpacing">5dp</dimen>
+    <dimen name="dashboardPhoneBottomPadding">10dp</dimen>
 </resources>

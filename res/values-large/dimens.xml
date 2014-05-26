@@ -4,5 +4,8 @@
     <!-- Splash screen -->
     <dimen name="splashDetailMarginTop">40dp</dimen>
     <dimen name="splashDetailBetweenMargin">40dp</dimen>
+    
+    <!-- Booth List Item -->
+    <dimen name="boothListItemHeight">80dp</dimen>
 
 </resources>

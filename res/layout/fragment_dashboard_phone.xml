@@ -1,69 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
 
-    <!-- Can probably take out the parent frame layout, unless we get fancy with the navigation drawer -->
+    <FrameLayout
+        android:id="@+id/phonePageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/navigationDrawerContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/dashboardPhoneBottomPadding" >
 
         <FrameLayout
-            android:id="@+id/phonePageContainer"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1" >
+
+            <LinearLayout
+                android:id="@+id/dashboardPhoneExploreLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/tab_selector"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="@dimen/dashboardPhoneIconSize"
+                    android:layout_height="@dimen/dashboardPhoneIconSize"
+                    android:contentDescription="@string/dashboardPhoneMenuItem"
+                    android:src="@drawable/icon_landing_explore" />
+
+                <TextView
+                    android:id="@+id/dashboardPhoneExploreTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dashboardPhoneSpacing"
+                    android:text="@string/splashExploreTitle"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textSize14" />
+            </LinearLayout>
         </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/navigationDrawerContainer"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/drawerHeight"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal" >
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
 
-            <Button
-                android:id="@+id/exploreButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+            <LinearLayout
+                android:id="@+id/dashboardPhoneFindLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:background="@drawable/tab_selector"
-                android:text="Explore"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textSize14" />
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical" >
 
-            <Button
-                android:id="@+id/findButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/tab_selector"
-                android:text="Find"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textSize14" />
+                <ImageView
+                    android:layout_width="@dimen/dashboardPhoneIconSize"
+                    android:layout_height="@dimen/dashboardPhoneIconSize"
+                    android:contentDescription="@string/dashboardPhoneMenuItem"
+                    android:src="@drawable/icon_landing_lookup" />
 
-            <Button
-                android:id="@+id/scheduleButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/tab_selector"
-                android:text="Schedule"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textSize14" />
+                <TextView
+                    android:id="@+id/dashboardPhoneFindTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dashboardPhoneSpacing"
+                    android:text="@string/splashFindTitle"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textSize14" />
+            </LinearLayout>
+        </FrameLayout>
 
-            <Button
-                android:id="@+id/infoButton"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:id="@+id/dashboardPhoneAttendLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:background="@drawable/tab_selector"
-                android:text="Info"
-                android:textColor="@color/white"
-                android:textSize="@dimen/textSize14" />
-        </LinearLayout>
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="@dimen/dashboardPhoneIconSize"
+                    android:layout_height="@dimen/dashboardPhoneIconSize"
+                    android:contentDescription="@string/dashboardPhoneMenuItem"
+                    android:src="@drawable/icon_landing_attend" />
+
+                <TextView
+                    android:id="@+id/dashboardPhoneAttendTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dashboardPhoneSpacing"
+                    android:text="@string/splashAttendTitle"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textSize14" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" >
+
+            <LinearLayout
+                android:id="@+id/dashboardPhoneInfoLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/tab_selector"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="@dimen/dashboardPhoneIconSize"
+                    android:layout_height="@dimen/dashboardPhoneIconSize"
+                    android:contentDescription="@string/dashboardPhoneMenuItem"
+                    android:src="@drawable/icon_info" />
+
+                <TextView
+                    android:id="@+id/dashboardPhoneInfoTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dashboardPhoneSpacing"
+                    android:text="@string/menuInfo"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textSize14" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

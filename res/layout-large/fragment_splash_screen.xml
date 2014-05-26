@@ -98,6 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
+                    android:layout_marginRight="@dimen/splashDetailBetweenMargin"
                     android:src="@drawable/icon_landing_lookup" />
 
                 <ImageView
@@ -105,7 +106,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
                     android:src="@drawable/icon_landing_attend" />
             </TableRow>
 
@@ -130,6 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
+                    android:layout_marginRight="@dimen/splashDetailBetweenMargin"
                     android:text="@string/splashFindTitle"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize40" />
@@ -139,7 +140,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
                     android:text="@string/splashAttendTitle"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize40" />
@@ -167,6 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
+                    android:layout_marginRight="@dimen/splashDetailBetweenMargin"
                     android:gravity="center_horizontal"
                     android:text="@string/splashFindDesc"
                     android:textColor="@color/white"
@@ -177,7 +178,6 @@
                     android:layout_width="@dimen/splashDetailsTextWidth"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
                     android:gravity="center_horizontal"
                     android:text="@string/splashAttendDesc"
                     android:textColor="@color/white"

@@ -86,7 +86,7 @@ public class BoothListAdapter extends ArrayAdapter<BoothModel>
 		{
 			row = this.layoutInflater.inflate(R.layout.list_item_booth, null);
 			holder = new ViewHolder();
-			holder.circleLayout = (FrameLayout) row.findViewById(R.id.boothItemCircleLayout);
+			holder.drawableLayout = (FrameLayout) row.findViewById(R.id.boothItemDrawableLayout);
 			holder.companyName = (TextView) row.findViewById(R.id.companyNameTextView);
 			holder.companyName.setTypeface(this.application.getExo2Font());
 			holder.boothNumber = (TextView) row.findViewById(R.id.boothNumberTextView);
@@ -107,15 +107,22 @@ public class BoothListAdapter extends ArrayAdapter<BoothModel>
 		holder.boothNumber.setText(BOOTH_PREFIX + String.valueOf(model.getBoothNumber()));
 		holder.boothNumber.setTextColor(resolvedColorId);
 
-		GradientDrawable circle = (GradientDrawable) holder.circleLayout.getBackground();
-		circle.setColor(resolvedColorId);
+		if (RealCommApplication.getIsLargeScreen())
+		{
+			GradientDrawable circle = (GradientDrawable) holder.drawableLayout.getBackground();
+			circle.setColor(resolvedColorId);
+		}
+		else
+		{
+			holder.drawableLayout.setBackgroundColor(resolvedColorId);
+		}
 
 		return row;
 	}
 
 	static class ViewHolder
 	{
-		FrameLayout circleLayout;
+		FrameLayout drawableLayout;
 		TextView companyName;;
 		TextView boothNumber;
 	}

@@ -5,20 +5,20 @@ import com.openbox.realcomm3.R;
 public enum RealcommPhonePage
 {
 	INITIALIZING(-1),
-	BOOTH_EXPLORE(R.id.exploreButton),
-	BOOTH_LIST(R.id.findButton),
-	SCHEDULE_PAGE(R.id.scheduleButton),
-	INFO_PAGE(R.id.infoButton);
+	BOOTH_EXPLORE(R.id.dashboardPhoneExploreLayout),
+	BOOTH_LIST(R.id.dashboardPhoneFindLayout),
+	SCHEDULE_PAGE(R.id.dashboardPhoneAttendLayout),
+	INFO_PAGE(R.id.dashboardPhoneInfoLayout);
 
-	private int buttonId;
+	private int layoutId;
 
 	private RealcommPhonePage(int buttonId)
 	{
-		this.buttonId = buttonId;
+		this.layoutId = buttonId;
 	}
 
-	public int getButtonId()
+	public int getLayoutId()
 	{
-		return buttonId;
+		return layoutId;
 	}
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/navigationDrawerContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/dashboardPhoneBottomPadding" >
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tab_selector"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="@dimen/dashboardPhoneIconSize"
+                android:layout_height="@dimen/dashboardPhoneIconSize"
+                android:layout_above="@+id/dashboardPhoneExploreTextView"
+                android:layout_alignParentTop="true"
+                android:contentDescription="@string/dashboardPhoneMenuItem"
+                android:src="@drawable/icon_landing_explore" />
+
+            <TextView
+                android:id="@+id/dashboardPhoneExploreTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="@dimen/dashboardPhoneSpacing"
+                android:text="@string/splashExploreTitle"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textSize14" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -113,7 +113,6 @@ public class RealCommActivity extends BaseActivity implements
 
 	// Globals
 	private SelectedBoothModel selectedBooth;
-	private boolean isLargeScreen;
 
 	/**********************************************************************************************
 	 * Activity Lifecycle Implements
@@ -121,7 +120,6 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		setIsLargeScreen();
 		setTheme();
 		setupActionBar(); // Crashes saying "call requestFeature() before setting content"
 
@@ -249,7 +247,7 @@ public class RealCommActivity extends BaseActivity implements
 		{
 			changePage(RealcommPage.DASHBOARD_PAGE);
 		}
-		else if (!this.isLargeScreen)
+		else if (!RealCommApplication.getIsLargeScreen())
 		{
 			if (this.dashboardPhoneListener != null)
 			{
@@ -327,12 +325,6 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	@Override
-	public boolean getIsLargeScreen()
-	{
-		return this.isLargeScreen;
-	}
-
-	@Override
 	public void changePage(RealcommPage page)
 	{
 		this.pageManager.changePage(page);
@@ -374,7 +366,7 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	public void showDashboardAndRemoveSplashScreen()
 	{
-		if (this.isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			showDashboardTabletAndRemoveSplashScreen();
 		}
@@ -438,7 +430,7 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	public void showProfilePageAndHideDashboard()
 	{
-		if (this.isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			showProfilePageAndHideDashboardTablet();
 		}
@@ -501,7 +493,7 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	public void showDashboardAndHideProfilePage()
 	{
-		if (this.isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			showDashboardTabletAndHideProfilePage();
 		}
@@ -862,16 +854,9 @@ public class RealCommActivity extends BaseActivity implements
 		this.pageManager = new RealcommPageManager(startingPage, this);
 	}
 
-	private void setIsLargeScreen()
-	{
-		// Lookup Configuration#screenLayout for more details
-		this.isLargeScreen =
-			(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
-	}
-
 	private void setTheme()
 	{
-		if (this.isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			setTheme(R.style.TabletTheme);
 		}
@@ -879,7 +864,7 @@ public class RealCommActivity extends BaseActivity implements
 
 	private void setupActionBar()
 	{
-		if (isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		}
@@ -895,7 +880,7 @@ public class RealCommActivity extends BaseActivity implements
 
 	private void setScreenOrientation()
 	{
-		if (this.isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		}
@@ -945,7 +930,7 @@ public class RealCommActivity extends BaseActivity implements
 
 	private void initializeDashboardFragment()
 	{
-		if (this.isLargeScreen)
+		if (RealCommApplication.getIsLargeScreen())
 		{
 			initializeDashboardTabletFragment();
 		}

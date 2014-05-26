@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.openbox.realcomm3.R;
+import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.utilities.enums.CompanyCategory;
@@ -112,7 +113,7 @@ public class CompanyCategoriesFragment extends BaseProfileFragment
 	private void addCategoryFragment(Fragment fragment, String tag)
 	{
 		int containerId;
-		if (getActivityInterface() != null && getActivityInterface().getIsLargeScreen())
+		if (getActivityInterface() != null && RealCommApplication.getIsLargeScreen())
 		{
 			// Want to go First -> Second -> First -> Second
 			containerId = currentlyAddedFragments.size() % 2 == 0 ? R.id.companyCategoriesFirstContainer : R.id.companyCategoriesSecondContainer;

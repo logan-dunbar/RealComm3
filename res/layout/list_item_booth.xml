@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
 
     <FrameLayout
-        android:id="@+id/boothItemCircleLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_margin="@dimen/boothListItemCircleMargin"
-        android:background="@drawable/circle_list_item" >
+        android:id="@+id/boothItemDrawableLayout"
+        android:layout_width="@dimen/boothListItemRectangleWidth"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/boothListItemMargin" >
     </FrameLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="@dimen/boothListItemHeight"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/boothItemCircleLayout"
         android:gravity="center_vertical" >
 
         <TextView
@@ -28,7 +24,7 @@
             android:includeFontPadding="false"
             android:minHeight="0dp"
             android:singleLine="true"
-            android:textSize="@dimen/textSize30" />
+            android:textSize="@dimen/textSize24" />
 
         <TextView
             android:id="@+id/boothNumberTextView"
@@ -37,7 +33,7 @@
             android:layout_below="@+id/companyNameTextView"
             android:includeFontPadding="false"
             android:minHeight="0dp"
-            android:textSize="@dimen/textSize24" />
+            android:textSize="@dimen/textSize20" />
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

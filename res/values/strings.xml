@@ -2,6 +2,8 @@
 
     <!-- App -->
     <string name="app_name">RealComm</string>
+    <string name="openBoxCompanyName">Open Box Software</string>
+    <string name="openLeaseCompanyName">Open Lease</string>
 
     <!-- Menu -->
     <string name="updateMenuItemTitle">Update</string>
@@ -54,5 +56,6 @@
     <!-- Image Content Descriptions -->
     <string name="boothListTabAtoZ">A - Z</string>
     <string name="boothListTabNearMe">Near Me</string>
+    <string name="dashboardPhoneMenuItem">Menu Icon</string>
 
 </resources>

@@ -10,8 +10,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
+import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseFragment;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
@@ -30,7 +32,7 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 
 	// Views
 	private LinearLayout navigationDrawer;
-	private List<Button> navigationButtons = new ArrayList<>();
+	private List<LinearLayout> navigationLayouts = new ArrayList<>();
 
 	/**********************************************************************************************
 	 * Fields
@@ -425,16 +427,16 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 	@Override
 	public void selectPageButton()
 	{
-		int buttonId = this.phonePageManager.getCurrentPage().getButtonId();
-		for (Button button : this.navigationButtons)
+		int buttonId = this.phonePageManager.getCurrentPage().getLayoutId();
+		for (LinearLayout layout : this.navigationLayouts)
 		{
-			if (button.getId() == buttonId)
+			if (layout.getId() == buttonId)
 			{
-				button.setSelected(true);
+				layout.setSelected(true);
 			}
 			else
 			{
-				button.setSelected(false);
+				layout.setSelected(false);
 			}
 		}
 	}
@@ -459,25 +461,25 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 	{
 		switch (v.getId())
 		{
-			case R.id.exploreButton:
+			case R.id.dashboardPhoneExploreLayout:
 				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
 				{
 					changePage(RealcommPhonePage.BOOTH_EXPLORE);
 				}
 				break;
-			case R.id.findButton:
+			case R.id.dashboardPhoneFindLayout:
 				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_LIST)
 				{
 					changePage(RealcommPhonePage.BOOTH_LIST);
 				}
 				break;
-			case R.id.scheduleButton:
+			case R.id.dashboardPhoneAttendLayout:
 				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.SCHEDULE_PAGE)
 				{
 					changePage(RealcommPhonePage.SCHEDULE_PAGE);
 				}
 				break;
-			case R.id.infoButton:
+			case R.id.dashboardPhoneInfoLayout:
 				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.INFO_PAGE)
 				{
 					changePage(RealcommPhonePage.INFO_PAGE);
@@ -499,22 +501,34 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 
 	private void initNavigationDrawer(View view)
 	{
+		RealCommApplication application = (RealCommApplication) getActivity().getApplication();
+
 		this.navigationDrawer = (LinearLayout) view.findViewById(R.id.navigationDrawerContainer);
 
-		Button exploreButton = (Button) view.findViewById(R.id.exploreButton);
-		Button findButton = (Button) view.findViewById(R.id.findButton);
-		Button scheduleButton = (Button) view.findViewById(R.id.scheduleButton);
-		Button infoButton = (Button) view.findViewById(R.id.infoButton);
+		LinearLayout exploreLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneExploreLayout);
+		LinearLayout findLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneFindLayout);
+		LinearLayout attendLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneAttendLayout);
+		LinearLayout infoLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneInfoLayout);
 
-		exploreButton.setOnClickListener(this);
-		findButton.setOnClickListener(this);
-		scheduleButton.setOnClickListener(this);
-		infoButton.setOnClickListener(this);
+		exploreLayout.setOnClickListener(this);
+		findLayout.setOnClickListener(this);
+		attendLayout.setOnClickListener(this);
+		infoLayout.setOnClickListener(this);
 
-		this.navigationButtons.add(exploreButton);
-		this.navigationButtons.add(findButton);
-		this.navigationButtons.add(scheduleButton);
-		this.navigationButtons.add(infoButton);
+		this.navigationLayouts.add(exploreLayout);
+		this.navigationLayouts.add(findLayout);
+		this.navigationLayouts.add(attendLayout);
+		this.navigationLayouts.add(infoLayout);
+
+		TextView exploreTextView = (TextView) view.findViewById(R.id.dashboardPhoneExploreTextView);
+		TextView findTextView = (TextView) view.findViewById(R.id.dashboardPhoneFindTextView);
+		TextView attendTextView = (TextView) view.findViewById(R.id.dashboardPhoneAttendTextView);
+		TextView infoTextView = (TextView) view.findViewById(R.id.dashboardPhoneInfoTextView);
+
+		exploreTextView.setTypeface(application.getExo2Font());
+		findTextView.setTypeface(application.getExo2Font());
+		attendTextView.setTypeface(application.getExo2Font());
+		infoTextView.setTypeface(application.getExo2Font());
 	}
 
 	private void initializeFragments()
