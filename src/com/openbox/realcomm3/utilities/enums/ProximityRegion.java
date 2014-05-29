@@ -6,9 +6,9 @@ import com.openbox.realcomm3.R;
 
 public enum ProximityRegion
 {
-	IMMEDIATE(3.0, R.color.opaque_red),
-	NEAR(8.0, R.color.opaque_orange),
-	FAR(18.0, R.color.opaque_blue),
+	IMMEDIATE(5.0, R.color.opaque_red),
+	NEAR(13.0, R.color.opaque_orange),
+	FAR(25.0, R.color.opaque_blue),
 	OUTOFRANGE(1000.0, R.color.opaque_light_grey);
 
 	private final double proximityLimit;

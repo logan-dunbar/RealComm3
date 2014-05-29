@@ -89,15 +89,15 @@ public class RealCommApplication extends Application
 		DatabaseManager.init(getApplicationContext());
 
 		// Start WebService
-		Intent service = new Intent(getApplicationContext(), WebService.class);
-		startService(service);
+//		Intent service = new Intent(getApplicationContext(), WebService.class);
+//		startService(service);
 	}
 
 	private void setIsLargeScreen()
 	{
 		// Lookup Configuration#screenLayout for more details
 		isLargeScreen =
-			(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+			(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
 	}
 
 	public static Boolean isBluetoothEnabled(Context context)

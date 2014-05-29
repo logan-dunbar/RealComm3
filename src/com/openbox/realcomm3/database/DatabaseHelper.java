@@ -1,6 +1,14 @@
 package com.openbox.realcomm3.database;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +32,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 	 * Database Configuration
 	 **********************************************************************************************/
 	private static final String DATABASE_NAME = "RealCommDB.sqlite";
+	private static final String DATABASE_ASSET_NAME = "RealCommDB.zip";
+	private static final String ASSET_DB_PATH = "databases";
 	private static final int DATABASE_VERSION = 1;
 
 	/**********************************************************************************************
@@ -32,6 +42,34 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 	public DatabaseHelper(Context context)
 	{
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+
+		File dbFile = context.getDatabasePath(DATABASE_NAME);
+		String dbPath = dbFile.getPath();
+		File dbfile = new File(dbPath);
+		boolean exists = dbfile.exists();
+
+		if (!exists)
+		{
+			// Make sure folders exists
+			dbFile.getParentFile().mkdirs();
+
+			InputStream is;
+			try
+			{
+				is = context.getAssets().open(DATABASE_ASSET_NAME);
+				ZipInputStream zis = getFileFromZip(is);
+				if (zis == null)
+				{
+					throw new FileNotFoundException("Realcomm DB not in asset folder");
+				}
+
+				writeExtractedFileToDisk(zis, new FileOutputStream(dbPath));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**********************************************************************************************
@@ -52,7 +90,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 			TableUtils.createTable(connectionSource, TalkTrack.class);
 			TableUtils.createTable(connectionSource, Venue.class);
 
-			//TableUtils.createTable(connectionSource, BeaconInfo.class);
+			// TableUtils.createTable(connectionSource, BeaconInfo.class);
 		}
 		catch (SQLException e)
 		{
@@ -75,7 +113,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 			TableUtils.dropTable(connectionSource, TalkTrack.class, true);
 			TableUtils.dropTable(connectionSource, Venue.class, true);
 
-			//TableUtils.dropTable(connectionSource, BeaconInfo.class, true);
+			// TableUtils.dropTable(connectionSource, BeaconInfo.class, true);
 		}
 		catch (SQLException e)
 		{
@@ -83,5 +121,29 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		}
 
 		onCreate(database, connectionSource);
+	}
+
+	public static ZipInputStream getFileFromZip(InputStream zipFileStream) throws IOException
+	{
+		ZipInputStream zis = new ZipInputStream(zipFileStream);
+		while (zis.getNextEntry() != null)
+		{
+			return zis;
+		}
+
+		return null;
+	}
+
+	public static void writeExtractedFileToDisk(InputStream in, OutputStream outs) throws IOException
+	{
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = in.read(buffer)) > 0)
+		{
+			outs.write(buffer, 0, length);
+		}
+		outs.flush();
+		outs.close();
+		in.close();
 	}
 }
