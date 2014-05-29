@@ -608,6 +608,17 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	@Override
+	public List<BoothModel> getBoothModelList()
+	{
+		if (this.dataInterface != null)
+		{
+			return this.dataInterface.getBoothModelList();
+		}
+
+		return null;
+	}
+
+	@Override
 	public Map<ProximityRegion, Integer> getBoothProximityCounts()
 	{
 		if (this.dataInterface != null)

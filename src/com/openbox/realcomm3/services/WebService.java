@@ -15,7 +15,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 public class WebService extends Service implements AsyncTaskInterface
 {
-	public static final String ROOT_API_URL = "http://obtestweb.openbox.local/RealComm/api/Default/";
+	public static final String ROOT_API_URL = "http://ob036.openbox.local/RealComm/api/Default/";
 	public static final String FETCH_MOST_RECENT_UPDATE_DATE_API_URL = ROOT_API_URL + "FetchMostRecentUpdateDate";
 	public static final String FETCH_DATABASE_API_URL = ROOT_API_URL + "FetchRealCommDatabase";
 

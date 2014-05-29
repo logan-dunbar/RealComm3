@@ -190,6 +190,12 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	}
 
 	@Override
+	public List<BoothModel> getBoothModelList()
+	{
+		return new ArrayList<>(this.boothModelList);
+	}
+
+	@Override
 	public Map<ProximityRegion, Integer> getBoothProximityCounts()
 	{
 		// Get all the proximity regions

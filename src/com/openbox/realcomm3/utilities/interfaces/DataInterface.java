@@ -21,6 +21,8 @@ public interface DataInterface
 
 	List<BoothModel> getBoothModelList(BoothSortMode sortMode);
 
+	List<BoothModel> getBoothModelList();
+
 	Map<ProximityRegion, Integer> getBoothProximityCounts();
 
 	void updateAccuracy(Collection<IBeacon> beaconList);
