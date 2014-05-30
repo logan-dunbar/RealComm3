@@ -14,10 +14,16 @@ import com.openbox.realcomm3.database.models.CompanyModel;
 
 public class CompanySocialNetworksFragment extends BaseProfileFragment
 {
+	private static String HTTP_PREFIX = "http://";
+	private static String HTTPS_PREFIX = "https://";
+	private static String WWW_PREFIX = "www.";
+
 	private ImageButton facebook;
 	private ImageButton twitter;
 	private ImageButton linkedIn;
 
+	// TODO Could refactor this class a bit
+	
 	public static CompanySocialNetworksFragment newInstance()
 	{
 		CompanySocialNetworksFragment fragment = new CompanySocialNetworksFragment();
@@ -63,15 +69,26 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		{
 			this.facebook.setVisibility(View.VISIBLE);
 			// attachOnClickListener(this.facebook, model.getFacebook());
-			this.facebook.setOnClickListener(new OnClickListener()
+
+			final String address = parseAddress(model.getFacebook());
+			if (address != null)
 			{
-				@Override
-				public void onClick(View v)
+//				attachOnClickListener(this.facebook, address);
+
+				this.facebook.setOnClickListener(new OnClickListener()
 				{
-					Intent i = getOpenFacebookIntent(model.getFacebook(), model.getFacebookProfileId());
-					startActivity(i);
-				}
-			});
+					@Override
+					public void onClick(View v)
+					{
+						Intent i = getOpenFacebookIntent(address, model.getFacebookProfileId());
+						startActivity(i);
+					}
+				});
+			}
+			else
+			{
+				this.facebook.setVisibility(View.GONE);
+			}
 		}
 		else
 		{
@@ -84,7 +101,16 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		if (model.getHasTwitter())
 		{
 			this.twitter.setVisibility(View.VISIBLE);
-			attachOnClickListener(this.twitter, model.getTwitter());
+
+			String address = parseAddress(model.getTwitter());
+			if (address != null)
+			{
+				attachOnClickListener(this.twitter, address);
+			}
+			else
+			{
+				this.twitter.setVisibility(View.GONE);
+			}
 		}
 		else
 		{
@@ -97,7 +123,16 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		if (model.getHasLinkedIn())
 		{
 			this.linkedIn.setVisibility(View.VISIBLE);
-			attachOnClickListener(this.linkedIn, model.getLinkedIn());
+
+			String address = parseAddress(model.getLinkedIn());
+			if (address != null)
+			{
+				attachOnClickListener(this.linkedIn, address);
+			}
+			else
+			{
+				this.linkedIn.setVisibility(View.GONE);
+			}
 		}
 		else
 		{
@@ -118,8 +153,26 @@ public class CompanySocialNetworksFragment extends BaseProfileFragment
 		});
 	}
 
+	private String parseAddress(String address)
+	{
+		if (address.startsWith(HTTP_PREFIX) || address.startsWith(HTTPS_PREFIX))
+		{
+			return address;
+		}
+		else if (address.startsWith(WWW_PREFIX))
+		{
+			return HTTPS_PREFIX + address;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	private Intent getOpenFacebookIntent(String address, String profileId)
 	{
+		// return new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+
 		try
 		{
 			getActivity().getPackageManager().getPackageInfo("com.facebook.katana", 0);
