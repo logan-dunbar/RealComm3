@@ -6,7 +6,7 @@ public enum AppMode
 	OFFLINE("Offline", 1500, 7000),
 	ONLINE("Online", 1500, 1500),
 	OUTOFRANGE("Out of Range", 1500, 7000),
-	PAUSED("Paused", -1, -1);
+	PAUSED("Paused", 1500, 7000); // TODO This is a quick fix hax. should never need this
 
 	private final String displayName;
 	private final int animationStartDelay;

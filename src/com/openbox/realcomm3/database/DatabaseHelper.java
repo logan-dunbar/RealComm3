@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.content.Context;
@@ -16,6 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.openbox.realcomm3.database.objects.Beacon;
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.BoothContact;
 import com.openbox.realcomm3.database.objects.Company;
@@ -33,7 +33,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 	 **********************************************************************************************/
 	private static final String DATABASE_NAME = "RealCommDB.sqlite";
 	private static final String DATABASE_ASSET_NAME = "RealCommDB.zip";
-	private static final String ASSET_DB_PATH = "databases";
 	private static final int DATABASE_VERSION = 1;
 
 	/**********************************************************************************************
@@ -43,6 +42,62 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 	{
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
+		copyFromAssets(context);
+	}
+
+	/**********************************************************************************************
+	 * onCreate and onUpgrade Events
+	 **********************************************************************************************/
+	@Override
+	public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource)
+	{
+		try
+		{
+			TableUtils.createTable(connectionSource, Booth.class);
+			TableUtils.createTable(connectionSource, BoothContact.class);
+			TableUtils.createTable(connectionSource, Contact.class);
+			TableUtils.createTable(connectionSource, ContactImage.class);
+			TableUtils.createTable(connectionSource, Company.class);
+			TableUtils.createTable(connectionSource, CompanyLogo.class);
+			TableUtils.createTable(connectionSource, Talk.class);
+			TableUtils.createTable(connectionSource, TalkTrack.class);
+			TableUtils.createTable(connectionSource, Venue.class);
+
+			TableUtils.createTable(connectionSource, Beacon.class);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)
+	{
+		try
+		{
+			TableUtils.dropTable(connectionSource, Booth.class, true);
+			TableUtils.dropTable(connectionSource, BoothContact.class, true);
+			TableUtils.dropTable(connectionSource, Contact.class, true);
+			TableUtils.dropTable(connectionSource, ContactImage.class, true);
+			TableUtils.dropTable(connectionSource, Company.class, true);
+			TableUtils.dropTable(connectionSource, CompanyLogo.class, true);
+			TableUtils.dropTable(connectionSource, Talk.class, true);
+			TableUtils.dropTable(connectionSource, TalkTrack.class, true);
+			TableUtils.dropTable(connectionSource, Venue.class, true);
+
+			TableUtils.dropTable(connectionSource, Beacon.class, true);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		onCreate(database, connectionSource);
+	}
+
+	private void copyFromAssets(Context context)
+	{
 		File dbFile = context.getDatabasePath(DATABASE_NAME);
 		String dbPath = dbFile.getPath();
 		File dbfile = new File(dbPath);
@@ -72,58 +127,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		}
 	}
 
-	/**********************************************************************************************
-	 * onCreate and onUpgrade Events
-	 **********************************************************************************************/
-	@Override
-	public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource)
-	{
-		try
-		{
-			TableUtils.createTable(connectionSource, Booth.class);
-			TableUtils.createTable(connectionSource, BoothContact.class);
-			TableUtils.createTable(connectionSource, Contact.class);
-			TableUtils.createTable(connectionSource, ContactImage.class);
-			TableUtils.createTable(connectionSource, Company.class);
-			TableUtils.createTable(connectionSource, CompanyLogo.class);
-			TableUtils.createTable(connectionSource, Talk.class);
-			TableUtils.createTable(connectionSource, TalkTrack.class);
-			TableUtils.createTable(connectionSource, Venue.class);
-
-			// TableUtils.createTable(connectionSource, BeaconInfo.class);
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion)
-	{
-		try
-		{
-			TableUtils.dropTable(connectionSource, Booth.class, true);
-			TableUtils.dropTable(connectionSource, BoothContact.class, true);
-			TableUtils.dropTable(connectionSource, Contact.class, true);
-			TableUtils.dropTable(connectionSource, ContactImage.class, true);
-			TableUtils.dropTable(connectionSource, Company.class, true);
-			TableUtils.dropTable(connectionSource, CompanyLogo.class, true);
-			TableUtils.dropTable(connectionSource, Talk.class, true);
-			TableUtils.dropTable(connectionSource, TalkTrack.class, true);
-			TableUtils.dropTable(connectionSource, Venue.class, true);
-
-			// TableUtils.dropTable(connectionSource, BeaconInfo.class, true);
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-
-		onCreate(database, connectionSource);
-	}
-
-	public static ZipInputStream getFileFromZip(InputStream zipFileStream) throws IOException
+	private static ZipInputStream getFileFromZip(InputStream zipFileStream) throws IOException
 	{
 		ZipInputStream zis = new ZipInputStream(zipFileStream);
 		while (zis.getNextEntry() != null)
@@ -134,7 +138,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		return null;
 	}
 
-	public static void writeExtractedFileToDisk(InputStream in, OutputStream outs) throws IOException
+	private static void writeExtractedFileToDisk(InputStream in, OutputStream outs) throws IOException
 	{
 		byte[] buffer = new byte[1024];
 		int length;

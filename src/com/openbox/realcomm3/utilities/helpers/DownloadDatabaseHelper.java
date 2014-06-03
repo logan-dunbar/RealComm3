@@ -13,8 +13,10 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.application.SharedPreferencesManager;
 import com.openbox.realcomm3.database.DatabaseManager;
 import com.openbox.realcomm3.database.objects.Booth;
@@ -27,42 +29,27 @@ import com.openbox.realcomm3.database.objects.RealCommDatabase;
 import com.openbox.realcomm3.database.objects.Talk;
 import com.openbox.realcomm3.database.objects.TalkTrack;
 import com.openbox.realcomm3.database.objects.Venue;
+import com.openbox.realcomm3.services.WebService;
 
 public class DownloadDatabaseHelper
 {
+	public static final String FETCH_MOST_RECENT_UPDATE_DATE_API_URL = WebService.ROOT_API_URL + "FetchMostRecentUpdateDate";
+	public static final String FETCH_DATABASE_API_URL = WebService.ROOT_API_URL + "FetchRealCommDatabase";
+
 	/**********************************************************************************************
 	 * Members
 	 **********************************************************************************************/
 	private static String serverMostRecentUpdateDate;
 
 	private Context context;
-	private String urlString;
 	private Gson gson;
 	private JsonParser jsonParser;
 
-	private Boolean checkUpdateSucceeded = false;;
 	private Boolean updateNeeded = false;
-	private Boolean downloadDatabaseSucceeded = false;
-	private Boolean writeDatabaseSucceeded = false;
-
-	public Boolean getCheckUpdateSucceeded()
-	{
-		return this.checkUpdateSucceeded;
-	}
 
 	public Boolean getUpdateNeeded()
 	{
 		return this.updateNeeded;
-	}
-
-	public Boolean getDownloadDatabaseSucceeded()
-	{
-		return this.downloadDatabaseSucceeded;
-	}
-
-	public Boolean getWriteDatabaseSucceeded()
-	{
-		return this.writeDatabaseSucceeded;
 	}
 
 	private RealCommDatabase realCommDatabase;
@@ -70,25 +57,24 @@ public class DownloadDatabaseHelper
 	/**********************************************************************************************
 	 * Constructor
 	 **********************************************************************************************/
-	public DownloadDatabaseHelper(Context context, String urlString)
+	public DownloadDatabaseHelper(Context context)
 	{
 		this.context = context;
-		this.urlString = urlString;
-		this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+		this.gson = new GsonBuilder().setDateFormat(RealCommApplication.DOWNLOAD_DATE_FORMAT).create();
 		this.jsonParser = new JsonParser();
 	}
 
 	/**********************************************************************************************
 	 * Public Methods
 	 **********************************************************************************************/
-	public void checkUpdateNeeded()
+	public boolean checkUpdateNeeded()
 	{
-		LogHelper.Log("Checking if needs to update...");
-		URL url;
 		try
 		{
+			LogHelper.Log("In checkUpdateNeeded()...");
+
 			// Set up the connection
-			url = new URL(this.urlString);
+			URL url = new URL(FETCH_MOST_RECENT_UPDATE_DATE_API_URL);
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
 			// Specify request properties asking for JSON
@@ -97,10 +83,19 @@ public class DownloadDatabaseHelper
 			// Get the input stream
 			InputStream stream = urlConnection.getInputStream();
 
-			// Read the data
+			// Get the reader
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+
+			// TODO maybe save date in DB so we can ship with a date to prevent download on first start
+			// Read and convert mostRecentUpdateDate
 			this.updateNeeded = readMostRecentUpdateDateAndCompareToSaved(reader);
-			this.checkUpdateSucceeded = true;
+
+			if (this.updateNeeded)
+			{
+				LogHelper.Log("Update needed...");
+			}
+
+			return true;
 		}
 		catch (MalformedURLException e)
 		{
@@ -111,34 +106,36 @@ public class DownloadDatabaseHelper
 			// UnknownHostException comes in here
 			e.printStackTrace();
 		}
+
+		return false;
 	}
 
-	public void downloadDatabase()
+	public boolean downloadDatabase()
 	{
-		// TODO LD - NB Change - com.openbox.realcomm.database is downloaded and completely loaded into memory, and then
-		// written, might need
-		// to be incremental based on DB size
-		LogHelper.Log("Downloading com.openbox.realcomm.database...");
-		URL url;
+		// TODO LD - NB Change - com.openbox.realcomm.database is downloaded and completely loaded into memory,
+		// and then written, might need to be incremental based on DB size
 		try
 		{
+			LogHelper.Log("In downloadDatabase()...");
+
 			// Set up the connection
-			url = new URL(this.urlString);
+			URL url = new URL(FETCH_DATABASE_API_URL);
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
 			// Specify request properties asking for JSON
 			urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			urlConnection.setRequestProperty("Connection", "Keep-Alive");
 
 			// Get the input stream
 			InputStream stream = urlConnection.getInputStream();
 
-			// Read the data
+			// Get the reader
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
-			LogHelper.Log("Download complete!");
-
+			// Read and convert database
 			readRealCommDatabaseJson(reader);
-			this.downloadDatabaseSucceeded = true;
+
+			return true;
 		}
 		catch (MalformedURLException e)
 		{
@@ -146,11 +143,14 @@ public class DownloadDatabaseHelper
 		}
 		catch (IOException e)
 		{
+			// UnknownHostException comes in here
 			e.printStackTrace();
 		}
+
+		return false;
 	}
 
-	public void writeDatabase()
+	public boolean writeDatabase()
 	{
 		DatabaseManager databaseManager = DatabaseManager.getInstance();
 
@@ -176,15 +176,19 @@ public class DownloadDatabaseHelper
 			databaseManager.createList(realCommDatabase.getTalkTrackList(), TalkTrack.class, TalkTrack.ID_CLASS);
 			databaseManager.createList(realCommDatabase.getVenueList(), Venue.class, Venue.ID_CLASS);
 
+			// Wait until data has been deleted/inserted before writing the mostRecentUpdateDate
 			SharedPreferencesManager.setMostRecentUpdateDate(this.context, serverMostRecentUpdateDate);
 			SharedPreferencesManager.setLastUpdateDate(this.context, new Date().getTime());
-			this.writeDatabaseSucceeded = true;
+
+			return true;
 		}
 		catch (Exception e)
 		{
 			// Something went wrong with the insert
 			e.printStackTrace();
 		}
+
+		return false;
 	}
 
 	/**********************************************************************************************
@@ -192,21 +196,40 @@ public class DownloadDatabaseHelper
 	 **********************************************************************************************/
 	private Boolean readMostRecentUpdateDateAndCompareToSaved(BufferedReader reader)
 	{
-		// Get the two dates
-		JsonObject mostRecentUpdateDateObject = this.jsonParser.parse(reader).getAsJsonObject();
-		serverMostRecentUpdateDate = mostRecentUpdateDateObject.get(SharedPreferencesManager.MOST_RECENT_UPDATE_DATE_MEMBER_NAME).getAsString();
+		try
+		{
+			// Get the two dates
+			JsonObject mostRecentUpdateDateObject = this.jsonParser.parse(reader).getAsJsonObject();
+			serverMostRecentUpdateDate = mostRecentUpdateDateObject.get(SharedPreferencesManager.MOST_RECENT_UPDATE_DATE_MEMBER_NAME).getAsString();
 
-		String localMostRecentUpdateDate = SharedPreferencesManager.getMostRecentUpdateDate(this.context);
+			String localMostRecentUpdateDate = SharedPreferencesManager.getMostRecentUpdateDate(this.context);
 
-		LogHelper.Log("Update Needed = " + !serverMostRecentUpdateDate.equals(localMostRecentUpdateDate));
+			return !serverMostRecentUpdateDate.equals(localMostRecentUpdateDate);
+		}
+		catch (JsonIOException e)
+		{
+			e.printStackTrace();
+		}
 
-		return !serverMostRecentUpdateDate.equals(localMostRecentUpdateDate);
+		return false;
 	}
 
 	private void readRealCommDatabaseJson(BufferedReader reader)
 	{
-		JsonObject realCommDatabaseJsonObject = this.jsonParser.parse(reader).getAsJsonObject();
-		realCommDatabase = this.gson.fromJson(realCommDatabaseJsonObject, RealCommDatabase.class);
-		LogHelper.Log("Conversion complete!");
+		try
+		{
+			LogHelper.Log("Downloading...");
+			JsonObject realCommDatabaseJsonObject = this.jsonParser.parse(reader).getAsJsonObject();
+			LogHelper.Log("Download complete!");
+
+			LogHelper.Log("Converting...");
+			realCommDatabase = this.gson.fromJson(realCommDatabaseJsonObject, RealCommDatabase.class);
+			LogHelper.Log("Conversion complete!");
+		}
+		catch (JsonIOException e)
+		{
+			LogHelper.Log("Too many beacons, not enough CPU!!!");
+			e.printStackTrace();
+		}
 	}
 }

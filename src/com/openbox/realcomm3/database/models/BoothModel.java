@@ -25,6 +25,7 @@ public class BoothModel
 	private int txPower;
 
 	private Double accuracy = null;
+	private int rssi;
 
 	private int boothId;
 	private String UUID;
@@ -84,6 +85,7 @@ public class BoothModel
 	public void updateAccuracyWithBeacon(IBeacon beacon)
 	{
 		this.rssiHistory.add(beacon.getRssi());
+		this.rssi = beacon.getRssi();
 		this.txPower = beacon.getTxPower();
 		updateAccuracy();
 
@@ -92,6 +94,7 @@ public class BoothModel
 	public void updateAccuracyWithDefault()
 	{
 		this.rssiHistory.add(DEFAULT_RSSI);
+		this.rssi = DEFAULT_RSSI;
 		this.txPower = DEFAULT_TX_POWER;
 		updateAccuracy();
 	}
@@ -214,6 +217,11 @@ public class BoothModel
 	/**********************************************************************************************
 	 * Getters and Setters
 	 **********************************************************************************************/
+	public int getRssi()
+	{
+		return rssi;
+	}
+	
 	public int getBoothId()
 	{
 		return boothId;

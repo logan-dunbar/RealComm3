@@ -1,39 +1,49 @@
 package com.openbox.realcomm3.application;
 
 import com.openbox.realcomm3.database.DatabaseManager;
-import com.openbox.realcomm3.services.WebService;
 import com.openbox.realcomm3.utilities.helpers.LogHelper;
 
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Build;
-import android.support.v4.app.FragmentManager;
+import android.provider.Settings.Secure;
 
 public class RealCommApplication extends Application
 {
 	// ONLY STATIC VARIABLES/METHODS IN HERE. THIS IS BOUND TO THE CONTEXT
 	// Note: If the app goes to background and is closed by the OS, this object is not persisted. Use at own risk
+	public static final String DOWNLOAD_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+	public static final String UPLOAD_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-	public static Boolean updateNeeded = false;
-	public static Boolean downloadAndWriteDatabaseSucceeded = false;
-	private static Boolean hasBluetoothLE = false;
+	private static boolean hasBluetoothLE = false;
 	private static boolean isLargeScreen = false;
+
+	private static String deviceId;
 
 	private Typeface exo2Font;
 	private Typeface exo2FontBold;
 	private Typeface nunitoFont;
 	private Typeface nunitoFontBold;
 
-	public static Boolean getHasBluetoothLe()
+	public static boolean getHasBluetoothLe()
 	{
 		return hasBluetoothLE;
 	}
-	
+
+	public static Boolean isBluetoothEnabled()
+	{
+		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		return bluetoothAdapter == null ? false : bluetoothAdapter.isEnabled();
+	}
+
+	public static String getDeviceId()
+	{
+		return deviceId;
+	}
+
 	public static boolean getIsLargeScreen()
 	{
 		return isLargeScreen;
@@ -59,16 +69,12 @@ public class RealCommApplication extends Application
 		return nunitoFontBold;
 	}
 
-	// public static final RealCommMenuItem[] menuItems =
-	// {
-	// new RealCommMenuItem("Listing", ListingPageActivity.class),
-	// new RealCommMenuItem("Settings", SettingsPageActivity.class)
-	// };
-
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
+
+		deviceId = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 
 		setIsLargeScreen();
 
@@ -87,10 +93,6 @@ public class RealCommApplication extends Application
 
 		// Initialize the DBManager
 		DatabaseManager.init(getApplicationContext());
-
-		// Start WebService
-//		Intent service = new Intent(getApplicationContext(), WebService.class);
-//		startService(service);
 	}
 
 	private void setIsLargeScreen()
@@ -98,19 +100,5 @@ public class RealCommApplication extends Application
 		// Lookup Configuration#screenLayout for more details
 		isLargeScreen =
 			(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-	}
-
-	public static Boolean isBluetoothEnabled(Context context)
-	{
-		BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-		if (bluetoothAdapter == null)
-		{
-			return false;
-		}
-		else
-		{
-			return bluetoothAdapter.isEnabled();
-		}
 	}
 }

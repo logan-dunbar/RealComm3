@@ -1,138 +1,129 @@
 package com.openbox.realcomm3.services;
 
-import com.openbox.realcomm3.application.RealCommApplication;
-import com.openbox.realcomm3.base.BaseAsyncTask;
-import com.openbox.realcomm3.utilities.interfaces.AsyncTaskInterface;
+import com.openbox.realcomm3.utilities.helpers.DownloadDatabaseHelper;
+import com.openbox.realcomm3.utilities.helpers.LogHelper;
+import com.openbox.realcomm3.utilities.helpers.UploadBeaconsHelper;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Binder;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 
-public class WebService extends Service implements AsyncTaskInterface
+public class WebService extends CustomIntentService
 {
-	public static final String ROOT_API_URL = "http://ob036.openbox.local/RealComm/api/Default/";
-	public static final String FETCH_MOST_RECENT_UPDATE_DATE_API_URL = ROOT_API_URL + "FetchMostRecentUpdateDate";
-	public static final String FETCH_DATABASE_API_URL = ROOT_API_URL + "FetchRealCommDatabase";
+	public static final String ROOT_API_URL = "http://obtestweb.openbox.local/RealComm_Test/api/Default/";
 
-	public static final String CHECK_UPDATE_INTENT = "checkUpdateIntent";
-	public static final String DOWNLOAD_DATABASE_INTENT = "downloadDatabaseIntent";
+	public static final String DOWNLOAD_DATABASE_ACTION = "com.openbox.realcomm3.DOWNLOAD_DATABASE";
+	public static final String UPLOAD_BEACONS_ACTION = "com.openbox.realcomm3.UPLOAD_BEACONS";
 
-	private IBinder binder = new WebServiceBinder();
+	public static final String DOWNLOAD_STARTING_INTENT = "com.openbox.realcomm3.DOWNLOAD_STARTING";
+	public static final String DOWNLOAD_FINISHED_INTENT = "com.openbox.realcomm3.DOWNLOAD_FINISHED";
 
-	private CheckUpdateDateAsyncTask checkUpdateTask;
-	private DownloadDatabaseAsyncTask downloadTask;
+	private DownloadDatabaseHelper downloadDatabaseHelper;
+	private UploadBeaconsHelper uploadBeaconsHelper;
 
-	public class WebServiceBinder extends Binder
+	public WebService()
 	{
-		public WebService getService()
-		{
-			return WebService.this;
-		}
+		// Elevate priority slightly
+		super("WebService", Thread.NORM_PRIORITY + 1);
 	}
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId)
+	public void onCreate()
+	{
+		super.onCreate();
+
+		// TODO see if can't get rid of passing Context in (possible memory leak)
+		this.downloadDatabaseHelper = new DownloadDatabaseHelper(this);
+		this.uploadBeaconsHelper = new UploadBeaconsHelper();
+	}
+
+	@Override
+	protected void onHandleIntent(Intent intent)
+	{
+		boolean connected = checkConnectivity();
+
+		if (connected)
+		{
+			if (intent.getAction().equals(DOWNLOAD_DATABASE_ACTION))
+			{
+				checkUpdateNeeded();
+			}
+			else if (intent.getAction().equals(UPLOAD_BEACONS_ACTION))
+			{
+				uploadBeacons();
+			}
+		}
+	}
+
+	private boolean checkConnectivity()
 	{
 		// Check the network connectivity situation
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
 		// Can maybe do something here with the different connections
+		// TODO Can maybe do something here with the different connections
 		// NetworkInfo mobileNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 		// NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-		if (activeNetworkInfo == null || !activeNetworkInfo.isConnected())
-		{
-			// Not connected, do nothing?
-		}
-		else if (activeNetworkInfo.isConnected())
-		{
-			// We are connected, check if we need to update (maybe do something with waiting for WiFi or Roaming?)
-			checkUpdateNeeded();
-		}
-
-		return Service.START_NOT_STICKY;
-	}
-
-	@Override
-	public IBinder onBind(Intent intent)
-	{
-		return this.binder;
+		return activeNetworkInfo == null || !activeNetworkInfo.isConnected() ? false : activeNetworkInfo.isConnected();
 	}
 
 	private void checkUpdateNeeded()
 	{
-		if (this.checkUpdateTask == null)
+		LogHelper.Log("WebServicev2 - In checkUpdateNeeded()");
+
+		boolean checkUpdateSucceeded = this.downloadDatabaseHelper.checkUpdateNeeded();
+
+		if (checkUpdateSucceeded && this.downloadDatabaseHelper.getUpdateNeeded())
 		{
-			this.checkUpdateTask = new CheckUpdateDateAsyncTask(this, this, FETCH_MOST_RECENT_UPDATE_DATE_API_URL);
-			this.checkUpdateTask.execute();
+			downloadDatabase();
+		}
+		else
+		{
+			// TODO Timer to try again based on error?
 		}
 	}
 
-	public void downloadDatabase()
+	private void downloadDatabase()
 	{
-		if (this.downloadTask == null)
+		LogHelper.Log("WebServicev2 - In downloadDatabase()");
+
+		LogHelper.Log("WebServicev2 - sending DOWNLOAD_STARTING_INTENT local broadcast");
+		Intent startingIntent = new Intent(DOWNLOAD_STARTING_INTENT);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(startingIntent);
+
+		boolean downloadSucceeded = this.downloadDatabaseHelper.downloadDatabase();
+
+		if (downloadSucceeded)
 		{
-			this.downloadTask = new DownloadDatabaseAsyncTask(this, this, FETCH_DATABASE_API_URL);
-			this.downloadTask.execute();
+			boolean writeSucceeded = this.downloadDatabaseHelper.writeDatabase();
+
+			if (writeSucceeded)
+			{
+				LogHelper.Log("WebServicev2 - sending DOWNLOAD_FINISHED_INTENT local broadcast");
+				Intent finishedIntent = new Intent(DOWNLOAD_FINISHED_INTENT);
+				LocalBroadcastManager.getInstance(this).sendBroadcast(finishedIntent);
+			}
+		}
+		else
+		{
+			// TODO Timer to try again based on error?
 		}
 	}
 
-	@Override
-	public void onTaskComplete(BaseAsyncTask task)
+	private void uploadBeacons()
 	{
-		if (task == this.checkUpdateTask)
+		boolean uploadSucceeded = this.uploadBeaconsHelper.uploadBeaconRangingData();
+		if (uploadSucceeded)
 		{
-			if (this.checkUpdateTask.getCheckUpdateSucceeded())
-			{
-				RealCommApplication.updateNeeded = this.checkUpdateTask.getUpdateRequired();
-			}
-			else
-			{
-				// TODO: Check update didn't work correctly, maybe do something here, try again in a few mins? alert
-				// user?
-			}
-
-			this.checkUpdateTask = null;
-
-			// Make sure to always signal task complete (even if it failed)
-			Intent intent = new Intent(CHECK_UPDATE_INTENT);
-			LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-			stopSelf();
+			// Do something?
 		}
-		else if (task == this.downloadTask)
+		else
 		{
-			if (this.downloadTask.getDownloadAndWriteSucceeded())
-			{
-				// Everything done, clean up
-				RealCommApplication.updateNeeded = false;
-			}
-			else
-			{
-				// download and write failed, do something, alert user?
-			}
-
-			this.downloadTask = null;
-
-			// Make sure to always signal task complete (even if it failed)
-			Intent intent = new Intent(DOWNLOAD_DATABASE_INTENT);
-			LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+			// Do something?
 		}
-	}
-
-	@Override
-	public void onTaskCancelled(BaseAsyncTask task)
-	{
-	}
-
-	@Override
-	public void finishAsyncTask(String taskName)
-	{
 	}
 }

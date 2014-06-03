@@ -26,67 +26,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class BaseActivity extends FragmentActivity implements
-	AsyncTaskInterface,
-	WebServiceConnectionInterface,
-	DatabaseSyncReceiverInterface
+public class BaseActivity extends FragmentActivity
 {
 	/**********************************************************************************************
 	 * Fields
 	 **********************************************************************************************/
-	private WebService webService;
-	// private MenuItem updateMenuItem;
 	private ActionBar actionBar;
-	private static Dictionary<String, BaseAsyncTask> asyncTaskDictionary = new Hashtable<String, BaseAsyncTask>();
-
-	/**********************************************************************************************
-	 * Broadcast Receivers
-	 **********************************************************************************************/
-	private BroadcastReceiver checkUpdateBroadcastReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			BaseActivity.this.onCheckUpdateReceive(intent);
-		}
-	};
-
-	private BroadcastReceiver downloadDatabaseBroadcastReceiver = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			onDownloadDatabaseReceive(intent);
-		}
-	};
-
-	/**********************************************************************************************
-	 * Service Connections
-	 **********************************************************************************************/
-	private ServiceConnection serviceConnection = new ServiceConnection()
-	{
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder binder)
-		{
-			BaseActivity.this.webService = ((WebService.WebServiceBinder) binder).getService();
-			BaseActivity.this.onServiceConnected(name);
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName name)
-		{
-			BaseActivity.this.onServiceDisconnected(name);
-			BaseActivity.this.webService = null;
-		}
-	};
-
-	/**********************************************************************************************
-	 * Getters and setters
-	 **********************************************************************************************/
-	public WebService getWebService()
-	{
-		return webService;
-	}
 
 	/**********************************************************************************************
 	 * Lifecycle Implements
@@ -105,8 +50,7 @@ public class BaseActivity extends FragmentActivity implements
 		// Careful when this is called in the Lifecycle
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
-		// this.updateMenuItem = menu.findItem(R.id.refreshMenuItem);
-		// updateUpdateMenuItemVisibility();
+
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -121,16 +65,6 @@ public class BaseActivity extends FragmentActivity implements
 			case R.id.infoMenuItem:
 				showInfoDialogFragment();
 				break;
-			// case R.id.refreshMenuItem:
-			// this.updateMenuItem.setEnabled(false);
-			// downloadDatabase();
-			// break;
-			// case R.id.settingsMenuItem:
-			// startSettingsActivity();
-			// break;
-			// case R.id.dataCaptureMenuItem:
-			// startDataCaptureActivity();
-			// break;
 			default:
 				break;
 		}
@@ -141,202 +75,5 @@ public class BaseActivity extends FragmentActivity implements
 	{
 		InfoDialogFragment infoDialogFragment = new InfoDialogFragment();
 		infoDialogFragment.show(getSupportFragmentManager(), InfoDialogFragment.TAG);
-	}
-
-	/**********************************************************************************************
-	 * AsyncTaskInterface Implements
-	 **********************************************************************************************/
-	@Override
-	public void finishAsyncTask(String taskName)
-	{
-		asyncTaskDictionary.remove(taskName);
-	}
-
-	@Override
-	public void onTaskComplete(BaseAsyncTask task)
-	{
-		// This should be overridden when using AsyncTask in a custom activity
-	}
-
-	@Override
-	public void onTaskCancelled(BaseAsyncTask task)
-	{
-		// This should be overridden when using AsyncTask in a custom activity
-	}
-
-	/**********************************************************************************************
-	 * WebServiceConnectionInterface Implements
-	 **********************************************************************************************/
-	@Override
-	public void onServiceConnected(ComponentName name)
-	{
-		// TODO LD - Might need to differentiate here?
-		getWebService().downloadDatabase();
-	}
-
-	@Override
-	public void onServiceDisconnected(ComponentName name)
-	{
-		// This can be overridden and used as pleased
-	}
-
-	/**********************************************************************************************
-	 * AsyncTask Management Methods
-	 **********************************************************************************************/
-	// TODO This is a crap method, but I was just starting Android, so sue me ;)
-	protected void startAsyncTask(BaseAsyncTask newTask)
-	{
-		String taskName = newTask.getTaskName();
-		BaseAsyncTask task = asyncTaskDictionary.get(taskName);
-		if (task == null)
-		{
-			task = newTask;
-			asyncTaskDictionary.put(taskName, task);
-		}
-
-		// Only run if task hasn't started yet
-		if (task.getStatus() == Status.PENDING)
-		{
-			task.execute();
-		}
-	}
-
-	protected void cancelAsyncTask(String taskName)
-	{
-		// TODO LD - Maybe a bool return to see if it did actually cancel or not (probably not though)
-		BaseAsyncTask task = asyncTaskDictionary.get(taskName);
-		if (task != null)
-		{
-			// TODO LD - Check the param mayInterruptIfRunning, not sure what it does
-			task.cancel(true);
-		}
-	}
-
-	/**********************************************************************************************
-	 * WebService Methods
-	 **********************************************************************************************/
-	protected void bindWebService()
-	{
-		Intent service = new Intent(this, WebService.class);
-		bindService(service, this.serviceConnection, Context.BIND_AUTO_CREATE);
-	}
-
-	protected void unbindWebService()
-	{
-		try
-		{
-			unbindService(this.serviceConnection);
-		}
-		catch (IllegalArgumentException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	/**********************************************************************************************
-	 * Broadcast Receiver Methods
-	 **********************************************************************************************/
-	@Override
-	public void onCheckUpdateReceive(Intent intent)
-	{
-		// TODO Override to implement, when checking update is complete super() must be called last
-
-		// Check update and Download are separate because they used to be user driven
-		// updateUpdateMenuItemVisibility();
-
-		if (RealCommApplication.updateNeeded)
-		{
-			downloadDatabase();
-		}
-	}
-
-	@Override
-	public void onDownloadDatabaseReceive(Intent intent)
-	{
-		// TODO Override to implement, when downloading database is complete super() must be called last
-
-		// Check update and Download are separate because they used to be user driven
-		// updateUpdateMenuItemVisibility();
-
-		unbindDownloadDatabaseReceiver();
-		unbindWebService();
-
-		// this.updateMenuItem.setEnabled(true);
-		ToastHelper.showLongMessage(this, "Sync complete");
-	}
-
-	@Override
-	public void bindCheckUpdateReceiver()
-	{
-		LocalBroadcastManager.getInstance(this).registerReceiver(checkUpdateBroadcastReceiver, new IntentFilter(WebService.CHECK_UPDATE_INTENT));
-	}
-
-	@Override
-	public void unbindCheckUpdateReceiver()
-	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(checkUpdateBroadcastReceiver);
-	}
-
-	@Override
-	public void bindDownloadDatabaseRecever()
-	{
-		LocalBroadcastManager.getInstance(this).registerReceiver(downloadDatabaseBroadcastReceiver, new IntentFilter(WebService.DOWNLOAD_DATABASE_INTENT));
-	}
-
-	@Override
-	public void unbindDownloadDatabaseReceiver()
-	{
-		LocalBroadcastManager.getInstance(this).unregisterReceiver(downloadDatabaseBroadcastReceiver);
-	}
-
-	/**********************************************************************************************
-	 * Misc Methods
-	 **********************************************************************************************/
-	private void downloadDatabase()
-	{
-		// Binding com.openbox.realcomm.service is async, follow up in onServiceConnected
-		bindDownloadDatabaseRecever();
-		bindWebService();
-	}
-
-	private void updateUpdateMenuItemVisibility()
-	{
-		// if (this.updateMenuItem != null)
-		// {
-		// if (RealCommApplication.updateNeeded)
-		// {
-		// this.updateMenuItem.setIcon(R.drawable.ic_menu_refresh_colour);
-		// }
-		// else
-		// {
-		// this.updateMenuItem.setIcon(R.drawable.ic_menu_refresh_grey);
-		// }
-		// }
-	}
-
-	protected void setDisplayHomeAsUpEnable(Boolean enabled)
-	{
-		if (this.actionBar != null)
-		{
-			this.actionBar.setDisplayHomeAsUpEnabled(enabled);
-		}
-	}
-
-	private void startSettingsActivity()
-	{
-		// Intent intent = new Intent(this, SettingsPageActivity.class);
-		//
-		// // Don't restart if already showing settings
-		// intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		// startActivity(intent);
-	}
-
-	private void startDataCaptureActivity()
-	{
-		// Intent intent = new Intent(this, DataCaptureActivity.class);
-		//
-		// // Don't restart if already showing settings
-		// intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		// startActivity(intent);
 	}
 }
