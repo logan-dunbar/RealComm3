@@ -86,21 +86,6 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 		}
 	}
 
-	@Override
-	public void setUserVisibleHint(boolean isVisibleToUser)
-	{
-		super.setUserVisibleHint(isVisibleToUser);
-
-//		if (isVisibleToUser)
-//		{
-//			startViewTimer();
-//		}
-//		else
-//		{
-//			stopViewTimer();
-//		}
-	}
-
 	/**********************************************************************************************
 	 * Data Changed Interface Implements
 	 **********************************************************************************************/
