@@ -81,6 +81,8 @@ public class ProximityFragment extends BaseFragment
 		{
 			exhibitionAreaTextView.setTypeface(application.getExo2Font());
 		}
+		
+		updateView();
 
 		return view;
 	}
