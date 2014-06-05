@@ -157,8 +157,6 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 				case OUTOFRANGE:
 					updateViewOutOfRange();
 					break;
-				case PAUSED:
-					// Do nothing
 				default:
 					break;
 			}
@@ -211,7 +209,10 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 	{
 		// Memory leak - navigate to profile page, minimize, come back, starts the timer again, but
 		// because not visible GarbageCollector doesn't know to clean up. Fixed by only starting if isVisibile()
-		if (this.viewUpdateTimer == null && getAppModeInterface() != null && isVisible())
+		if (this.viewUpdateTimer == null &&
+			getAppModeInterface() != null &&
+			getAppModeInterface().getCurrentAppMode() != AppMode.INITIALIZING &&
+			isVisible())
 		{
 			this.viewUpdateTimer = new Timer();
 			int delay = getAppModeInterface().getCurrentAppMode().getAnimationStartDelay();

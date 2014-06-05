@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import com.openbox.realcomm3.services.WebService;
-import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseActivity;
@@ -37,7 +35,6 @@ import com.openbox.realcomm3.fragments.ProfilePageFragment;
 import com.openbox.realcomm3.fragments.SplashScreenFragment;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
 import com.openbox.realcomm3.utilities.enums.AppMode;
-import com.openbox.realcomm3.utilities.enums.BeaconStatus;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
 import com.openbox.realcomm3.utilities.enums.RealcommPage;
@@ -45,12 +42,9 @@ import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
 import com.openbox.realcomm3.utilities.helpers.FragmentHelper;
-import com.openbox.realcomm3.utilities.helpers.ToastHelper;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
-import com.openbox.realcomm3.utilities.interfaces.BeaconManagerBoundCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.BeaconStatusChangeCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.ClearFocusInterface;
 import com.openbox.realcomm3.utilities.interfaces.DashboardPhoneInterface;
@@ -58,7 +52,6 @@ import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.managers.AppModeManager;
 import com.openbox.realcomm3.utilities.managers.BeaconSaverManager;
-import com.openbox.realcomm3.utilities.managers.BeaconStatusManager;
 import com.openbox.realcomm3.utilities.managers.RealcommPageManager;
 import com.radiusnetworks.ibeacon.IBeacon;
 import com.radiusnetworks.ibeacon.IBeaconConsumer;
@@ -72,15 +65,11 @@ public class RealCommActivity extends BaseActivity implements
 	DataInterface,
 	ClearFocusInterface,
 	IBeaconConsumer,
-	BeaconStatusChangeCallbacks,
 	AppModeChangedCallbacks,
 	AppModeInterface,
 	RangeNotifier,
 	BoothFlipperInterface
 {
-	private static final String APP_MODE_KEY = "appModeKey";
-	private static final String APP_MODE_SELECTOR_KEY = "appModeSelectorKey";
-	private static final String BEACON_STATUS_KEY = "beaconStatusKey";
 	private static final String CURRENT_PAGE_KEY = "currentPageKey";
 
 	private static final int ENABLE_BLUETOOTH_REQUEST = 1;
@@ -95,7 +84,6 @@ public class RealCommActivity extends BaseActivity implements
 	 **********************************************************************************************/
 	// Page managers
 	private RealcommPageManager pageManager;
-	// private RealcommPhonePageManager phonePageManager;
 
 	// App Mode
 	private AppModeManager appModeManager;
@@ -112,7 +100,6 @@ public class RealCommActivity extends BaseActivity implements
 
 	// Data listeners
 	private DataInterface dataInterface;
-	private BeaconManagerBoundCallbacks beaconManagerBoundListener;
 	private BoothFlipperInterface boothFlipperListener;
 	private DashboardPhoneInterface dashboardPhoneListener;
 
@@ -123,6 +110,7 @@ public class RealCommActivity extends BaseActivity implements
 	// Globals
 	private SelectedBoothModel selectedBooth;
 	private long beaconScanBetweenPeriod = IBeaconManager.DEFAULT_FOREGROUND_BETWEEN_SCAN_PERIOD;
+	private boolean bluetoothReceiverIsRegistered = false;
 
 	/**********************************************************************************************
 	 * Activity Lifecycle Implements
@@ -139,19 +127,17 @@ public class RealCommActivity extends BaseActivity implements
 		getWindow().setBackgroundDrawable(null); // Dark background not needed anymore
 		setContentView(R.layout.activity_realcomm);
 
+		// For closing keyboard
 		getWindow().getDecorView().getRootView().setOnTouchListener(new ClearFocusTouchListener(this, this));
 
 		this.clearRealcommBackground = (ImageView) findViewById(R.id.clearRealcommBackgroundImageView);
 		this.blurRealCommBackground = (ImageView) findViewById(R.id.blurRealcommBackgroundImageView);
 
-		// Initialize the page managers
-		initStateManagers(savedInstanceState);
+		// Initialize the managers
+		initManagers(savedInstanceState);
 
 		// Initialize the Data Fragment
 		initializeDataFragment();
-
-		// Show SplashScreen if required
-		showSplashScreen();
 	}
 
 	@Override
@@ -159,10 +145,7 @@ public class RealCommActivity extends BaseActivity implements
 	{
 		super.onSaveInstanceState(outState);
 
-		// Save the current state of the system
-		outState.putSerializable(APP_MODE_KEY, this.appModeManager.getCurrentAppMode());
-		outState.putSerializable(APP_MODE_SELECTOR_KEY, this.appModeManager.getCurrentAppModeSelector());
-		outState.putSerializable(BEACON_STATUS_KEY, this.appModeManager.getCurrentBeaconStatus());
+		// Save the current page
 		outState.putSerializable(CURRENT_PAGE_KEY, this.pageManager.getCurrentPage());
 	}
 
@@ -197,30 +180,41 @@ public class RealCommActivity extends BaseActivity implements
 	{
 		super.onStart();
 
-		registerBluetoothReceiver();
+		// Create each start so it can go through the motions of determining BT state etc
+		this.appModeManager = new AppModeManager(this, this);
+
 		registerDownloadStartingReceiver();
 		registerDownloadCompleteReceiver();
 
 		// Check each time app opens
 		startWebService();
+
+		if (RealCommApplication.getHasBluetoothLe())
+		{
+			registerBluetoothReceiver();
+
+			if (RealCommApplication.isBluetoothEnabled())
+			{
+				changeAppMode(AppMode.ONLINE);
+			}
+			else
+			{
+				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST);
+			}
+		}
 	}
 
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
-
-		// Decide which mode the app is currently in
-		determineAppMode();
 	}
 
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
-
-		// Pause the app
-		changeAppMode(AppMode.PAUSED);
 	}
 
 	@Override
@@ -228,13 +222,16 @@ public class RealCommActivity extends BaseActivity implements
 	{
 		super.onStop();
 
-		// Make sure to free up unneeded resources
-		this.appModeManager.unbindBeaconManager();
-
-		unregisterBluetoothReceiver();
+		this.beaconSaverManager.stop();
 
 		unregisterDownloadStartingReceiver();
 		unregisterDownloadCompleteReceiver();
+
+		if (RealCommApplication.getHasBluetoothLe())
+		{
+			unregisterBluetoothReceiver();
+			unbindBeaconManager();
+		}
 	}
 
 	@Override
@@ -244,7 +241,6 @@ public class RealCommActivity extends BaseActivity implements
 
 		// Clean up
 		this.dataInterface = null;
-		this.beaconManagerBoundListener = null;
 		this.boothFlipperListener = null;
 		this.dashboardPhoneListener = null;
 
@@ -300,19 +296,23 @@ public class RealCommActivity extends BaseActivity implements
 	 **********************************************************************************************/
 	private void registerBluetoothReceiver()
 	{
-		if (RealCommApplication.getHasBluetoothLe())
+		if (RealCommApplication.getHasBluetoothLe() && !this.bluetoothReceiverIsRegistered)
 		{
 			final IntentFilter filter = new IntentFilter();
 			filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 			registerReceiver(this.bluetoothReceiver, filter);
+
+			this.bluetoothReceiverIsRegistered = true;
 		}
 	}
 
 	private void unregisterBluetoothReceiver()
 	{
-		if (RealCommApplication.getHasBluetoothLe())
+		if (RealCommApplication.getHasBluetoothLe() && this.bluetoothReceiverIsRegistered)
 		{
 			unregisterReceiver(this.bluetoothReceiver);
+
+			this.bluetoothReceiverIsRegistered = false;
 		}
 	}
 
@@ -357,6 +357,12 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	@Override
+	public void showSplashScreen()
+	{
+		changePage(RealcommPage.SPLASH_SCREEN);
+	}
+
+	@Override
 	public void initializeFragments()
 	{
 		initializeDashboardFragment();
@@ -385,7 +391,7 @@ public class RealCommActivity extends BaseActivity implements
 				.beginTransaction()
 				.setCustomAnimations(R.id.fadeInAnimation, -1)
 				.add(R.id.realcommFragmentContainer, splashScreenFragment, SplashScreenFragment.TAG)
-				.commit();
+				.commitAllowingStateLoss();
 		}
 	}
 
@@ -575,6 +581,40 @@ public class RealCommActivity extends BaseActivity implements
 		}
 	}
 
+	@Override
+	public void initBeaconManager()
+	{
+		if (RealCommApplication.getHasBluetoothLe())
+		{
+			beaconManager = IBeaconManager.getInstanceForApplication(this);
+			beaconManager.setRangeNotifier(this);
+		}
+	}
+
+	@Override
+	public void bindBeaconManager()
+	{
+		if (RealCommApplication.getHasBluetoothLe() &&
+			RealCommApplication.isBluetoothEnabled() &&
+			this.beaconManager != null &&
+			!this.beaconManager.isBound(this))
+		{
+			this.beaconManager.bind(this);
+		}
+	}
+
+	@Override
+	public void unbindBeaconManager()
+	{
+		if (RealCommApplication.getHasBluetoothLe() &&
+			RealCommApplication.isBluetoothEnabled() &&
+			this.beaconManager != null &&
+			this.beaconManager.isBound(this))
+		{
+			this.beaconManager.unBind(this);
+		}
+	}
+
 	/**********************************************************************************************
 	 * Data Interface Implements
 	 **********************************************************************************************/
@@ -707,18 +747,12 @@ public class RealCommActivity extends BaseActivity implements
 	 * App Mode Changed Callbacks
 	 **********************************************************************************************/
 	@Override
-	public void onAppModeChanged()
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
 		for (AppModeChangedCallbacks listener : this.appModeChangedListeners)
 		{
-			listener.onAppModeChanged();
+			listener.onAppModeChanged(newAppMode, previousAppMode);
 		}
-	}
-
-	@Override
-	public void onOnlineModeToOfflineMode()
-	{
-		resetAccuracy();
 	}
 
 	/**********************************************************************************************
@@ -742,7 +776,6 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	public void changeAppMode(AppMode newAppMode)
 	{
-		this.appModeManager.setPreviousAppMode(this.appModeManager.getCurrentAppMode());
 		this.appModeManager.changeAppMode(newAppMode);
 	}
 
@@ -757,29 +790,19 @@ public class RealCommActivity extends BaseActivity implements
 		return null;
 	}
 
-	@Override
-	public AppMode getPreviousAppMode()
-	{
-		if (this.appModeManager != null)
-		{
-			return this.appModeManager.getPreviousAppMode();
-		}
-
-		return null;
-	}
-
 	/**********************************************************************************************
 	 * Beacon Consumer Callbacks
 	 **********************************************************************************************/
 	@Override
 	public void onIBeaconServiceConnect()
 	{
-		this.beaconManager.setRangeNotifier(this);
-
-		if (this.beaconManagerBoundListener != null)
+		try
 		{
-			this.beaconManagerBoundListener.onBeaconManagerBound();
-			this.beaconManagerBoundListener = null;
+			this.beaconManager.startRangingBeaconsInRegion(ALL_BEACONS);
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -789,6 +812,7 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	public void didRangeBeaconsInRegion(final Collection<IBeacon> beaconList, Region region)
 	{
+		// TODO leave on separate thread
 		runOnUiThread(new Runnable()
 		{
 			@Override
@@ -800,61 +824,6 @@ public class RealCommActivity extends BaseActivity implements
 				}
 			}
 		});
-	}
-
-	/**********************************************************************************************
-	 * Beacon Status Change Callbacks
-	 **********************************************************************************************/
-	@Override
-	public void initializeBeaconManager()
-	{
-		this.beaconManager = IBeaconManager.getInstanceForApplication(this);
-		updateBeaconScanPeriod();
-	}
-
-	@Override
-	public void bindBeaconManager()
-	{
-		this.beaconManager.bind(this);
-	}
-
-	@Override
-	public void bindBeaconManagerAndRange(BeaconManagerBoundCallbacks listener)
-	{
-		this.beaconManagerBoundListener = listener;
-		this.beaconManager.bind(this);
-	}
-
-	@Override
-	public void unbindBeaconManager()
-	{
-		this.beaconManager.unBind(this);
-	}
-
-	@Override
-	public void startRangingBeacons()
-	{
-		try
-		{
-			this.beaconManager.startRangingBeaconsInRegion(ALL_BEACONS);
-		}
-		catch (RemoteException e)
-		{
-			LogHelper.Log("Can't range beacons: " + e);
-		}
-	}
-
-	@Override
-	public void stopRangingBeacons()
-	{
-		try
-		{
-			this.beaconManager.stopRangingBeaconsInRegion(ALL_BEACONS);
-		}
-		catch (RemoteException e)
-		{
-			LogHelper.Log("Can't stop ranging beacons: " + e);
-		}
 	}
 
 	/**********************************************************************************************
@@ -872,26 +841,26 @@ public class RealCommActivity extends BaseActivity implements
 	/**********************************************************************************************
 	 * Private helper methods
 	 **********************************************************************************************/
-	private void initStateManagers(Bundle savedInstanceState)
+	private void initManagers(Bundle savedInstanceState)
 	{
-		BeaconStatus startingBeaconStatus = BeaconStatus.NONEXISTENT;
-		AppMode startingAppMode = AppMode.INITIALIZING;
-		AppMode startingAppModeSelector = AppMode.ONLINE;
+		initPageManager(savedInstanceState);
+		initBeaconSaverManager();
+	}
+
+	private void initPageManager(Bundle savedInstanceState)
+	{
 		RealcommPage startingPage = RealcommPage.INITIALIZING;
 
-		// TODO this is wrong, should not 'set' the state, should save and then retrace steps
 		if (savedInstanceState != null)
 		{
-			startingBeaconStatus = (BeaconStatus) savedInstanceState.getSerializable(BEACON_STATUS_KEY);
-			startingAppMode = (AppMode) savedInstanceState.getSerializable(APP_MODE_KEY);
-			startingAppModeSelector = (AppMode) savedInstanceState.getSerializable(APP_MODE_SELECTOR_KEY);
 			startingPage = (RealcommPage) savedInstanceState.getSerializable(CURRENT_PAGE_KEY);
 		}
 
-		BeaconStatusManager beaconStatusManager = new BeaconStatusManager(this, startingBeaconStatus, RealCommApplication.getHasBluetoothLe());
-		this.appModeManager = new AppModeManager(startingAppMode, startingAppModeSelector, beaconStatusManager, this, this);
 		this.pageManager = new RealcommPageManager(startingPage, this);
+	}
 
+	private void initBeaconSaverManager()
+	{
 		this.beaconSaverManager = new BeaconSaverManager(this, this, this);
 		this.dataChangedListeners.add(this.beaconSaverManager);
 		this.appModeChangedListeners.add(this.beaconSaverManager);
@@ -913,14 +882,6 @@ public class RealCommActivity extends BaseActivity implements
 		}
 	}
 
-	private void showSplashScreen()
-	{
-		if (this.pageManager.getCurrentPage() == RealcommPage.INITIALIZING)
-		{
-			this.pageManager.changePage(RealcommPage.SPLASH_SCREEN);
-		}
-	}
-
 	private void setScreenOrientation()
 	{
 		if (RealCommApplication.getIsLargeScreen())
@@ -933,36 +894,6 @@ public class RealCommActivity extends BaseActivity implements
 		}
 	}
 
-	private void determineAppMode()
-	{
-		// ToastHelper.showShortMessage(this, "Determining App Mode...");
-		// Technically should sit in the AppModeManager, with method calls
-		// for all of these, but this is neater/more readable
-		if (this.appModeManager.getCurrentAppModeSelector() == AppMode.ONLINE)
-		{
-			if (RealCommApplication.getHasBluetoothLe())
-			{
-				if (RealCommApplication.isBluetoothEnabled())
-				{
-					changeAppMode(AppMode.ONLINE);
-				}
-				else
-				{
-					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-					startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST);
-				}
-			}
-			else
-			{
-				changeAppMode(AppMode.OFFLINE);
-			}
-		}
-		else
-		{
-			changeAppMode(AppMode.OFFLINE);
-		}
-	}
-
 	private void startWebService()
 	{
 		Intent serviceIntent = new Intent(this, WebService.class);
@@ -970,6 +901,7 @@ public class RealCommActivity extends BaseActivity implements
 		startService(serviceIntent);
 	}
 
+	// TODO check this is actually the case, before slagging off the library...
 	// Slow down and speed up needed because RadiusNetworks' service ranges on the UI Thread,
 	// which has a much higher priority than a background http request, and was causing the
 	// db sync to fail with JsonIOException - SocketException (Connection reset by peer)
@@ -1033,7 +965,7 @@ public class RealCommActivity extends BaseActivity implements
 		if (dashboardTabletFragment == null)
 		{
 			dashboardTabletFragment = DashboardTabletFragment.newInstance();
-			FragmentHelper.addAndHideFragment(
+			FragmentHelper.addAndHideFragmentAllowingStateLoss(
 				getSupportFragmentManager(),
 				R.id.realcommFragmentContainer,
 				dashboardTabletFragment,
@@ -1053,7 +985,7 @@ public class RealCommActivity extends BaseActivity implements
 		if (dashboardPhoneFragment == null)
 		{
 			dashboardPhoneFragment = DashboardPhoneFragment.newInstance();
-			FragmentHelper.addAndHideFragment(
+			FragmentHelper.addAndHideFragmentAllowingStateLoss(
 				getSupportFragmentManager(),
 				R.id.realcommFragmentContainer,
 				dashboardPhoneFragment,
@@ -1073,7 +1005,7 @@ public class RealCommActivity extends BaseActivity implements
 		if (profilePageFragment == null)
 		{
 			profilePageFragment = ProfilePageFragment.newInstance();
-			FragmentHelper.addAndHideFragment(
+			FragmentHelper.addAndHideFragmentAllowingStateLoss(
 				getSupportFragmentManager(),
 				R.id.realcommFragmentContainer,
 				profilePageFragment,
@@ -1111,7 +1043,7 @@ public class RealCommActivity extends BaseActivity implements
 		this.blurRealCommBackground.setVisibility(View.VISIBLE);
 
 		// Go to dashboard
-		this.pageManager.changePage(RealcommPage.DASHBOARD_PAGE);
+		changePage(RealcommPage.DASHBOARD_PAGE);
 	}
 
 	/**********************************************************************************************
@@ -1128,22 +1060,18 @@ public class RealCommActivity extends BaseActivity implements
 				final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 				switch (state)
 				{
-					case BluetoothAdapter.STATE_OFF:
-						ToastHelper.showLongMessage(RealCommActivity.this, "Offline mode engaged!");
-						changeAppMode(AppMode.OFFLINE);
-						break;
-					case BluetoothAdapter.STATE_TURNING_OFF:
-						// ToastHelper.showShortMessage(ListingPageActivity.this, "Bluetooth turning off!");
+					case BluetoothAdapter.STATE_TURNING_ON:
 						break;
 					case BluetoothAdapter.STATE_ON:
-						ToastHelper.showLongMessage(RealCommActivity.this, "Online mode engaged!");
-						if (RealCommApplication.getHasBluetoothLe())
-						{
-							changeAppMode(AppMode.ONLINE);
-						}
+						changeAppMode(AppMode.ONLINE);
 						break;
-					case BluetoothAdapter.STATE_TURNING_ON:
-						// ToastHelper.showShortMessage(ListingPageActivity.this, "Bluetooth turning on!");
+					case BluetoothAdapter.STATE_TURNING_OFF:
+						changeAppMode(AppMode.OFFLINE);
+						break;
+					case BluetoothAdapter.STATE_OFF:
+						break;
+					case BluetoothAdapter.ERROR:
+						changeAppMode(AppMode.OFFLINE);
 						break;
 				}
 			}

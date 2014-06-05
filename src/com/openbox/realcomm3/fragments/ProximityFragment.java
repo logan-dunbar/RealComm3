@@ -105,7 +105,7 @@ public class ProximityFragment extends BaseFragment
 	 * App Mode Changed Callbacks
 	 **********************************************************************************************/
 	@Override
-	public void onAppModeChanged()
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
 		updateView();
 	}
@@ -119,66 +119,78 @@ public class ProximityFragment extends BaseFragment
 		if (getDataInterface() != null && getAppModeInterface() != null)
 		{
 			AppMode currentMode = getAppModeInterface().getCurrentAppMode();
-			AppMode previousMode = getAppModeInterface().getPreviousAppMode();
-			DataInterface dataInterface = getDataInterface();
 
 			// Reset view to visible
 			this.proximityControlPictureLayout.setVisibility(View.VISIBLE);
 
-			if (currentMode == AppMode.OFFLINE ||
-				(currentMode == AppMode.PAUSED && previousMode == AppMode.OFFLINE))
+			switch (currentMode)
 			{
-				if (this.exhibitionAreaTextView != null)
-				{
-					this.exhibitionAreaTextView.setText(OFFLINE_HEADER);
-				}
-
-				if (RealCommApplication.getHasBluetoothLe())
-				{
-					this.boothsNearMeTextView.setText(PROXIMITY_FEATURES_REQUIRE_BLUETOOTH);
-				}
-				else
-				{
-					this.boothsNearMeTextView.setText(DEVICE_UNSUPPORTED);
-				}
-
-				this.proximityControlPictureLayout.setVisibility(View.GONE);
-			}
-			else if (currentMode == AppMode.ONLINE ||
-				(currentMode == AppMode.PAUSED && previousMode == AppMode.ONLINE))
-			{
-				if (this.exhibitionAreaTextView != null)
-				{
-					this.exhibitionAreaTextView.setText(EXHIBITION_AREA_HEADER);
-				}
-
-				Map<ProximityRegion, Integer> proximityCounts = dataInterface.getBoothProximityCounts();
-				if (proximityCounts != null)
-				{
-					int totalCount = proximityCounts.get(ProximityRegion.IMMEDIATE) + proximityCounts.get(ProximityRegion.NEAR)
-						+ proximityCounts.get(ProximityRegion.FAR);
-					this.boothsNearMeTextView.setText(String.format("%d" + BOOTHS_NEAR_ME_SUFFIX, totalCount));
-
-					updateTextView(this.immediateTextView, ProximityRegion.IMMEDIATE, proximityCounts.get(ProximityRegion.IMMEDIATE));
-					updateTextView(this.nearTextView, ProximityRegion.NEAR, proximityCounts.get(ProximityRegion.NEAR));
-					updateTextView(this.farTextView, ProximityRegion.FAR, proximityCounts.get(ProximityRegion.FAR));
-				}
-			}
-			else if (currentMode == AppMode.OUTOFRANGE ||
-				(currentMode == AppMode.PAUSED))
-			{
-				if (this.exhibitionAreaTextView != null)
-				{
-					this.exhibitionAreaTextView.setText(OUT_OF_RANGE);
-				}
-
-				this.boothsNearMeTextView.setText(NO_BOOTHS_NEAR_ME);
-
-				this.immediateTextView.setVisibility(View.GONE);
-				this.nearTextView.setVisibility(View.GONE);
-				this.farTextView.setVisibility(View.GONE);
+				case OFFLINE:
+					updateViewOffline();
+					break;
+				case ONLINE:
+					updateViewOnline(getDataInterface());
+					break;
+				case OUTOFRANGE:
+					updateViewOutOfRange();
+					break;
+				default:
+					break;
 			}
 		}
+	}
+
+	private void updateViewOutOfRange()
+	{
+		if (this.exhibitionAreaTextView != null)
+		{
+			this.exhibitionAreaTextView.setText(OUT_OF_RANGE);
+		}
+
+		this.boothsNearMeTextView.setText(NO_BOOTHS_NEAR_ME);
+
+		this.immediateTextView.setVisibility(View.GONE);
+		this.nearTextView.setVisibility(View.GONE);
+		this.farTextView.setVisibility(View.GONE);
+	}
+
+	private void updateViewOnline(DataInterface dataInterface)
+	{
+		if (this.exhibitionAreaTextView != null)
+		{
+			this.exhibitionAreaTextView.setText(EXHIBITION_AREA_HEADER);
+		}
+
+		Map<ProximityRegion, Integer> proximityCounts = dataInterface.getBoothProximityCounts();
+		if (proximityCounts != null)
+		{
+			int totalCount = proximityCounts.get(ProximityRegion.IMMEDIATE) + proximityCounts.get(ProximityRegion.NEAR)
+				+ proximityCounts.get(ProximityRegion.FAR);
+			this.boothsNearMeTextView.setText(String.format("%d" + BOOTHS_NEAR_ME_SUFFIX, totalCount));
+
+			updateTextView(this.immediateTextView, ProximityRegion.IMMEDIATE, proximityCounts.get(ProximityRegion.IMMEDIATE));
+			updateTextView(this.nearTextView, ProximityRegion.NEAR, proximityCounts.get(ProximityRegion.NEAR));
+			updateTextView(this.farTextView, ProximityRegion.FAR, proximityCounts.get(ProximityRegion.FAR));
+		}
+	}
+
+	private void updateViewOffline()
+	{
+		if (this.exhibitionAreaTextView != null)
+		{
+			this.exhibitionAreaTextView.setText(OFFLINE_HEADER);
+		}
+
+		if (RealCommApplication.getHasBluetoothLe())
+		{
+			this.boothsNearMeTextView.setText(PROXIMITY_FEATURES_REQUIRE_BLUETOOTH);
+		}
+		else
+		{
+			this.boothsNearMeTextView.setText(DEVICE_UNSUPPORTED);
+		}
+
+		this.proximityControlPictureLayout.setVisibility(View.GONE);
 	}
 
 	private void updateTextView(TextView textView, ProximityRegion proximityRegion, int count)

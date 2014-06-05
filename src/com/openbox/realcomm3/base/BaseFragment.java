@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.utilities.enums.AnimationInterpolator;
+import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.CustomAnimationListener;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
@@ -351,18 +352,12 @@ public class BaseFragment extends Fragment implements
 	 * App Mode Changed Callbacks Implements
 	 **********************************************************************************************/
 	@Override
-	public void onAppModeChanged()
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
 		for (AppModeChangedCallbacks listener : this.appModeChangedListeners)
 		{
-			listener.onAppModeChanged();
+			listener.onAppModeChanged(newAppMode, previousAppMode);
 		}
-	}
-
-	@Override
-	public void onOnlineModeToOfflineMode()
-	{
-		// TODO not needed and should be removed
 	}
 
 	/**********************************************************************************************
@@ -378,40 +373,5 @@ public class BaseFragment extends Fragment implements
 		}
 
 		return views;
-	}
-
-	private static Animation createNoneAnimation(Fragment fragment, boolean enter)
-	{
-		Animation animation = null;
-		Fragment nextParentFragment;
-
-		// Get top most fragment (which has the animation)
-		while ((nextParentFragment = fragment.getParentFragment()) != null)
-		{
-			fragment = nextParentFragment;
-		}
-
-		// Create the None animation (which is AlphaAnimation from 1.0 to 1.0)
-		if (fragment instanceof BaseFragment && fragment.isRemoving())
-		{
-			BaseFragment baseFrag = (BaseFragment) fragment;
-
-			int duration;
-			int delay;
-			if (enter)
-			{
-				duration = baseFrag.getInAnimationDuration();
-				delay = baseFrag.getInAnimationDelay();
-			}
-			else
-			{
-				duration = baseFrag.getOutAnimationDuration();
-				delay = baseFrag.getOutAnimationDelay();
-			}
-
-			animation = AnimationHelper.getNoneAnimation(AnimationInterpolator.LINEAR, duration, delay, null);
-		}
-
-		return animation;
 	}
 }

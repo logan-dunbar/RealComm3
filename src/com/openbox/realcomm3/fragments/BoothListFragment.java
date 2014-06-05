@@ -197,28 +197,24 @@ public class BoothListFragment extends BaseFragment implements
 	{
 		return Arrays.asList((View) this.boothFilter);
 	}
-	
+
 	/**********************************************************************************************
 	 * App Mode Changed Callbacks Implements
 	 **********************************************************************************************/
 	@Override
-	public void onAppModeChanged()
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
-		if (getAppModeInterface() != null)
+		if (newAppMode == AppMode.OFFLINE || newAppMode == AppMode.OUTOFRANGE)
 		{
-			AppMode currentAppMode = getAppModeInterface().getCurrentAppMode();
-			if (currentAppMode == AppMode.OFFLINE || currentAppMode == AppMode.OUTOFRANGE)
-			{
-				this.boothListSortModeContainer.setVisibility(View.GONE);
-				this.currentSortMode = BoothSortMode.A_TO_Z;
-				updateButtons();
-				updateList();
-			}
-			else if (currentAppMode == AppMode.ONLINE)
-			{
-				// TODO maybe change back to NEAR_ME?
-				this.boothListSortModeContainer.setVisibility(View.VISIBLE);
-			}
+			this.boothListSortModeContainer.setVisibility(View.GONE);
+			this.currentSortMode = BoothSortMode.A_TO_Z;
+			updateButtons();
+			updateList();
+		}
+		else if (newAppMode == AppMode.ONLINE)
+		{
+			// TODO maybe change back to NEAR_ME?
+			this.boothListSortModeContainer.setVisibility(View.VISIBLE);
 		}
 	}
 

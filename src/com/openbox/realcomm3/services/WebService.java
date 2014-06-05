@@ -23,6 +23,9 @@ public class WebService extends CustomIntentService
 	private DownloadDatabaseHelper downloadDatabaseHelper;
 	private UploadBeaconsHelper uploadBeaconsHelper;
 
+	private boolean isDownloading = false;
+	private boolean isUploading = false;
+
 	public WebService()
 	{
 		// Elevate priority slightly
@@ -46,11 +49,11 @@ public class WebService extends CustomIntentService
 
 		if (connected)
 		{
-			if (intent.getAction().equals(DOWNLOAD_DATABASE_ACTION))
+			if (intent.getAction().equals(DOWNLOAD_DATABASE_ACTION) && !isDownloading)
 			{
 				checkUpdateNeeded();
 			}
-			else if (intent.getAction().equals(UPLOAD_BEACONS_ACTION))
+			else if (intent.getAction().equals(UPLOAD_BEACONS_ACTION) && !isUploading)
 			{
 				uploadBeacons();
 			}
@@ -73,6 +76,8 @@ public class WebService extends CustomIntentService
 
 	private void checkUpdateNeeded()
 	{
+		this.isDownloading = true;
+
 		LogHelper.Log("WebServicev2 - In checkUpdateNeeded()");
 
 		boolean checkUpdateSucceeded = this.downloadDatabaseHelper.checkUpdateNeeded();
@@ -85,13 +90,12 @@ public class WebService extends CustomIntentService
 		{
 			// TODO Timer to try again based on error?
 		}
+
+		this.isDownloading = false;
 	}
 
 	private void downloadDatabase()
 	{
-		LogHelper.Log("WebServicev2 - In downloadDatabase()");
-
-		LogHelper.Log("WebServicev2 - sending DOWNLOAD_STARTING_INTENT local broadcast");
 		Intent startingIntent = new Intent(DOWNLOAD_STARTING_INTENT);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(startingIntent);
 
@@ -116,6 +120,8 @@ public class WebService extends CustomIntentService
 
 	private void uploadBeacons()
 	{
+		this.isUploading = true;
+
 		boolean uploadSucceeded = this.uploadBeaconsHelper.uploadBeaconRangingData();
 		if (uploadSucceeded)
 		{
@@ -125,5 +131,7 @@ public class WebService extends CustomIntentService
 		{
 			// Do something?
 		}
+
+		this.isUploading = false;
 	}
 }

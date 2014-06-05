@@ -1,12 +1,12 @@
 package com.openbox.realcomm3.utilities.managers;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.SparseArray;
 
 import com.openbox.realcomm3.database.DatabaseManager;
@@ -23,21 +23,39 @@ import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 
 public class BeaconSaverManager implements DataChangedCallbacks, AppModeChangedCallbacks
 {
+	private static final long SAVE_INTERVAL = 1000;
+	private static final long UPLOAD_INTERVAL = 60 * 1000;
+
+	private Handler updateBeaconsHandler;
+	private Handler saveHandler;
+	private Handler uploadHandler;
+
 	private Context context;
 	private DataInterface dataInterface;
 	private AppModeInterface appModeInterface;
+
 	private boolean isDataLoaded;
+	private boolean shouldContinue = true;
 
-	private SaveBeaconThread saveBeaconThread;
-	private UploadBeaconThread uploadBeaconThread;
-
-	private SparseArray<BeaconModel> beaconArray = new SparseArray<>();
+	private volatile SparseArray<BeaconModel> beaconArray = new SparseArray<>();
 
 	public BeaconSaverManager(Context context, DataInterface dataInterface, AppModeInterface appModeInterface)
 	{
 		this.context = context;
 		this.dataInterface = dataInterface;
 		this.appModeInterface = appModeInterface;
+
+		HandlerThread updateBeaconsThread = new HandlerThread("UpdateBeaconsThread");
+		updateBeaconsThread.start();
+		updateBeaconsHandler = new Handler(updateBeaconsThread.getLooper());
+
+		HandlerThread saveThread = new HandlerThread("SaveThread");
+		saveThread.start();
+		saveHandler = new Handler(saveThread.getLooper());
+
+		HandlerThread uploadThread = new HandlerThread("UploadThread");
+		uploadThread.start();
+		uploadHandler = new Handler(uploadThread.getLooper());
 	}
 
 	@Override
@@ -49,7 +67,10 @@ public class BeaconSaverManager implements DataChangedCallbacks, AppModeChangedC
 	@Override
 	public void onDataChanged()
 	{
-		// TODO Clear any saved beacons?
+		if (this.isDataLoaded)
+		{
+			beaconArray.clear();
+		}
 	}
 
 	@Override
@@ -57,151 +78,105 @@ public class BeaconSaverManager implements DataChangedCallbacks, AppModeChangedC
 	{
 		if (this.isDataLoaded)
 		{
-			updateBeacons();
+			updateBeaconsHandler.post(updateBeaconsRunnable);
 		}
 	}
 
 	@Override
-	public void onAppModeChanged()
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
+		LogHelper.Log("onAppModeChanged: " + newAppMode.getDisplayName());
 		if (this.appModeInterface != null)
 		{
-			if (this.appModeInterface.getCurrentAppMode() == AppMode.ONLINE)
+			if (newAppMode == AppMode.ONLINE)
 			{
-				this.saveBeaconThread = new SaveBeaconThread();
-				this.saveBeaconThread.setPriority(Thread.MIN_PRIORITY + 1);
-				this.saveBeaconThread.start();
-
-				this.uploadBeaconThread = new UploadBeaconThread();
-				this.uploadBeaconThread.setPriority(Thread.MIN_PRIORITY + 1);
-				this.uploadBeaconThread.start();
+				this.shouldContinue = true;
+				this.saveHandler.post(saveBeaconsRunnable);
+				this.uploadHandler.post(uploadBeaconsRunnable);
 			}
 			else
 			{
-				if (this.saveBeaconThread != null)
-				{
-					this.saveBeaconThread.setShouldContinue(false);
-				}
-
-				if (this.uploadBeaconThread != null)
-				{
-					this.uploadBeaconThread.setShouldContinue(false);
-				}
+				this.shouldContinue = false;
 			}
 		}
 	}
 
-	@Override
-	public void onOnlineModeToOfflineMode()
+	public void stop()
 	{
-		// Stub
+		this.shouldContinue = false;
 	}
 
-	private void updateBeacons()
+	private Runnable updateBeaconsRunnable = new Runnable()
 	{
-		if (this.dataInterface != null)
+		@Override
+		public void run()
 		{
-			List<BoothModel> boothList = this.dataInterface.getBoothModelList();
-			for (BoothModel boothModel : boothList)
+			if (dataInterface != null)
 			{
-				// TODO Do we only keep beacons that have 'real' values?
-				if (boothModel.getAccuracy() < BoothModel.DEFAULT_ACCURACY)
+				List<BoothModel> boothList = dataInterface.getBoothModelList();
+				for (BoothModel boothModel : boothList)
 				{
-					if (this.beaconArray.indexOfKey(boothModel.getBoothId()) > -1)
+					// TODO Do we only keep beacons that have 'real' values?
+					if (boothModel.getAccuracy() < BoothModel.DEFAULT_ACCURACY)
 					{
-						this.beaconArray.get(boothModel.getBoothId()).updateBeacon(boothModel);
-					}
-					else
-					{
-						this.beaconArray.put(boothModel.getBoothId(), new BeaconModel(boothModel));
+						if (beaconArray.indexOfKey(boothModel.getBoothId()) > -1)
+						{
+							beaconArray.get(boothModel.getBoothId()).updateBeacon(boothModel);
+						}
+						else
+						{
+							beaconArray.put(boothModel.getBoothId(), new BeaconModel(boothModel));
+						}
 					}
 				}
 			}
 		}
-	}
+	};
 
-	class UploadBeaconThread extends Thread
+	private Runnable uploadBeaconsRunnable = new Runnable()
 	{
-		private static final long UPLOAD_INTERVAL = 10 * 1000;
-		private Handler uploadHandler;
-		private boolean shouldContinue = true;
-
-		public UploadBeaconThread()
+		@Override
+		public void run()
 		{
-			this.uploadHandler = new Handler();
-			this.uploadHandler.post(this.uploadBeaconsRunnable);
-		}
+			Intent serviceIntent = new Intent(context, WebService.class);
+			serviceIntent.setAction(WebService.UPLOAD_BEACONS_ACTION);
+			context.startService(serviceIntent);
 
-		public void setShouldContinue(boolean shouldContinue)
-		{
-			this.shouldContinue = shouldContinue;
-		}
-
-		private Runnable uploadBeaconsRunnable = new Runnable()
-		{
-			@Override
-			public void run()
+			if (shouldContinue)
 			{
-				LogHelper.Log("Starting service to upload beacons...");
-				Intent serviceIntent = new Intent(context, WebService.class);
-				serviceIntent.setAction(WebService.UPLOAD_BEACONS_ACTION);
-				context.startService(serviceIntent);
-
-				if (shouldContinue)
-				{
-					uploadHandler.postDelayed(uploadBeaconsRunnable, UPLOAD_INTERVAL);
-				}
+				uploadHandler.postDelayed(uploadBeaconsRunnable, UPLOAD_INTERVAL);
 			}
-		};
-	}
+		}
+	};
 
-	class SaveBeaconThread extends Thread
+	private Runnable saveBeaconsRunnable = new Runnable()
 	{
-		private static final long SAVE_INTERVAL = 1000;
-		private Handler saveHandler;
-		private boolean shouldContinue = true;
-
-		public SaveBeaconThread()
+		@Override
+		public void run()
 		{
-			this.saveHandler = new Handler();
-			this.saveHandler.post(this.saveBeaconsRunnable);
-		}
+			List<Beacon> saveList = new ArrayList<>();
 
-		public void setShouldContinue(boolean shouldContinue)
-		{
-			this.shouldContinue = shouldContinue;
-		}
-
-		private Runnable saveBeaconsRunnable = new Runnable()
-		{
-			@Override
-			public void run()
+			for (int i = 0; i < beaconArray.size(); i++)
 			{
-				List<Beacon> saveList = new ArrayList<>();
+				saveList.add(new Beacon(beaconArray.valueAt(i)));
+			}
 
-				for (int i = 0; i < beaconArray.size(); i++)
+			if (saveList.size() > 0)
+			{
+				try
 				{
-					saveList.add(new Beacon(beaconArray.valueAt(i)));
+					DatabaseManager.getInstance().createList(saveList, Beacon.class, Beacon.ID_CLASS);
 				}
-
-				if (saveList.size() > 0)
+				catch (Exception e)
 				{
-					try
-					{
-						DatabaseManager.getInstance().createList(saveList, Beacon.class, Beacon.ID_CLASS);
-						LogHelper.Log("Wrote " + saveList.size() + " beacons to DB");
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-				}
-
-				if (shouldContinue)
-				{
-					saveHandler.postDelayed(saveBeaconsRunnable, SAVE_INTERVAL);
+					e.printStackTrace();
 				}
 			}
-		};
-	}
+
+			if (shouldContinue)
+			{
+				saveHandler.postDelayed(saveBeaconsRunnable, SAVE_INTERVAL);
+			}
+		}
+	};
 }

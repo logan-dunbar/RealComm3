@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.base.BaseFragment;
+import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 
 public class ConnectionStatusFragment extends BaseFragment implements
@@ -43,15 +44,9 @@ public class ConnectionStatusFragment extends BaseFragment implements
 	 * App Mode Changed Callbacks
 	 **********************************************************************************************/
 	@Override
-	public void onAppModeChanged()
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
 		updateView();
-	}
-
-	@Override
-	public void onOnlineModeToOfflineMode()
-	{
-		// Stub. Not needed
 	}
 
 	/**********************************************************************************************

@@ -36,7 +36,7 @@ public class FragmentHelper
 			.hide(fragment)
 			.commit();
 	}
-
+	
 	public static void addAndHideFragment(FragmentManager fm, int containerId, Fragment fragment, String tag)
 	{
 		fm
@@ -44,6 +44,18 @@ public class FragmentHelper
 			.add(containerId, fragment, tag)
 			.hide(fragment)
 			.commit();
+	}
+
+	public static void addAndHideFragmentAllowingStateLoss(FragmentManager fm, int containerId, Fragment fragment, String tag)
+	{
+		// A bit of hax, the bluetooth prompt causes onSaveInstanceState, and then tries to do
+		// Fragment transactions before hitting onResume again we don't mind if this state is
+		// lost though, as it will be recreated when coming back if needs be.
+		fm
+			.beginTransaction()
+			.add(containerId, fragment, tag)
+			.hide(fragment)
+			.commitAllowingStateLoss();
 	}
 
 	public static void showAndHideFragments(FragmentManager fm, Fragment showFragment, Fragment hideFragment, int inAnimationId, int outAnimationId)

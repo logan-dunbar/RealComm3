@@ -1,79 +1,37 @@
 package com.openbox.realcomm3.utilities.managers;
 
 import com.openbox.realcomm3.utilities.enums.AppMode;
-import com.openbox.realcomm3.utilities.enums.BeaconStatus;
+import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
-import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 
 public class AppModeManager
 {
 	private AppMode currentAppMode;
 	private AppMode previousAppMode;
-	private AppMode currentAppModeSelector;
-	private BeaconStatusManager beaconStatusManager;
+
+	private ActivityInterface activityInterface;
 	private AppModeChangedCallbacks appModeChangedListener;
-	private BoothFlipperInterface boothFlipperListener;
 
 	public AppMode getCurrentAppMode()
 	{
 		return this.currentAppMode;
 	}
 
-	public AppMode getPreviousAppMode()
+	public AppModeManager(ActivityInterface activityInterface, AppModeChangedCallbacks appModeChangedListener)
 	{
-		return previousAppMode;
-	}
+		this.currentAppMode = this.previousAppMode = AppMode.INITIALIZING;
 
-	public void setPreviousAppMode(AppMode previousAppMode)
-	{
-		this.previousAppMode = previousAppMode;
-	}
-
-	public void setCurrentAppMode(AppMode currentAppMode)
-	{
-		this.currentAppMode = currentAppMode;
-	}
-
-	public AppMode getCurrentAppModeSelector()
-	{
-		return this.currentAppModeSelector;
-	}
-
-	public void setCurrentAppModeSelector(AppMode currentAppModeSelector)
-	{
-		this.currentAppModeSelector = currentAppModeSelector;
-	}
-
-	public BeaconStatus getCurrentBeaconStatus()
-	{
-		return this.beaconStatusManager.getCurrentBeaconStatus();
-	}
-
-	public void setCurrentBeaconStatus(BeaconStatus currentBeaconStatus)
-	{
-		this.beaconStatusManager.setCurrentBeaconStatus(currentBeaconStatus);
-	}
-
-	public AppModeManager(
-		AppMode startingAppMode,
-		AppMode startingAppModeSelector,
-		BeaconStatusManager beaconStatusManager,
-		AppModeChangedCallbacks appModeListener,
-		BoothFlipperInterface boothFlipperListener)
-	{
-		this.currentAppMode = startingAppMode;
-		this.currentAppModeSelector = startingAppModeSelector;
-		this.beaconStatusManager = beaconStatusManager;
-		this.appModeChangedListener = appModeListener;
-		this.boothFlipperListener = boothFlipperListener;
-	}
-
-	public void unbindBeaconManager()
-	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.UNBOUND);
+		this.activityInterface = activityInterface;
+		this.appModeChangedListener = appModeChangedListener;
 	}
 
 	public void changeAppMode(AppMode newAppMode)
+	{
+		this.previousAppMode = this.currentAppMode;
+		doAppModeChange(newAppMode);
+	}
+
+	private void doAppModeChange(AppMode newAppMode)
 	{
 		switch (newAppMode)
 		{
@@ -89,9 +47,6 @@ public class AppModeManager
 			case OUTOFRANGE:
 				changeAppModeOutOfRange(newAppMode);
 				break;
-			case PAUSED:
-				changeAppModePaused(newAppMode);
-				break;
 			default:
 				break;
 		}
@@ -103,22 +58,18 @@ public class AppModeManager
 		{
 			case INITIALIZING:
 				changeInitializingToOffline();
-				changeAppMode(newAppMode);
+				doAppModeChange(newAppMode);
 				break;
 			case OFFLINE:
 				// Stay here
 				break;
 			case ONLINE:
 				changeOnlineToOffline();
-				changeAppMode(newAppMode);
+				doAppModeChange(newAppMode);
 				break;
 			case OUTOFRANGE:
-				changeOutOfRangeToOnline();
-				changeAppMode(newAppMode);
-				break;
-			case PAUSED:
-				changePausedToOffline();
-				changeAppMode(newAppMode);
+				changeOutOfRangeToOffline();
+				doAppModeChange(newAppMode);
 				break;
 			default:
 				break;
@@ -131,22 +82,18 @@ public class AppModeManager
 		{
 			case INITIALIZING:
 				changeInitializingToOnline();
-				changeAppMode(newAppMode);
+				doAppModeChange(newAppMode);
 				break;
 			case OFFLINE:
 				changeOfflineToOnline();
-				changeAppMode(newAppMode);
+				doAppModeChange(newAppMode);
 				break;
 			case ONLINE:
 				// Stay here
 				break;
 			case OUTOFRANGE:
 				changeOutOfRangeToOnline();
-				changeAppMode(newAppMode);
-				break;
-			case PAUSED:
-				changePausedToOnline();
-				changeAppMode(newAppMode);
+				doAppModeChange(newAppMode);
 				break;
 			default:
 				break;
@@ -165,40 +112,9 @@ public class AppModeManager
 				break;
 			case ONLINE:
 				changeOnlineToOutOfRange();
-				changeAppMode(newAppMode);
+				doAppModeChange(newAppMode);
 				break;
 			case OUTOFRANGE:
-				// Stay here
-				break;
-			case PAUSED:
-				changePausedToOnline();
-				changeAppMode(newAppMode);
-				break;
-			default:
-				break;
-		}
-	}
-
-	private void changeAppModePaused(AppMode newAppMode)
-	{
-		switch (this.currentAppMode)
-		{
-			case INITIALIZING:
-				// Can't do this
-				break;
-			case OFFLINE:
-				changeOfflineToPaused();
-				changeAppMode(newAppMode);
-				break;
-			case ONLINE:
-				changeOnlineToPaused();
-				changeAppMode(newAppMode);
-				break;
-			case OUTOFRANGE:
-				changeOutOfRangeToPaused();
-				changeAppMode(newAppMode);
-				break;
-			case PAUSED:
 				// Stay here
 				break;
 			default:
@@ -208,112 +124,62 @@ public class AppModeManager
 
 	private void changeInitializingToOffline()
 	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.UNBOUND);
-		updateAppMode(AppMode.OFFLINE, true);
-	}
+		this.activityInterface.initBeaconManager();
+		this.activityInterface.showSplashScreen();
 
-	private void changeInitializingToOnline()
-	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.RANGING);
-		updateAppMode(AppMode.ONLINE, true);
-	}
-
-	private void changeOfflineToOnline()
-	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.RANGING);
-		updateAppMode(AppMode.ONLINE, true);
+		updateAppMode(AppMode.OFFLINE);
 	}
 
 	private void changeOnlineToOffline()
 	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.UNBOUND);
-		updateAppMode(AppMode.OFFLINE, true);
-		resetBoothDistances();
+		this.activityInterface.unbindBeaconManager();
+
+		updateAppMode(AppMode.OFFLINE);
 	}
 
-	private void changeOfflineToPaused()
+	private void changeOutOfRangeToOffline()
 	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.BOUND);
-		updateAppMode(AppMode.PAUSED, false);
+		this.activityInterface.unbindBeaconManager();
+
+		updateAppMode(AppMode.OFFLINE);
 	}
 
-	private void changePausedToOffline()
+	private void changeInitializingToOnline()
 	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.UNBOUND);
-		updateAppMode(AppMode.OFFLINE, true);
-		resetBoothDistances();
+		this.activityInterface.initBeaconManager();
+		this.activityInterface.bindBeaconManager();
+		this.activityInterface.showSplashScreen();
+
+		updateAppMode(AppMode.ONLINE);
 	}
 
-	private void changeOnlineToPaused()
+	private void changeOfflineToOnline()
 	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.BOUND);
-		updateAppMode(AppMode.PAUSED, false);
-	}
+		this.activityInterface.bindBeaconManager();
 
-	private void changePausedToOnline()
-	{
-		this.beaconStatusManager.changeBeaconStatus(BeaconStatus.RANGING);
-		updateAppMode(AppMode.ONLINE, true);
-	}
-
-	private void changeOnlineToOutOfRange()
-	{
-		updateAppMode(AppMode.OUTOFRANGE, false);
-		this.boothFlipperListener.resetTimer();
+		updateAppMode(AppMode.ONLINE);
 	}
 
 	private void changeOutOfRangeToOnline()
 	{
-		updateAppMode(AppMode.ONLINE, true);
-		this.boothFlipperListener.resetTimer();
+		// Nothing to do, the firing of onAppModeChanged will handle the rest
+		updateAppMode(AppMode.ONLINE);
 	}
 
-	private void changeOutOfRangeToPaused()
+	private void changeOnlineToOutOfRange()
 	{
-		// TODO maybe?
-		updateAppMode(AppMode.PAUSED, false);
+		// Nothing to do, the firing of onAppModeChanged will handle the rest
+		updateAppMode(AppMode.OUTOFRANGE);
 	}
 
-	private void updateAppMode(AppMode appMode, Boolean updateAppModeSelector)
+	private void updateAppMode(AppMode newAppMode)
 	{
-		this.currentAppMode = appMode;
-
-		if (updateAppModeSelector)
-		{
-			this.currentAppModeSelector = appMode;
-		}
+		this.currentAppMode = newAppMode;
 
 		if (this.appModeChangedListener != null)
 		{
-			this.appModeChangedListener.onAppModeChanged();
+			// TODO pass the new app mode, so no need to fetch it.
+			this.appModeChangedListener.onAppModeChanged(newAppMode, this.previousAppMode);
 		}
 	}
-
-	private void resetBoothDistances()
-	{
-		// Doesn't happen from Initializing -> Offline (no need)
-		if (this.appModeChangedListener != null)
-		{
-			this.appModeChangedListener.onOnlineModeToOfflineMode();
-		}
-	}
-
-	// private void template()
-	// {
-	// switch (this.currentAppMode)
-	// {
-	// case Initializing:
-	// break;
-	// case Offline:
-	// break;
-	// case Online:
-	// break;
-	// case OutOfRange:
-	// break;
-	// case Paused:
-	// break;
-	// default:
-	// break;
-	// }
-	// }
 }

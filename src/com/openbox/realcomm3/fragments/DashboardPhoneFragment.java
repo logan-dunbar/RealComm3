@@ -92,7 +92,8 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 	@Override
 	public boolean onBackBressed()
 	{
-		if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
+		if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.INITIALIZING &&
+			this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_EXPLORE)
 		{
 			changePage(RealcommPhonePage.BOOTH_EXPLORE);
 			return true;

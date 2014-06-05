@@ -7,6 +7,4 @@ public interface AppModeInterface
 	void changeAppMode(AppMode newAppMode);
 	
 	AppMode getCurrentAppMode();
-	
-	AppMode getPreviousAppMode();
 }

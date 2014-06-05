@@ -10,9 +10,11 @@ public interface ActivityInterface
 	void changePage(RealcommPage page);
 
 	// General Page Manager related
-	void showSplashScreenFragment();
+	void showSplashScreen();
 
 	void initializeFragments();
+	
+	void showSplashScreenFragment();
 
 	// Realcomm Page Manager related
 	void showDashboardAndRemoveSplashScreen();
@@ -20,4 +22,11 @@ public interface ActivityInterface
 	void showDashboardAndHideProfilePage();
 
 	void showProfilePageAndHideDashboard();
+	
+	// App Mode Manager related
+	void initBeaconManager();
+	
+	void bindBeaconManager();
+	
+	void unbindBeaconManager();
 }
