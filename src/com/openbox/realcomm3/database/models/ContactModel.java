@@ -15,7 +15,7 @@ public class ContactModel
 	private int contactId;
 	private String firstName;
 	private String lastName;
-	private String jobDescription;
+	private String jobPosition;
 	private String email;
 	private String contactNumber;
 
@@ -28,7 +28,7 @@ public class ContactModel
 			this.contactId = contact.getContactId();
 			this.firstName = contact.getFirstName();
 			this.lastName = contact.getLastName();
-			this.jobDescription = contact.getJobDescription();
+			this.jobPosition = contact.getJobPosition();
 			this.email = contact.getEmail();
 			this.contactNumber = contact.getContactNumber();
 		}
@@ -52,7 +52,7 @@ public class ContactModel
 		StringBuilder sb = new StringBuilder();
 
 		List<String> detailsList = new ArrayList<>();
-		detailsList.add(getJobDescription());
+		detailsList.add(getJobPosition());
 		detailsList.add(getContactNumber());
 		detailsList.add(getEmail());
 
@@ -93,14 +93,14 @@ public class ContactModel
 		this.lastName = lastName;
 	}
 
-	public String getJobDescription()
+	public String getJobPosition()
 	{
-		return jobDescription;
+		return jobPosition;
 	}
 
-	public void setJobDescription(String jobDescription)
+	public void setJobPosition(String jobPosition)
 	{
-		this.jobDescription = jobDescription;
+		this.jobPosition = jobPosition;
 	}
 
 	public String getEmail()

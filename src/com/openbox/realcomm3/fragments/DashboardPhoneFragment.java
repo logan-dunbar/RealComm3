@@ -468,7 +468,7 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 					changePage(RealcommPhonePage.BOOTH_EXPLORE);
 				}
 				break;
-			case R.id.dashboardPhoneFindLayout:
+			case R.id.dashboardPhoneSearchLayout:
 				if (this.phonePageManager.getCurrentPage() != RealcommPhonePage.BOOTH_LIST)
 				{
 					changePage(RealcommPhonePage.BOOTH_LIST);
@@ -507,27 +507,27 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 		this.navigationDrawer = (LinearLayout) view.findViewById(R.id.navigationDrawerContainer);
 
 		LinearLayout exploreLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneExploreLayout);
-		LinearLayout findLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneFindLayout);
+		LinearLayout searchLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneSearchLayout);
 		LinearLayout attendLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneAttendLayout);
 		LinearLayout infoLayout = (LinearLayout) view.findViewById(R.id.dashboardPhoneInfoLayout);
 
 		exploreLayout.setOnClickListener(this);
-		findLayout.setOnClickListener(this);
+		searchLayout.setOnClickListener(this);
 		attendLayout.setOnClickListener(this);
 		infoLayout.setOnClickListener(this);
 
 		this.navigationLayouts.add(exploreLayout);
-		this.navigationLayouts.add(findLayout);
+		this.navigationLayouts.add(searchLayout);
 		this.navigationLayouts.add(attendLayout);
 		this.navigationLayouts.add(infoLayout);
 
 		TextView exploreTextView = (TextView) view.findViewById(R.id.dashboardPhoneExploreTextView);
-		TextView findTextView = (TextView) view.findViewById(R.id.dashboardPhoneFindTextView);
+		TextView searchTextView = (TextView) view.findViewById(R.id.dashboardPhoneSearchTextView);
 		TextView attendTextView = (TextView) view.findViewById(R.id.dashboardPhoneAttendTextView);
 		TextView infoTextView = (TextView) view.findViewById(R.id.dashboardPhoneInfoTextView);
 
 		exploreTextView.setTypeface(application.getExo2Font());
-		findTextView.setTypeface(application.getExo2Font());
+		searchTextView.setTypeface(application.getExo2Font());
 		attendTextView.setTypeface(application.getExo2Font());
 		infoTextView.setTypeface(application.getExo2Font());
 	}

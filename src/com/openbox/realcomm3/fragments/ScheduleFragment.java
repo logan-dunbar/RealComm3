@@ -216,56 +216,6 @@ public class ScheduleFragment extends BaseScheduleFragment
 		}
 	}
 
-	// private void updateScheduleFragment()
-	// {
-	// TreeMap<Date, String> distinctDateList = getDistinctDayList();
-	// if (distinctDateList != null && distinctDateList.size() > 0)
-	// {
-	// // See if the tab host has already been created
-	// Boolean creating = false;
-	// this.scheduleTabHost = (FragmentTabHost) this.scheduleLayout.findViewById(R.id.talkDayTabHost);
-	// if (this.scheduleTabHost == null)
-	// {
-	// // Create it if not
-	// this.scheduleTabHost = new FragmentTabHost(getActivity());
-	// this.scheduleTabHost.setup(getActivity(), getChildFragmentManager(), R.id.scheduleTabContainer);
-	// this.scheduleTabHost.setId(R.id.talkDayTabHost);
-	// // this.talkDayTabHost.getLayoutParams().
-	// creating = true;
-	// }
-	// else
-	// {
-	// // Clear it if yes, because we have new data
-	// this.scheduleTabHost.clearAllTabs();
-	// }
-	//
-	// LayoutInflater inflater = LayoutInflater.from(getActivity());
-	//
-	// // For each day, create a tab holding a TalkDayFragment
-	// for (TreeMap.Entry<Date, String> entry : distinctDateList.entrySet())
-	// {
-	// Date talkDate = entry.getKey();
-	// String talkDateDisplayName = entry.getValue();
-	//
-	// View view = inflater.inflate(R.layout.tab_item_schedule, null);
-	// TextView title = (TextView) view.findViewById(R.id.tabTitle);
-	// title.setText(talkDateDisplayName);
-	//
-	// Bundle args = new Bundle();
-	// args.putSerializable(TalkDayFragment.TALK_DATE_KEY, talkDate);
-	// TabSpec tabSepc = this.scheduleTabHost.newTabSpec(talkDateDisplayName).setIndicator(view);
-	// this.scheduleTabHost.addTab(tabSepc, TalkDayFragment.class, args);
-	// }
-	//
-	// // Add the view to the top of the layout
-	// // Happens at the end because we can't add until tabs have been initialized
-	// if (creating)
-	// {
-	// this.scheduleLayout.addView(this.scheduleTabHost, 0);
-	// }
-	// }
-	// }
-
 	private TreeMap<Date, String> getDistinctDayList()
 	{
 		// TreeMap used because it is automatically sorted on key

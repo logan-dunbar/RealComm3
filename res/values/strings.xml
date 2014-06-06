@@ -31,8 +31,8 @@
     <string name="splashSubHeader">Las Vegas</string>
     <string name="splashExploreTitle">Explore</string>
     <string name="splashExploreDesc">Access information and contact details of exhibitors near you</string>
-    <string name="splashFindTitle">Find</string>
-    <string name="splashFindDesc">Search a complete directory of exhibitors</string>
+    <string name="splashSearchTitle">Search</string>
+    <string name="splashSearchDesc">Search a complete directory of exhibitors</string>
     <string name="splashAttendTitle">Attend</string>
     <string name="splashAttendDesc">Up-to-the-minute schedule of conference events</string>
     <string name="companyAddressTitle">ADDRESS</string>

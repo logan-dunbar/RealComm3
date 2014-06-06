@@ -55,10 +55,10 @@ public class SplashScreenFragment extends BaseFragment
 		TextView exploreDesc = (TextView) view.findViewById(R.id.splashScreenExploreDescTextView);
 		exploreDesc.setTypeface(application.getExo2Font());
 
-		TextView findTitle = (TextView) view.findViewById(R.id.splashScreenFindTitleTextView);
-		findTitle.setTypeface(application.getExo2Font());
-		TextView findDesc = (TextView) view.findViewById(R.id.splashScreenFindDescTextView);
-		findDesc.setTypeface(application.getExo2Font());
+		TextView searchTitle = (TextView) view.findViewById(R.id.splashScreenSearchTitleTextView);
+		searchTitle.setTypeface(application.getExo2Font());
+		TextView searchDesc = (TextView) view.findViewById(R.id.splashScreenSearchDescTextView);
+		searchDesc.setTypeface(application.getExo2Font());
 
 		TextView attendTitle = (TextView) view.findViewById(R.id.splashScreenAttendTitleTextView);
 		attendTitle.setTypeface(application.getExo2Font());

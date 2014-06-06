@@ -6,7 +6,7 @@ public enum RealcommPhonePage
 {
 	INITIALIZING(-1),
 	BOOTH_EXPLORE(R.id.dashboardPhoneExploreLayout),
-	BOOTH_LIST(R.id.dashboardPhoneFindLayout),
+	BOOTH_LIST(R.id.dashboardPhoneSearchLayout),
 	SCHEDULE_PAGE(R.id.dashboardPhoneAttendLayout),
 	INFO_PAGE(R.id.dashboardPhoneInfoLayout);
 

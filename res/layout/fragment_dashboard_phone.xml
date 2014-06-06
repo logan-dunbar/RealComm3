@@ -58,7 +58,7 @@
             android:layout_weight="1" >
 
             <LinearLayout
-                android:id="@+id/dashboardPhoneFindLayout"
+                android:id="@+id/dashboardPhoneSearchLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -74,11 +74,11 @@
                     android:src="@drawable/icon_landing_lookup" />
 
                 <TextView
-                    android:id="@+id/dashboardPhoneFindTextView"
+                    android:id="@+id/dashboardPhoneSearchTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dashboardPhoneSpacing"
-                    android:text="@string/splashFindTitle"
+                    android:text="@string/splashSearchTitle"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize14" />
             </LinearLayout>

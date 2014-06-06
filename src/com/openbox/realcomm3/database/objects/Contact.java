@@ -20,7 +20,7 @@ public class Contact implements Serializable
 	public static final String CONTACT_ID_COLUMN_NAME = "ContactId";
 	public static final String FIRST_NAME_COLUMN_NAME = "FirstName";
 	public static final String LAST_NAME_COLUMN_NAME = "LastName";
-	public static final String JOB_DESCRIPTION_COLUMN_NAME = "JobDescription";
+	public static final String JOB_POSITION_COLUMN_NAME = "JobPosition";
 	public static final String IS_PRIMARY_CONTACT_COLUMN_NAME = "IsPrimaryContact";
 	public static final String EMAIL_COLUMN_NAME = "Email";
 	public static final String CONTACT_NUMBER_COLUMN_NAME = "ContactNumber";
@@ -31,7 +31,7 @@ public class Contact implements Serializable
 	@DatabaseField(id = true, columnName = CONTACT_ID_COLUMN_NAME)
 	@SerializedName(CONTACT_ID_COLUMN_NAME)
 	private int contactId;
-	
+
 	@DatabaseField(columnName = Company.COMPANY_ID_COLUMN_NAME)
 	@SerializedName(Company.COMPANY_ID_COLUMN_NAME)
 	private int companyId;
@@ -44,9 +44,9 @@ public class Contact implements Serializable
 	@SerializedName(LAST_NAME_COLUMN_NAME)
 	private String lastName;
 
-	@DatabaseField(columnName = JOB_DESCRIPTION_COLUMN_NAME)
-	@SerializedName(JOB_DESCRIPTION_COLUMN_NAME)
-	private String jobDescription;
+	@DatabaseField(columnName = JOB_POSITION_COLUMN_NAME)
+	@SerializedName(JOB_POSITION_COLUMN_NAME)
+	private String jobPosition;
 
 	@DatabaseField(columnName = IS_PRIMARY_CONTACT_COLUMN_NAME)
 	@SerializedName(IS_PRIMARY_CONTACT_COLUMN_NAME)
@@ -112,15 +112,15 @@ public class Contact implements Serializable
 		this.lastName = lastName;
 	}
 
-	// JobDescription
-	public String getJobDescription()
+	// JobPosition
+	public String getJobPosition()
 	{
-		return this.jobDescription;
+		return this.jobPosition;
 	}
 
-	public void setJobDescription(String jobDescription)
+	public void setJobPosition(String jobPosition)
 	{
-		this.jobDescription = jobDescription;
+		this.jobPosition = jobPosition;
 	}
 
 	// IsPrimaryContact
@@ -163,7 +163,7 @@ public class Contact implements Serializable
 		StringBuilder builder = new StringBuilder();
 		builder.append(firstName + ", ");
 		builder.append(lastName + ", ");
-		builder.append(jobDescription + ", ");
+		builder.append(jobPosition + ", ");
 		builder.append(isPrimaryContact + ", ");
 		builder.append(email + ", ");
 		builder.append(contactNumber);

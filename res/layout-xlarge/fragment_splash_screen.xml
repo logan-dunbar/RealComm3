@@ -93,7 +93,7 @@
                     android:src="@drawable/icon_landing_explore" />
 
                 <ImageView
-                    android:id="@+id/splashScreenIconExploreFind"
+                    android:id="@+id/splashScreenIconExploreSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -125,13 +125,13 @@
                     android:textSize="@dimen/textSize40" />
 
                 <TextView
-                    android:id="@+id/splashScreenFindTitleTextView"
+                    android:id="@+id/splashScreenSearchTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
                     android:layout_marginRight="@dimen/splashDetailBetweenMargin"
-                    android:text="@string/splashFindTitle"
+                    android:text="@string/splashSearchTitle"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize40" />
 
@@ -162,14 +162,14 @@
                     android:textSize="@dimen/textSize20" />
 
                 <TextView
-                    android:id="@+id/splashScreenFindDescTextView"
+                    android:id="@+id/splashScreenSearchDescTextView"
                     android:layout_width="@dimen/splashDetailsTextWidth"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
                     android:layout_marginRight="@dimen/splashDetailBetweenMargin"
                     android:gravity="center_horizontal"
-                    android:text="@string/splashFindDesc"
+                    android:text="@string/splashSearchDesc"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize20" />
 

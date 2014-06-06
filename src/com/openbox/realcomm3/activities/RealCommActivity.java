@@ -209,6 +209,10 @@ public class RealCommActivity extends BaseActivity implements
 				}
 			}
 		}
+		else
+		{
+			changeAppMode(AppMode.OFFLINE);
+		}
 	}
 
 	@Override

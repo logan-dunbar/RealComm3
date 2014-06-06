@@ -9,7 +9,8 @@
         android:layout_width="@dimen/contactImageSize"
         android:layout_height="@dimen/contactImageSize"
         android:layout_marginRight="@dimen/contactsSpacingMargin"
-        android:contentDescription="@string/contactImageDescription" />
+        android:contentDescription="@string/contactImageDescription"
+        android:src="@drawable/icon_contact_person" />
 
     <LinearLayout
         android:layout_width="match_parent"

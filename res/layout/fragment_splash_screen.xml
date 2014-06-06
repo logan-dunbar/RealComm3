@@ -121,7 +121,7 @@
                 android:layout_marginTop="@dimen/splashDetailBetweenMargin" >
 
                 <ImageView
-                    android:id="@+id/splashScreenIconExploreFind"
+                    android:id="@+id/splashScreenIconExploreSearch"
                     android:layout_width="@dimen/splashLogoSize"
                     android:layout_height="@dimen/splashLogoSize"
                     android:layout_alignParentLeft="true"
@@ -130,22 +130,22 @@
                     android:src="@drawable/icon_landing_lookup" />
 
                 <TextView
-                    android:id="@+id/splashScreenFindTitleTextView"
+                    android:id="@+id/splashScreenSearchTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/splashScreenIconExploreFind"
-                    android:text="@string/splashFindTitle"
+                    android:layout_toRightOf="@+id/splashScreenIconExploreSearch"
+                    android:text="@string/splashSearchTitle"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize20" />
 
                 <TextView
-                    android:id="@+id/splashScreenFindDescTextView"
+                    android:id="@+id/splashScreenSearchDescTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/splashScreenFindTitleTextView"
-                    android:layout_toRightOf="@+id/splashScreenIconExploreFind"
-                    android:text="@string/splashFindDesc"
+                    android:layout_below="@+id/splashScreenSearchTitleTextView"
+                    android:layout_toRightOf="@+id/splashScreenIconExploreSearch"
+                    android:text="@string/splashSearchDesc"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textSize14" />
             </RelativeLayout>

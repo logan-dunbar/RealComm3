@@ -69,8 +69,6 @@ public class ContactFragment extends BaseProfileFragment
 			{
 				if (contactModel.getContactImage() != null)
 				{
-					this.contactImage.setVisibility(View.VISIBLE);
-
 					float radius = getResources().getDimension(R.dimen.defaultCornerRadius);
 					int height = (int) getResources().getDimension(R.dimen.contactImageSize);
 
@@ -79,10 +77,6 @@ public class ContactFragment extends BaseProfileFragment
 
 					Bitmap contactImage = BitmapHelper.getRoundedBitmap(contactModel.getContactImage(), width, height, radius);
 					this.contactImage.setImageBitmap(contactImage);
-				}
-				else
-				{
-					this.contactImage.setVisibility(View.GONE);
 				}
 
 				this.contactName.setText(contactModel.getDisplayName());

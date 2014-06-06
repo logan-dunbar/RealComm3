@@ -6,8 +6,8 @@ import com.openbox.realcomm3.R;
 
 public enum ProximityRegion
 {
-	IMMEDIATE(1.5, 10, R.color.opaque_red),
-	NEAR(2.5, 15, R.color.opaque_orange),
+	IMMEDIATE(1.8, 10, R.color.opaque_red),
+	NEAR(3.0, 15, R.color.opaque_orange),
 	FAR(6.0, 30, R.color.opaque_blue),
 	OUTOFRANGE(1000.0, -1, R.color.opaque_light_grey);
 

@@ -37,7 +37,6 @@ public class BoothExploreFragment extends BaseBoothFlipperFragment
 		super.onViewCreated(view, savedInstanceState);
 
 		createProximityFragment();
-		// createPhoneBoothFlipperFragment();
 	}
 
 	/**********************************************************************************************
@@ -55,14 +54,4 @@ public class BoothExploreFragment extends BaseBoothFlipperFragment
 		getDataChangedListeners().add(fragment);
 		getAppModeChangedListeners().add(fragment);
 	}
-
-//	private void createPhoneBoothFlipperFragment()
-//	{
-//		PhoneBoothFlipperFragment fragment = (PhoneBoothFlipperFragment) getChildFragmentManager().findFragmentById(R.id.phoneBoothFlipperContainer);
-//		if (fragment == null)
-//		{
-//			fragment = PhoneBoothFlipperFragment.newInstance();
-//			FragmentHelper.addAndHideFragment(getChildFragmentManager(), R.id.phoneBoothFlipperContainer, fragment, PhoneBoothFlipperFragment.TAG);
-//		}
-//	}
 }
