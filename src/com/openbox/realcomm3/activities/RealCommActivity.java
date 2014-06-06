@@ -42,6 +42,7 @@ import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
 import com.openbox.realcomm3.utilities.helpers.FragmentHelper;
+import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
@@ -111,6 +112,7 @@ public class RealCommActivity extends BaseActivity implements
 	private SelectedBoothModel selectedBooth;
 	private long beaconScanBetweenPeriod = IBeaconManager.DEFAULT_FOREGROUND_BETWEEN_SCAN_PERIOD;
 	private boolean bluetoothReceiverIsRegistered = false;
+	private boolean showingEnableBluetoothRequest = false;
 
 	/**********************************************************************************************
 	 * Activity Lifecycle Implements
@@ -199,8 +201,12 @@ public class RealCommActivity extends BaseActivity implements
 			}
 			else
 			{
-				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-				startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST);
+				if (!this.showingEnableBluetoothRequest)
+				{
+					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+					startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST);
+					showingEnableBluetoothRequest = true;
+				}
 			}
 		}
 	}
@@ -288,6 +294,8 @@ public class RealCommActivity extends BaseActivity implements
 			{
 				changeAppMode(AppMode.OFFLINE);
 			}
+
+			this.showingEnableBluetoothRequest = false;
 		}
 	}
 
@@ -607,7 +615,6 @@ public class RealCommActivity extends BaseActivity implements
 	public void unbindBeaconManager()
 	{
 		if (RealCommApplication.getHasBluetoothLe() &&
-			RealCommApplication.isBluetoothEnabled() &&
 			this.beaconManager != null &&
 			this.beaconManager.isBound(this))
 		{
@@ -701,15 +708,6 @@ public class RealCommActivity extends BaseActivity implements
 		if (this.dataInterface != null)
 		{
 			this.dataInterface.updateAccuracy(beaconList);
-		}
-	}
-
-	@Override
-	public void resetAccuracy()
-	{
-		if (this.dataInterface != null)
-		{
-			this.dataInterface.resetAccuracy();
 		}
 	}
 
@@ -812,15 +810,14 @@ public class RealCommActivity extends BaseActivity implements
 	@Override
 	public void didRangeBeaconsInRegion(final Collection<IBeacon> beaconList, Region region)
 	{
-		// TODO leave on separate thread
 		runOnUiThread(new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				if (RealCommActivity.this.dataInterface != null)
+				if (dataInterface != null)
 				{
-					RealCommActivity.this.dataInterface.updateAccuracy(beaconList);
+					dataInterface.updateAccuracy(beaconList);
 				}
 			}
 		});
@@ -1063,14 +1060,17 @@ public class RealCommActivity extends BaseActivity implements
 					case BluetoothAdapter.STATE_TURNING_ON:
 						break;
 					case BluetoothAdapter.STATE_ON:
+						LogHelper.Log("BluetoothAdapter.STATE_ON");
 						changeAppMode(AppMode.ONLINE);
 						break;
 					case BluetoothAdapter.STATE_TURNING_OFF:
+						LogHelper.Log("BluetoothAdapter.OFFLINE");
 						changeAppMode(AppMode.OFFLINE);
 						break;
 					case BluetoothAdapter.STATE_OFF:
 						break;
 					case BluetoothAdapter.ERROR:
+						LogHelper.Log("BluetoothAdapter.OFFLINE");
 						changeAppMode(AppMode.OFFLINE);
 						break;
 				}

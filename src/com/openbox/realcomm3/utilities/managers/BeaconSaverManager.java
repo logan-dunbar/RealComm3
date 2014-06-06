@@ -24,7 +24,7 @@ import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 public class BeaconSaverManager implements DataChangedCallbacks, AppModeChangedCallbacks
 {
 	private static final long SAVE_INTERVAL = 1000;
-	private static final long UPLOAD_INTERVAL = 60 * 1000;
+	private static final long UPLOAD_INTERVAL = 10 * 1000;
 
 	private Handler updateBeaconsHandler;
 	private Handler saveHandler;
@@ -117,7 +117,7 @@ public class BeaconSaverManager implements DataChangedCallbacks, AppModeChangedC
 				for (BoothModel boothModel : boothList)
 				{
 					// TODO Do we only keep beacons that have 'real' values?
-					if (boothModel.getAccuracy() < BoothModel.DEFAULT_ACCURACY)
+					if (boothModel.getWeightedAccuracy() < BoothModel.DEFAULT_ACCURACY)
 					{
 						if (beaconArray.indexOfKey(boothModel.getBoothId()) > -1)
 						{

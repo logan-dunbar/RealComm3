@@ -2,20 +2,13 @@ package com.openbox.realcomm3.utilities.helpers;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.http.impl.io.ChunkedOutputStream;
 
 import android.util.SparseArray;
 
@@ -42,7 +35,6 @@ public class UploadBeaconsHelper
 
 	public boolean uploadBeaconRangingData()
 	{
-		LogHelper.Log("In uploadBeaconRangingData()...");
 		List<Beacon> beaconList = null;
 		try
 		{
@@ -56,8 +48,6 @@ public class UploadBeaconsHelper
 
 		if (beaconList != null && beaconList.size() > 0)
 		{
-			LogHelper.Log(beaconList.size() + " beacons to upload");
-
 			String beaconJson = this.gson.toJson(new BeaconJsonWrapper(beaconList));
 
 			try
@@ -86,7 +76,7 @@ public class UploadBeaconsHelper
 					{
 						// Posted successfully, clear the table
 						DatabaseManager.getInstance().deleteAll(Beacon.class);
-						LogHelper.Log("POST succeeded...");
+						LogHelper.Log("POST succeeded... uploaded beacons = " + beaconList.size());
 						return true;
 					}
 					catch (Exception e)
@@ -96,17 +86,7 @@ public class UploadBeaconsHelper
 				}
 				else
 				{
-					// InputStream error = urlConnection.getErrorStream();
-					// InputStreamReader reader = new InputStreamReader(error);
-					// StringBuilder sb = new StringBuilder();
-					// int charInt = 0;
-					// while ((charInt = reader.read()) != -1)
-					// {
-					// sb.append((char) charInt);
-					// }
-
 					LogHelper.Log("POST failed... error code = " + httpResult);
-					// LogHelper.Log(sb.toString());
 				}
 			}
 			catch (MalformedURLException e)

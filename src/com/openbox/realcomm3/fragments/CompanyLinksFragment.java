@@ -47,13 +47,7 @@ public class CompanyLinksFragment extends BaseProfileFragment
 		CompanyModel model = getCompany();
 		if (model != null)
 		{
-			StringBuilder sb = new StringBuilder();
-
-			sb.append(model.getWebsite());
-			// sb.append("\n");
-			// TODO more here?
-
-			this.companyLinks.setText(sb.toString());
+			this.companyLinks.setText(model.getFormattedLinks());
 		}
 	}
 }

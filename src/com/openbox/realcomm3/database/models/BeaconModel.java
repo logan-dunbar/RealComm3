@@ -9,8 +9,8 @@ public class BeaconModel
 {
 	private int boothId;
 	private double accuracy;
-	private double rssi;
 	private double weightedAccuracy;
+	private double rssi;
 	private String deviceId;
 
 	private int count;
@@ -23,10 +23,9 @@ public class BeaconModel
 		this.startTime = this.latestTime = new Date().getTime();
 
 		this.boothId = boothModel.getBoothId();
-		// TODO need to expose the pre-weighted accuracy
 		this.accuracy = boothModel.getAccuracy();
+		this.weightedAccuracy = boothModel.getWeightedAccuracy();
 		this.rssi = boothModel.getRssi();
-		this.weightedAccuracy = boothModel.getAccuracy();
 		this.deviceId = RealCommApplication.getDeviceId();
 	}
 
@@ -36,10 +35,9 @@ public class BeaconModel
 		this.startTime = this.latestTime = new Date().getTime();
 
 		this.boothId = beacon.getBoothId();
-		// TODO need to expose the pre-weighted accuracy
 		this.accuracy = beacon.getAccuracy();
+		this.weightedAccuracy = beacon.getWeightedAccuracy();
 		this.rssi = beacon.getRssi();
-		this.weightedAccuracy = beacon.getAccuracy();
 		this.deviceId = RealCommApplication.getDeviceId();
 	}
 
@@ -48,9 +46,9 @@ public class BeaconModel
 		count++;
 		this.latestTime = new Date().getTime();
 
-		this.rssi += boothModel.getRssi();
 		this.accuracy += boothModel.getAccuracy();
-		this.weightedAccuracy += boothModel.getAccuracy();
+		this.weightedAccuracy += boothModel.getWeightedAccuracy();
+		this.rssi += boothModel.getRssi();
 	}
 
 	public void updateBeacon(BeaconModel beaconModel)
@@ -58,9 +56,9 @@ public class BeaconModel
 		count++;
 		this.latestTime = new Date().getTime();
 
-		this.rssi += beaconModel.getRssi();
 		this.accuracy += beaconModel.getAccuracy();
-		this.weightedAccuracy += beaconModel.getAccuracy();
+		this.weightedAccuracy += beaconModel.getWeightedAccuracy();
+		this.rssi += beaconModel.getRssi();
 	}
 
 	public int getBoothId()
@@ -73,14 +71,14 @@ public class BeaconModel
 		return this.accuracy / count;
 	}
 
-	public double getRssi()
-	{
-		return this.rssi / count;
-	}
-
 	public double getWeightedAccuracy()
 	{
 		return this.weightedAccuracy / count;
+	}
+
+	public double getRssi()
+	{
+		return this.rssi / count;
 	}
 
 	public long getRangedDate()

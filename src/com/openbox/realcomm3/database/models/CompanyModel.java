@@ -1,6 +1,7 @@
 package com.openbox.realcomm3.database.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -119,32 +120,32 @@ public class CompanyModel
 
 	public boolean getHasMainCategories()
 	{
-		return this.mainCatergories != null && this.mainCatergories != "";
+		return !StringHelper.isNullOrEmpty(this.mainCatergories);
 	}
 
 	public boolean getHasSubCategories()
 	{
-		return this.subCategories != null && this.subCategories != "";
+		return !StringHelper.isNullOrEmpty(this.subCategories);
 	}
 
 	public boolean getHasTargetMarkets()
 	{
-		return this.targetMarkets != null && this.targetMarkets != "";
+		return !StringHelper.isNullOrEmpty(this.targetMarkets);
 	}
 
 	public boolean getHasClientSampling()
 	{
-		return this.clientSampling != null && this.clientSampling != "";
+		return !StringHelper.isNullOrEmpty(this.clientSampling);
 	}
 
 	public boolean getHasGeographicMarkets()
 	{
-		return this.geographicMarkets != null && this.geographicMarkets != "";
+		return !StringHelper.isNullOrEmpty(this.geographicMarkets);
 	}
 
 	public boolean getHasConferenceName()
 	{
-		return this.conferenceName != null && this.conferenceName != "";
+		return !StringHelper.isNullOrEmpty(this.conferenceName);
 	}
 
 	public boolean getHasAddress()
@@ -154,37 +155,37 @@ public class CompanyModel
 
 	public boolean getHasCountry()
 	{
-		return this.country != null && this.country != "";
+		return !StringHelper.isNullOrEmpty(this.country);
 	}
 
 	public boolean getHasCity()
 	{
-		return this.city != null && this.city != "";
+		return !StringHelper.isNullOrEmpty(this.city);
 	}
 
 	public boolean getHasState()
 	{
-		return this.state != null && this.state != "";
+		return !StringHelper.isNullOrEmpty(this.state);
 	}
 
 	public boolean getHasAddress1()
 	{
-		return this.address1 != null && this.address1 != "";
+		return !StringHelper.isNullOrEmpty(this.address1);
 	}
 
 	public boolean getHasAddress2()
 	{
-		return this.address2 != null && this.address2 != "";
+		return !StringHelper.isNullOrEmpty(this.address2);
 	}
 
 	public boolean getHasAddress3()
 	{
-		return this.address3 != null && this.address3 != "";
+		return !StringHelper.isNullOrEmpty(this.address3);
 	}
 
 	public boolean getHasPostalCode()
 	{
-		return this.postalCode != null && this.postalCode != "";
+		return !StringHelper.isNullOrEmpty(this.postalCode);
 	}
 
 	public boolean getHasContacts()
@@ -192,14 +193,19 @@ public class CompanyModel
 		return this.contactList.size() > 0;
 	}
 
+	public boolean getHasLinks()
+	{
+		return getHasWebsite() || getHasRelatedLinks();
+	}
+
 	public boolean getHasWebsite()
 	{
-		return this.website != null && this.website != "";
+		return !StringHelper.isNullOrEmpty(this.website);
 	}
 
 	public boolean getHasRelatedLinks()
 	{
-		return this.relatedLinks != null && this.relatedLinks != "";
+		return !StringHelper.isNullOrEmpty(this.relatedLinks);
 	}
 
 	public boolean getHasSocialNetworks()
@@ -209,22 +215,22 @@ public class CompanyModel
 
 	public boolean getHasFacebook()
 	{
-		return this.facebook != null && this.facebook != "";
+		return !StringHelper.isNullOrEmpty(this.facebook);
 	}
 
 	public boolean getHasFacebookProfileId()
 	{
-		return this.facebookProfileId != null && this.facebookProfileId != "";
+		return !StringHelper.isNullOrEmpty(this.facebookProfileId);
 	}
 
 	public boolean getHasTwitter()
 	{
-		return this.twitter != null && this.twitter != "";
+		return !StringHelper.isNullOrEmpty(this.twitter);
 	}
 
 	public boolean getHasLinkedIn()
 	{
-		return this.linkedIn != null && this.linkedIn != "";
+		return !StringHelper.isNullOrEmpty(this.linkedIn);
 	}
 
 	public List<Integer> getContactIds()
@@ -263,7 +269,7 @@ public class CompanyModel
 			addressLinesList.add(getAddress2());
 			addressLinesList.add(getAddress3());
 
-			String addressLinesString = StringHelper.join(addressLinesList, "\n");
+			String addressLinesString = StringHelper.join(addressLinesList, StringHelper.NEW_LINE);
 			sb.append(addressLinesString);
 			addNewLine = true;
 		}
@@ -272,7 +278,7 @@ public class CompanyModel
 		{
 			if (addNewLine)
 			{
-				sb.append("\n");
+				sb.append(StringHelper.NEW_LINE);
 			}
 
 			List<String> cityStateCodeList = new ArrayList<>();
@@ -289,10 +295,34 @@ public class CompanyModel
 		{
 			if (addNewLine)
 			{
-				sb.append("\n");
+				sb.append(StringHelper.NEW_LINE);
 			}
 
 			sb.append(getCountry());
+		}
+
+		return sb.toString();
+	}
+
+	public String getFormattedLinks()
+	{
+		StringBuilder sb = new StringBuilder();
+
+		if (getHasWebsite())
+		{
+			sb.append(this.website);
+		}
+
+		if (getHasWebsite() && getHasRelatedLinks())
+		{
+			sb.append(StringHelper.NEW_LINE);
+			sb.append(StringHelper.NEW_LINE);
+		}
+
+		if (getHasRelatedLinks())
+		{
+			String[] relatedLinksArray = this.relatedLinks.split("[\\s]*,[\\s]*");
+			sb.append(StringHelper.join(Arrays.asList(relatedLinksArray), StringHelper.NEW_LINE));
 		}
 
 		return sb.toString();

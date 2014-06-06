@@ -78,8 +78,6 @@ public class WebService extends CustomIntentService
 	{
 		this.isDownloading = true;
 
-		LogHelper.Log("WebServicev2 - In checkUpdateNeeded()");
-
 		boolean checkUpdateSucceeded = this.downloadDatabaseHelper.checkUpdateNeeded();
 
 		if (checkUpdateSucceeded && this.downloadDatabaseHelper.getUpdateNeeded())

@@ -2,30 +2,21 @@ package com.openbox.realcomm3.database.models;
 
 import java.util.Comparator;
 import java.util.LinkedList;
-
 import android.content.res.Resources;
 
 import com.openbox.realcomm3.database.objects.Booth;
 import com.openbox.realcomm3.database.objects.Company;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 import com.radiusnetworks.ibeacon.IBeacon;
 
 public class BoothModel
 {
+	public static final int DEFAULT_RSSI = -120;
+	public static final double DEFAULT_ACCURACY = 20;
+
 	private static final int WINDOW_LENGTH = 5;
-	private static final int DEFAULT_RSSI = -120;
-	private static final int DEFAULT_TX_POWER = -76;
-
-	public static final double DEFAULT_ACCURACY = calculateAccuracy(DEFAULT_RSSI, DEFAULT_TX_POWER);
-
-	/**********************************************************************************************
-	 * Fields
-	 **********************************************************************************************/
-	private LinkedList<Integer> rssiHistory = new LinkedList<Integer>();
-	private int txPower;
-
-	private Double accuracy = null;
-	private int rssi;
+	private static final int MAX_NOT_FOUND_COUNT = 8;
 
 	private int boothId;
 	private String UUID;
@@ -39,9 +30,13 @@ public class BoothModel
 	private String companyShortDescription;
 	private String conferenceName;
 
-	/**********************************************************************************************
-	 * Constructor
-	 **********************************************************************************************/
+	private double accuracy = DEFAULT_ACCURACY;
+	private int rssi = DEFAULT_RSSI;
+
+	private LinkedList<Double> runningAccuracyList = new LinkedList<>();
+
+	private int runningNotFoundCount = 0;
+
 	public BoothModel(Booth booth, Company company)
 	{
 		if (booth != null)
@@ -66,55 +61,65 @@ public class BoothModel
 	/**********************************************************************************************
 	 * Public Methods
 	 **********************************************************************************************/
-	public Double getAccuracy()
+	public void updateBoothModel(IBeacon beacon)
 	{
-		if (accuracy == null)
-		{
-			updateAccuracyWithDefault();
-		}
+		this.rssi = beacon.getRssi();
+		this.accuracy = beacon.getAccuracy() > 0 ? beacon.getAccuracy() : DEFAULT_ACCURACY;
 
-		return accuracy;
+		if (this.accuracy != DEFAULT_ACCURACY)
+		{
+			updateRunningAccuracy();
+			this.runningNotFoundCount = 0;
+		}
+	}
+
+	public void updateNotFound()
+	{
+		if (this.runningNotFoundCount++ > MAX_NOT_FOUND_COUNT)
+		{
+			resetAccuracy();
+		}
 	}
 
 	public void resetAccuracy()
 	{
-		this.rssiHistory.clear();
-		updateAccuracyWithDefault();
+		this.accuracy = DEFAULT_ACCURACY;
+		this.runningAccuracyList.clear();
+		this.runningNotFoundCount = MAX_NOT_FOUND_COUNT;
 	}
 
-	public void updateAccuracyWithBeacon(IBeacon beacon)
+	private void updateRunningAccuracy()
 	{
-		this.rssiHistory.add(beacon.getRssi());
-		this.rssi = beacon.getRssi();
-		this.txPower = beacon.getTxPower();
-		updateAccuracy();
+		if (this.runningAccuracyList.size() >= WINDOW_LENGTH)
+		{
+			this.runningAccuracyList.poll();
+		}
 
-	}
-
-	public void updateAccuracyWithDefault()
-	{
-		this.rssiHistory.add(DEFAULT_RSSI);
-		this.rssi = DEFAULT_RSSI;
-		this.txPower = DEFAULT_TX_POWER;
-		updateAccuracy();
+		this.runningAccuracyList.add(this.accuracy);
 	}
 
 	public int getColor(Resources resources)
 	{
-		return resources.getColor(getProximityRegion(getAccuracy()).getColorId());
+		return resources.getColor(getProximityRegion().getColorId());
 	}
 
-	public static ProximityRegion getProximityRegion(double accuracy)
+	public ProximityRegion getProximityRegion()
 	{
-		if (accuracy < ProximityRegion.IMMEDIATE.getProximityLimit())
+		double tempAccuracy = getWeightedAccuracy();
+		if (tempAccuracy < 0)
+		{
+			return ProximityRegion.OUTOFRANGE;
+		}
+
+		if (tempAccuracy < ProximityRegion.IMMEDIATE.getProximityLimit())
 		{
 			return ProximityRegion.IMMEDIATE;
 		}
-		else if (accuracy < ProximityRegion.NEAR.getProximityLimit())
+		else if (tempAccuracy < ProximityRegion.NEAR.getProximityLimit())
 		{
 			return ProximityRegion.NEAR;
 		}
-		else if (accuracy < ProximityRegion.FAR.getProximityLimit())
+		else if (tempAccuracy < ProximityRegion.FAR.getProximityLimit())
 		{
 			return ProximityRegion.FAR;
 		}
@@ -131,15 +136,16 @@ public class BoothModel
 			@Override
 			public int compare(BoothModel lhs, BoothModel rhs)
 			{
-				double lhsAccuracy = lhs.getAccuracy();
-				double rhsAccuracy = rhs.getAccuracy();
+				double lhsAccuracy = lhs.getWeightedAccuracy();
+				double rhsAccuracy = rhs.getWeightedAccuracy();
 				if (lhsAccuracy < rhsAccuracy)
 				{
-					// 50 - 23
+					// 23 : 50
 					return -1;
 				}
 				else if (lhsAccuracy > rhsAccuracy)
 				{
+					// 50 : 23
 					return 1;
 				}
 				else
@@ -162,66 +168,49 @@ public class BoothModel
 		};
 	}
 
+	public boolean getHasConferenceName()
+	{
+		return !StringHelper.isNullOrEmpty(this.conferenceName);
+	}
+
 	/**********************************************************************************************
 	 * Private Methods
 	 **********************************************************************************************/
-	private void updateAccuracy()
-	{
-		if (this.rssiHistory.size() >= WINDOW_LENGTH)
-		{
-			this.rssiHistory.poll();
-		}
-
-		double runningAverageRssi = calculateRunningAverageRssi();
-		this.accuracy = calculateAccuracy(runningAverageRssi, this.txPower);
-	}
-
-	private double calculateRunningAverageRssi()
-	{
-		if (this.rssiHistory.size() == 0)
-		{
-			return (double) DEFAULT_RSSI;
-		}
-
-		double runningAverageRssi = 0.0;
-		for (int i = 0; i < this.rssiHistory.size(); i++)
-		{
-			runningAverageRssi += this.rssiHistory.get(i);
-		}
-
-		runningAverageRssi = runningAverageRssi / this.rssiHistory.size();
-		return runningAverageRssi;
-	}
-
-	private static double calculateAccuracy(double runningAverageRssi, int txPower)
-	{
-		double accuracy;
-		double ratio = (runningAverageRssi * 1.0) / txPower;
-		if (ratio < 1.0)
-		{
-			accuracy = Math.pow(ratio, 10);
-		}
-		else
-		{
-			accuracy = (0.89976) * Math.pow(ratio, 7.7095) + 0.111;
-		}
-
-		return accuracy;
-	}
-
-	public boolean getHasConferenceName()
-	{
-		return this.conferenceName != null && this.conferenceName != "";
-	}
 
 	/**********************************************************************************************
 	 * Getters and Setters
 	 **********************************************************************************************/
+	public double getAccuracy()
+	{
+		return this.accuracy;
+	}
+
+	public double getWeightedAccuracy()
+	{
+		if (this.runningAccuracyList.size() == 0)
+		{
+			return this.accuracy;
+		}
+
+		double accuracy = 0;
+		double weight = 0;
+
+		for (int i = 0; i < this.runningAccuracyList.size(); i++)
+		{
+			double tempAccuracy = this.runningAccuracyList.get(i);
+			double tempWeight = Math.exp(i * -0.2);
+			accuracy += tempAccuracy * tempWeight;
+			weight += tempWeight;
+		}
+
+		return accuracy / weight;
+	}
+
 	public int getRssi()
 	{
 		return rssi;
 	}
-	
+
 	public int getBoothId()
 	{
 		return boothId;

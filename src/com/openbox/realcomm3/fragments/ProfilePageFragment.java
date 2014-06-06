@@ -223,7 +223,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 				ft.hide(contactsFragment);
 			}
 
-			if (linksFragment != null && this.companyModel.getHasWebsite())
+			if (linksFragment != null && this.companyModel.getHasLinks())
 			{
 				ft.show(linksFragment);
 				if (fragmentAboveIsVisible)

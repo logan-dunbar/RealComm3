@@ -15,6 +15,7 @@ import com.openbox.realcomm3.application.RealCommApplication;
 import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.CompanyModel;
 import com.openbox.realcomm3.utilities.enums.CompanyCategory;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 public class CategoriesFragment extends BaseProfileFragment
 {
@@ -55,13 +56,12 @@ public class CategoriesFragment extends BaseProfileFragment
 			String categoryDetailsString = model.getCompanyCategoryDetails(companyCategory).trim();
 			String[] categoryDetails = categoryDetailsString.split("[\\s]*,[\\s]*");
 
-			String newLine = System.getProperty("line.separator");
 			CharSequence spannedCategories = "";
 			for (int i = 0; i < categoryDetails.length; i++)
 			{
 				if (categoryDetails.length > 1 && i < categoryDetails.length - 1)
 				{
-					categoryDetails[i] = categoryDetails[i] + newLine;
+					categoryDetails[i] = categoryDetails[i] + StringHelper.NEW_LINE;
 				}
 
 				SpannableString span = new SpannableString(categoryDetails[i]);

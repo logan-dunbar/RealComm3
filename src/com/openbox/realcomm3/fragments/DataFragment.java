@@ -10,8 +10,11 @@ import java.util.Random;
 
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.database.models.BoothModel;
+import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.enums.BoothSortMode;
 import com.openbox.realcomm3.utilities.enums.ProximityRegion;
+import com.openbox.realcomm3.utilities.helpers.LogHelper;
+import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.DataInterface;
 import com.openbox.realcomm3.utilities.loaders.BoothModelLoader;
@@ -23,7 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
-public class DataFragment extends Fragment implements DataInterface, DataChangedCallbacks
+public class DataFragment extends Fragment implements DataInterface, DataChangedCallbacks, AppModeChangedCallbacks
 {
 	public static final String TAG = "dataFragment";
 	private static final int BOOTH_MODEL_LOADER_ID = 1;
@@ -105,11 +108,12 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	public List<Integer> getClosestBoothIds(int numberOfDisplayBooths)
 	{
 		List<Integer> boothIds = new ArrayList<Integer>();
+
 		List<BoothModel> sortedList = getListSortedByAccuracy();
 		for (int i = 0; i < getNumberOfBooths(numberOfDisplayBooths); i++)
 		{
 			BoothModel booth = sortedList.get(i);
-			if (BoothModel.getProximityRegion(booth.getAccuracy()) == ProximityRegion.OUTOFRANGE)
+			if (booth.getProximityRegion() == ProximityRegion.OUTOFRANGE)
 			{
 				// Stop adding if out of range
 				break;
@@ -124,6 +128,7 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	@Override
 	public List<Integer> getRandomBoothIds(int numberOfDisplayBooths)
 	{
+		List<Integer> boothIds = new ArrayList<Integer>();
 		// Shameless plug for Open Box
 		// Open Box or Open Lease needs to show up in one of the booth spaces when in Offline mode.
 		// Horrendous, but whatevs, the powers that be have spoken.
@@ -148,7 +153,6 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 		Random random = new Random();
 		int openPosition = random.nextInt(numberOfDisplayBooths);
 
-		List<Integer> boothIds = new ArrayList<Integer>();
 		for (int i = 0; i < getNumberOfBooths(numberOfDisplayBooths); i++)
 		{
 			int boothId;
@@ -208,7 +212,7 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 		// Update the counts for the proximity regions
 		for (BoothModel booth : this.boothModelList)
 		{
-			ProximityRegion boothProximityRegion = BoothModel.getProximityRegion(booth.getAccuracy());
+			ProximityRegion boothProximityRegion = booth.getProximityRegion();
 			proximityCounts.put(boothProximityRegion, proximityCounts.get(boothProximityRegion) + 1);
 		}
 
@@ -227,33 +231,33 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 
 		for (BoothModel model : this.boothModelList)
 		{
-			Boolean outOfRange = true;
+			// The Kontakt beacons are known to not show up every scan cycle
+			Boolean notFound = true;
 			for (IBeacon beacon : beaconList)
 			{
 				if (model.getUUID().equalsIgnoreCase(beacon.getProximityUuid()) &&
 					model.getMajor() == beacon.getMajor() &&
 					model.getMinor() == beacon.getMinor())
 				{
-					model.updateAccuracyWithBeacon(beacon);
-					outOfRange = false;
+					model.updateBoothModel(beacon);
+					notFound = false;
 					break;
 				}
 			}
 
-			if (outOfRange)
+			if (notFound)
 			{
-				model.updateAccuracyWithDefault();
+				model.updateNotFound();
 			}
 		}
 
-		if (this.dataChangedListener != null)
+		if (dataChangedListener != null)
 		{
-			this.dataChangedListener.onBeaconsUpdated();
+			dataChangedListener.onBeaconsUpdated();
 		}
 	}
 
-	@Override
-	public void resetAccuracy()
+	private void resetBoothList()
 	{
 		for (BoothModel boothModel : this.boothModelList)
 		{
@@ -293,6 +297,19 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	public void onBeaconsUpdated()
 	{
 		// Stub
+	}
+
+	@Override
+	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
+	{
+		LogHelper.Log("DataFrag - onAppModeChanged(): " + newAppMode.getDisplayName() + " -> " + previousAppMode.getDisplayName());
+
+		// If changing from online
+		if (previousAppMode == AppMode.ONLINE)
+		{
+			LogHelper.Log("Resetting Booth List...");
+			resetBoothList();
+		}
 	}
 
 	/**********************************************************************************************

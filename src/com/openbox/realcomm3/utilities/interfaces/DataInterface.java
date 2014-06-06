@@ -26,6 +26,4 @@ public interface DataInterface
 	Map<ProximityRegion, Integer> getBoothProximityCounts();
 
 	void updateAccuracy(Collection<IBeacon> beaconList);
-
-	void resetAccuracy();
 }

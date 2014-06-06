@@ -100,7 +100,7 @@ public class BoothListAdapter extends ArrayAdapter<BoothModel>
 		}
 
 		BoothModel model = getItem(position);
-		int colorId = BoothModel.getProximityRegion(model.getAccuracy()).getColorId();
+		int colorId = model.getProximityRegion().getColorId();
 		int resolvedColorId = this.resources.getColor(colorId);
 
 		holder.companyName.setText(model.getCompanyName());

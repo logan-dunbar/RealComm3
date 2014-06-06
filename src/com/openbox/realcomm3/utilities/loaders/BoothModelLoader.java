@@ -77,41 +77,6 @@ public class BoothModelLoader extends AsyncTaskLoader<List<BoothModel>>
 					}
 				}
 			}
-
-			// TODO Check this, this was the code pre- CompanyId on the Booth table
-			// List<BoothContact> boothContacts = DatabaseManager.getInstance().getForWhereEquals(BoothContact.class,
-			// Booth.BOOTH_ID_COLUMN_NAME,
-			// booth.getBoothId());
-			//
-			// List<Integer> contactIds = new ArrayList<Integer>();
-			// for (BoothContact boothContact : boothContacts)
-			// {
-			// contactIds.add(boothContact.getContactId());
-			// }
-			//
-			// List<Contact> contacts = DatabaseManager.getInstance().getForWhereIn(Contact.class,
-			// Contact.CONTACT_ID_COLUMN_NAME, contactIds);
-			//
-			// List<Integer> companyIds = new ArrayList<Integer>();
-			// for (Contact contact : contacts)
-			// {
-			// companyIds.add(contact.getCompanyId());
-			// }
-			//
-			// // This does a distinct
-			// companyIds = new ArrayList<Integer>(new HashSet<Integer>(companyIds));
-			//
-			// // Should only be one company, might need to cater for multiple, but ultimate edge case
-			// if (companyIds.size() > 0)
-			// {
-			// int companyId = companyIds.get(0);
-			//
-			// // Get the company
-			// company = DatabaseManager.getInstance().getForId(Company.class, companyId);
-			// }
-			//
-			// list.add(new BoothModel(booth, company));
-			// }
 		}
 		catch (SQLException e)
 		{
