@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.utilities.enums.AppMode;
 import com.openbox.realcomm3.utilities.helpers.BoothFlipHelper;
+import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.helpers.ViewTimerTask;
 import com.openbox.realcomm3.utilities.interfaces.BoothFlipperInterface;
 import com.openbox.realcomm3.utilities.interfaces.DataChangedCallbacks;
@@ -116,6 +117,7 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 	@Override
 	public void onTimerTick()
 	{
+		LogHelper.Log("onTimerTick()");
 		getActivity().runOnUiThread(new Runnable()
 		{
 			@Override
@@ -207,6 +209,8 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 	 **********************************************************************************************/
 	private void startViewTimer()
 	{
+		LogHelper.Log("startViewTimer()");
+
 		// Memory leak - navigate to profile page, minimize, come back, starts the timer again, but
 		// because not visible GarbageCollector doesn't know to clean up. Fixed by only starting if isVisibile()
 		if (this.viewUpdateTimer == null &&
@@ -217,12 +221,16 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 			this.viewUpdateTimer = new Timer();
 			int delay = getAppModeInterface().getCurrentAppMode().getAnimationStartDelay();
 			int period = getAppModeInterface().getCurrentAppMode().getAnimationPeriod();
+
+			LogHelper.Log("delay = " + String.valueOf(delay) + "; period = " + String.valueOf(period));
+
 			this.viewUpdateTimer.schedule(new ViewTimerTask(this), delay, period);
 		}
 	}
 
 	private void stopViewTimer()
 	{
+		LogHelper.Log("stopViewTimer()");
 		if (this.viewUpdateTimer != null)
 		{
 			this.viewUpdateTimer.cancel();

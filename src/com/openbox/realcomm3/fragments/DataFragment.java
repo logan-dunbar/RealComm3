@@ -302,8 +302,6 @@ public class DataFragment extends Fragment implements DataInterface, DataChanged
 	@Override
 	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
-		LogHelper.Log("DataFrag - onAppModeChanged(): " + previousAppMode.getDisplayName() + " -> " + newAppMode.getDisplayName());
-
 		// If changing from online
 		if (previousAppMode == AppMode.ONLINE)
 		{

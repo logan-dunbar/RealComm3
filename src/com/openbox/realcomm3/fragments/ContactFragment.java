@@ -26,7 +26,6 @@ import com.openbox.realcomm3.base.BaseProfileFragment;
 import com.openbox.realcomm3.database.models.ContactModel;
 import com.openbox.realcomm3.database.objects.Contact;
 import com.openbox.realcomm3.utilities.helpers.BitmapHelper;
-import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.helpers.StringHelper;
 import com.openbox.realcomm3.utilities.helpers.ToastHelper;
 
@@ -74,26 +73,6 @@ public class ContactFragment extends BaseProfileFragment
 		updateView();
 
 		return view;
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState)
-	{
-		super.onSaveInstanceState(outState);
-	}
-
-	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
-	{
-		LogHelper.Log("onViewCreated() has state = " + String.valueOf(savedInstanceState != null));
-		super.onViewCreated(view, savedInstanceState);
-	}
-
-	@Override
-	public void onViewStateRestored(Bundle savedInstanceState)
-	{
-		LogHelper.Log("onViewStateRestored() has state = " + String.valueOf(savedInstanceState != null));
-		super.onViewStateRestored(savedInstanceState);
 	}
 
 	@Override

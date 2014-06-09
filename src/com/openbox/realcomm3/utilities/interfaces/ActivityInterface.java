@@ -9,24 +9,28 @@ public interface ActivityInterface
 
 	void changePage(RealcommPage page);
 
-	// General Page Manager related
+	// Realcomm Page Manager related
+	void setInfoMenuItemVisibility(boolean visible);
+	
 	void showSplashScreen();
 
 	void initializeFragments();
-	
+
 	void showSplashScreenFragment();
 
-	// Realcomm Page Manager related
 	void showDashboardAndRemoveSplashScreen();
 
 	void showDashboardAndHideProfilePage();
 
 	void showProfilePageAndHideDashboard();
-	
+
 	// App Mode Manager related
 	void initBeaconManager();
-	
+
 	void bindBeaconManager();
-	
+
 	void unbindBeaconManager();
+
+	// Booth Flipper related
+	void resetTimer();
 }

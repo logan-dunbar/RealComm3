@@ -71,8 +71,6 @@ public class DownloadDatabaseHelper
 	{
 		try
 		{
-			LogHelper.Log("In checkUpdateNeeded()...");
-
 			// Set up the connection
 			URL url = new URL(FETCH_MOST_RECENT_UPDATE_DATE_API_URL);
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -92,7 +90,7 @@ public class DownloadDatabaseHelper
 
 			if (this.updateNeeded)
 			{
-				LogHelper.Log("Update needed...");
+				LogHelper.Log("Update required...");
 			}
 
 			return true;
@@ -116,7 +114,7 @@ public class DownloadDatabaseHelper
 		// and then written, might need to be incremental based on DB size
 		try
 		{
-			LogHelper.Log("In downloadDatabase()...");
+			LogHelper.Log("Starting database download...");
 
 			// Set up the connection
 			URL url = new URL(FETCH_DATABASE_API_URL);
@@ -135,6 +133,7 @@ public class DownloadDatabaseHelper
 			// Read and convert database
 			readRealCommDatabaseJson(reader);
 
+			LogHelper.Log("Download database completed successfully...");
 			return true;
 		}
 		catch (MalformedURLException e)
@@ -218,13 +217,9 @@ public class DownloadDatabaseHelper
 	{
 		try
 		{
-			LogHelper.Log("Downloading...");
 			JsonObject realCommDatabaseJsonObject = this.jsonParser.parse(reader).getAsJsonObject();
-			LogHelper.Log("Download complete!");
 
-			LogHelper.Log("Converting...");
 			realCommDatabase = this.gson.fromJson(realCommDatabaseJsonObject, RealCommDatabase.class);
-			LogHelper.Log("Conversion complete!");
 		}
 		catch (JsonIOException e)
 		{

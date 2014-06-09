@@ -105,7 +105,6 @@ public class WebService extends CustomIntentService
 
 			if (writeSucceeded)
 			{
-				LogHelper.Log("WebServicev2 - sending DOWNLOAD_FINISHED_INTENT local broadcast");
 				Intent finishedIntent = new Intent(DOWNLOAD_FINISHED_INTENT);
 				LocalBroadcastManager.getInstance(this).sendBroadcast(finishedIntent);
 			}

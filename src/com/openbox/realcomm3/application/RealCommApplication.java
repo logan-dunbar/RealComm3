@@ -89,8 +89,6 @@ public class RealCommApplication extends Application
 			hasBluetoothLE = true;
 		}
 
-		LogHelper.Log("Has Proximity Capabilities: " + hasBluetoothLE);
-
 		// Initialize the DBManager
 		DatabaseManager.init(getApplicationContext());
 	}

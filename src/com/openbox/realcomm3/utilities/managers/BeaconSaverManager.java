@@ -85,7 +85,6 @@ public class BeaconSaverManager implements DataChangedCallbacks, AppModeChangedC
 	@Override
 	public void onAppModeChanged(AppMode newAppMode, AppMode previousAppMode)
 	{
-		LogHelper.Log("onAppModeChanged: " + newAppMode.getDisplayName());
 		if (this.appModeInterface != null)
 		{
 			if (newAppMode == AppMode.ONLINE)

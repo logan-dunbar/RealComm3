@@ -142,6 +142,7 @@ public class RealcommPageManager
 	{
 		if (this.activityListener != null)
 		{
+			this.activityListener.setInfoMenuItemVisibility(false);
 			this.activityListener.showProfilePageAndHideDashboard();
 		}
 

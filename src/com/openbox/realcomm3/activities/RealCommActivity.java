@@ -15,7 +15,11 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -25,9 +29,9 @@ import android.widget.ImageView;
 import com.openbox.realcomm3.services.WebService;
 import com.openbox.realcomm3.R;
 import com.openbox.realcomm3.application.RealCommApplication;
-import com.openbox.realcomm3.base.BaseActivity;
 import com.openbox.realcomm3.database.models.BoothModel;
 import com.openbox.realcomm3.database.models.SelectedBoothModel;
+import com.openbox.realcomm3.dialogfragments.InfoDialogFragment;
 import com.openbox.realcomm3.fragments.DashboardPhoneFragment;
 import com.openbox.realcomm3.fragments.DashboardTabletFragment;
 import com.openbox.realcomm3.fragments.DataFragment;
@@ -42,7 +46,6 @@ import com.openbox.realcomm3.utilities.enums.RealcommPhonePage;
 import com.openbox.realcomm3.utilities.helpers.AnimationHelper;
 import com.openbox.realcomm3.utilities.helpers.ClearFocusTouchListener;
 import com.openbox.realcomm3.utilities.helpers.FragmentHelper;
-import com.openbox.realcomm3.utilities.helpers.LogHelper;
 import com.openbox.realcomm3.utilities.interfaces.ActivityInterface;
 import com.openbox.realcomm3.utilities.interfaces.AppModeChangedCallbacks;
 import com.openbox.realcomm3.utilities.interfaces.AppModeInterface;
@@ -60,7 +63,7 @@ import com.radiusnetworks.ibeacon.IBeaconManager;
 import com.radiusnetworks.ibeacon.RangeNotifier;
 import com.radiusnetworks.ibeacon.Region;
 
-public class RealCommActivity extends BaseActivity implements
+public class RealCommActivity extends FragmentActivity implements
 	ActivityInterface,
 	DataChangedCallbacks,
 	DataInterface,
@@ -113,6 +116,7 @@ public class RealCommActivity extends BaseActivity implements
 	private long beaconScanBetweenPeriod = IBeaconManager.DEFAULT_FOREGROUND_BETWEEN_SCAN_PERIOD;
 	private boolean bluetoothReceiverIsRegistered = false;
 	private boolean showingEnableBluetoothRequest = false;
+	private boolean showInfoMenuItem = false;
 
 	/**********************************************************************************************
 	 * Activity Lifecycle Implements
@@ -305,6 +309,48 @@ public class RealCommActivity extends BaseActivity implements
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Careful when this is called in the Lifecycle
+		if (RealCommApplication.getIsLargeScreen())
+		{
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.main_menu, menu);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.infoMenuItem:
+				showInfoDialogFragment();
+				break;
+			default:
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu)
+	{
+		MenuItem item = menu.findItem(R.id.infoMenuItem);
+		if (item != null)
+		{
+			item.setVisible(showInfoMenuItem);
+		}
+
+		return true;
+	}
+
 	/**********************************************************************************************
 	 * Bluetooth Receiver Methods
 	 **********************************************************************************************/
@@ -371,6 +417,31 @@ public class RealCommActivity extends BaseActivity implements
 	}
 
 	@Override
+	public void setInfoMenuItemVisibility(boolean visible)
+	{
+		this.showInfoMenuItem = visible;
+		invalidateOptionsMenu();
+	}
+
+	private Runnable showMenuItemRunnable = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			setInfoMenuItemVisibility(true);
+		}
+	};
+
+	private Runnable hideInfoMenuItemRunnable = new Runnable()
+	{
+		@Override
+		public void run()
+		{
+			setInfoMenuItemVisibility(false);
+		}
+	};
+
+	@Override
 	public void showSplashScreen()
 	{
 		changePage(RealcommPage.SPLASH_SCREEN);
@@ -435,6 +506,7 @@ public class RealCommActivity extends BaseActivity implements
 			// In
 			dashboardTabletFragment.setInAnimationDuration(getResources().getInteger(R.integer.splashFragmentToDashboardFragment));
 			dashboardTabletFragment.setInAnimationInterpolator(AnimationInterpolator.LINEAR);
+			dashboardTabletFragment.setInAnimationCompleteListener(this.showMenuItemRunnable);
 
 			FragmentHelper.showAndRemoveFragments(
 				getSupportFragmentManager(),
@@ -556,12 +628,13 @@ public class RealCommActivity extends BaseActivity implements
 		if (profilePageFragment != null && profilePageFragment.isVisible() && dashboardTabletFragment != null)
 		{
 			// Out
-			dashboardTabletFragment.setInAnimationDuration(getResources().getInteger(R.integer.profileFragmentToDashboardFragment));
-			dashboardTabletFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
-
-			// In
 			profilePageFragment.setOutAnimationDuration(getResources().getInteger(R.integer.profileFragmentToDashboardFragment));
 			profilePageFragment.setOutAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+
+			// In
+			dashboardTabletFragment.setInAnimationDuration(getResources().getInteger(R.integer.profileFragmentToDashboardFragment));
+			dashboardTabletFragment.setInAnimationInterpolator(AnimationInterpolator.ACCELERATEDECELERATE);
+			dashboardTabletFragment.setInAnimationCompleteListener(this.showMenuItemRunnable);
 
 			FragmentHelper.showAndHideFragments(
 				getSupportFragmentManager(),
@@ -1049,6 +1122,12 @@ public class RealCommActivity extends BaseActivity implements
 		changePage(RealcommPage.DASHBOARD_PAGE);
 	}
 
+	private void showInfoDialogFragment()
+	{
+		InfoDialogFragment infoDialogFragment = new InfoDialogFragment();
+		infoDialogFragment.show(getSupportFragmentManager(), InfoDialogFragment.TAG);
+	}
+
 	/**********************************************************************************************
 	 * Misc Fields, Methods and Classes
 	 **********************************************************************************************/
@@ -1066,17 +1145,14 @@ public class RealCommActivity extends BaseActivity implements
 					case BluetoothAdapter.STATE_TURNING_ON:
 						break;
 					case BluetoothAdapter.STATE_ON:
-						LogHelper.Log("BluetoothAdapter.STATE_ON");
 						changeAppMode(AppMode.ONLINE);
 						break;
 					case BluetoothAdapter.STATE_TURNING_OFF:
-						LogHelper.Log("BluetoothAdapter.OFFLINE");
 						changeAppMode(AppMode.OFFLINE);
 						break;
 					case BluetoothAdapter.STATE_OFF:
 						break;
 					case BluetoothAdapter.ERROR:
-						LogHelper.Log("BluetoothAdapter.OFFLINE");
 						changeAppMode(AppMode.OFFLINE);
 						break;
 				}

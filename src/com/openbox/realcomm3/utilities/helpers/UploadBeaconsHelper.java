@@ -76,7 +76,6 @@ public class UploadBeaconsHelper
 					{
 						// Posted successfully, clear the table
 						DatabaseManager.getInstance().deleteAll(Beacon.class);
-						LogHelper.Log("POST succeeded... uploaded beacons = " + beaconList.size());
 						return true;
 					}
 					catch (Exception e)

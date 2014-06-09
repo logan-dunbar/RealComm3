@@ -135,6 +135,8 @@ public class AppModeManager
 		this.activityInterface.unbindBeaconManager();
 
 		updateAppMode(AppMode.OFFLINE);
+
+		this.activityInterface.resetTimer();
 	}
 
 	private void changeOutOfRangeToOffline()
@@ -142,6 +144,8 @@ public class AppModeManager
 		this.activityInterface.unbindBeaconManager();
 
 		updateAppMode(AppMode.OFFLINE);
+
+		this.activityInterface.resetTimer();
 	}
 
 	private void changeInitializingToOnline()
@@ -158,18 +162,24 @@ public class AppModeManager
 		this.activityInterface.bindBeaconManager();
 
 		updateAppMode(AppMode.ONLINE);
+
+		this.activityInterface.resetTimer();
 	}
 
 	private void changeOutOfRangeToOnline()
 	{
 		// Nothing to do, the firing of onAppModeChanged will handle the rest
 		updateAppMode(AppMode.ONLINE);
+
+		this.activityInterface.resetTimer();
 	}
 
 	private void changeOnlineToOutOfRange()
 	{
 		// Nothing to do, the firing of onAppModeChanged will handle the rest
 		updateAppMode(AppMode.OUTOFRANGE);
+
+		this.activityInterface.resetTimer();
 	}
 
 	private void updateAppMode(AppMode newAppMode)

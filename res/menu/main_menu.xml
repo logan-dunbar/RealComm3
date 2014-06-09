@@ -6,6 +6,7 @@
         android:id="@+id/infoMenuItem"
         android:icon="@drawable/icon_info"
         android:showAsAction="ifRoom"
-        android:title="@string/menuInfo"/>
+        android:title="@string/menuInfo"
+        android:visible="false"/>
 
 </menu>

@@ -1,6 +1,8 @@
 package com.openbox.realcomm3.fragments;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -64,7 +66,17 @@ public class CompanyCategoriesFragment extends BaseProfileFragment
 		if (model != null)
 		{
 			CategoriesFragment lastFragment = null;
-			CompanyCategory[] categories = CompanyCategory.values();
+			CompanyCategory[] categories;
+			
+			if (RealCommApplication.getIsLargeScreen())
+			{
+				categories = CompanyCategory.getTabletSortedCompanyCategories();
+			}
+			else
+			{
+				categories = CompanyCategory.getPhoneSortedCompanyCategories();
+			}
+			
 			for (int i = 0; i < categories.length; i++)
 			{
 				CategoriesFragment fragment = getCategoriesFragment(categories[i]);
