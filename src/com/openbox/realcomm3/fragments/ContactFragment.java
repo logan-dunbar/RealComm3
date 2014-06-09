@@ -104,32 +104,6 @@ public class ContactFragment extends BaseProfileFragment
 		checkContactExists();
 	}
 
-	// @Override
-	// public void onActivityResult(int requestCode, int resultCode, Intent data)
-	// {
-	// LogHelper.Log("onActivityResult() in ContactFragment");
-	// super.onActivityResult(requestCode, resultCode, data);
-	//
-	// switch (requestCode)
-	// {
-	// case SAVE_CONTACT_REQUEST:
-	// if (resultCode == FragmentActivity.RESULT_OK)
-	// {
-	// ToastHelper.showLongMessage(getActivity(), "Contact saved successfully");
-	// checkContactExists();
-	// }
-	// else
-	// {
-	// LogHelper.Log("About to delete contact");
-	// DeleteContactTask deleteTask = new DeleteContactTask();
-	// deleteTask.execute();
-	// }
-	// break;
-	// default:
-	// break;
-	// }
-	// }
-
 	private ContactModel getContactModel()
 	{
 		if (getCompany() == null)
