@@ -1,31 +1,18 @@
 package com.openbox.realcomm3.fragments;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.OperationApplicationException;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.provider.ContactsContract.CommonDataKinds;
-import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Intents;
-import android.provider.ContactsContract.RawContacts;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,16 +32,12 @@ import com.openbox.realcomm3.utilities.helpers.ToastHelper;
 
 public class ContactFragment extends BaseProfileFragment
 {
-	private static final int SAVE_CONTACT_REQUEST = 1;
-
 	private ImageView contactImage;
 	private TextView contactName;
 	private TextView contactDetails;
 	private ImageView addContactImageView;
 
 	private ContactModel contactModel;
-
-	private Uri newContactUri;
 
 	public static ContactFragment newInstance(int contactId)
 	{
@@ -197,6 +180,56 @@ public class ContactFragment extends BaseProfileFragment
 		}
 	}
 
+	private void insertContact()
+	{
+		if (getCompany() != null && getContactModel() != null)
+		{
+			Intent intent = new Intent(Intents.Insert.ACTION);
+			intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+
+			ArrayList<ContentValues> data = new ArrayList<ContentValues>();
+
+			intent.putExtra(Intents.Insert.NAME, getContactModel().getDisplayName());
+			intent.putExtra(Intents.Insert.COMPANY, getCompany().getName());
+
+			if (!StringHelper.isNullOrEmpty(getContactModel().getContactNumber()))
+			{
+				intent.putExtra(Intents.Insert.PHONE, getContactModel().getContactNumber());
+				intent.putExtra(Intents.Insert.PHONE_TYPE, Phone.TYPE_WORK);
+			}
+
+			if (!StringHelper.isNullOrEmpty(getContactModel().getEmail()))
+			{
+				intent.putExtra(Intents.Insert.EMAIL, getContactModel().getEmail());
+				intent.putExtra(Intents.Insert.EMAIL_TYPE, Email.TYPE_WORK);
+			}
+
+			if (!StringHelper.isNullOrEmpty(getContactModel().getJobPosition()))
+			{
+				intent.putExtra(Intents.Insert.JOB_TITLE, getContactModel().getJobPosition());
+			}
+
+			Bitmap contactImage = getContactModel().getContactImage();
+			if (contactImage != null)
+			{
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				contactImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+				ContentValues photoRow = new ContentValues();
+				photoRow.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE);
+				photoRow.put(ContactsContract.CommonDataKinds.Photo.PHOTO, stream.toByteArray());
+				data.add(photoRow);
+			}
+
+			intent.putParcelableArrayListExtra(Intents.Insert.DATA, data);
+
+			// Fix for Android 4.0+ going back to contact listing on save
+			intent.putExtra("finishActivityOnSaveCompleted", true);
+
+			startActivity(intent);
+		}
+	}
+
 	class CheckContactExistsTask extends AsyncTask<Void, Void, Boolean>
 	{
 		private String firstName;
@@ -309,8 +342,6 @@ public class ContactFragment extends BaseProfileFragment
 					{
 						// Prevent multiple adds
 						addContactImageView.setEnabled(false);
-						// InsertContactTask insertTask = new InsertContactTask();
-						// insertTask.execute();
 
 						insertContact();
 					}
@@ -321,226 +352,4 @@ public class ContactFragment extends BaseProfileFragment
 			addContactImageView.setEnabled(true);
 		}
 	}
-
-	private void insertContact()
-	{
-		if (getCompany() != null && getContactModel() != null)
-		{
-			Intent intent = new Intent(Intents.Insert.ACTION);
-			intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
-
-			ArrayList<ContentValues> data = new ArrayList<ContentValues>();
-			// ContentValues nameRow = new ContentValues();
-			// nameRow.put(ContactsContract.Data.MIMETYPE,
-			// ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);
-			// nameRow.put(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
-			// getContactModel().getFirstName());
-			// nameRow.put(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-			// getContactModel().getLastName());
-			// data.add(nameRow);
-
-			intent.putExtra(Intents.Insert.NAME, getContactModel().getDisplayName());
-			intent.putExtra(Intents.Insert.COMPANY, getCompany().getName());
-
-			if (!StringHelper.isNullOrEmpty(getContactModel().getContactNumber()))
-			{
-				intent.putExtra(Intents.Insert.PHONE, getContactModel().getContactNumber());
-				intent.putExtra(Intents.Insert.PHONE_TYPE, Phone.TYPE_WORK);
-			}
-
-			if (!StringHelper.isNullOrEmpty(getContactModel().getEmail()))
-			{
-				intent.putExtra(Intents.Insert.EMAIL, getContactModel().getEmail());
-				intent.putExtra(Intents.Insert.EMAIL_TYPE, Email.TYPE_WORK);
-			}
-
-			if (!StringHelper.isNullOrEmpty(getContactModel().getJobPosition()))
-			{
-				intent.putExtra(Intents.Insert.JOB_TITLE, getContactModel().getJobPosition());
-			}
-
-			Bitmap contactImage = getContactModel().getContactImage();
-			if (contactImage != null)
-			{
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				contactImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-
-				ContentValues photoRow = new ContentValues();
-				photoRow.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE);
-				photoRow.put(ContactsContract.CommonDataKinds.Photo.PHOTO, stream.toByteArray());
-				data.add(photoRow);
-			}
-
-			intent.putParcelableArrayListExtra(Intents.Insert.DATA, data);
-
-			// Fix for Android 4.0+ going back to contact listing on save
-			intent.putExtra("finishActivityOnSaveCompleted", true);
-
-			startActivity(intent);
-		}
-	}
-
-	// class InsertContactTask extends AsyncTask<Void, Void, Boolean>
-	// {
-	// @Override
-	// protected Boolean doInBackground(Void... params)
-	// {
-	// ContactModel contactModel = getContactModel();
-	// if (getCompany() != null && contactModel != null)
-	// {
-	// ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-	// int rawContactInsertIndex = operations.size();
-	//
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-	// .withValue(RawContacts.ACCOUNT_TYPE, null)
-	// .withValue(RawContacts.ACCOUNT_NAME, null)
-	// .build());
-	//
-	// // Insert Contact Name (first/last name are required fields, might need to do null checks if that
-	// // changes)
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-	// .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-	// .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-	// .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contactModel.getDisplayName().trim())
-	// .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, contactModel.getLastName().trim())
-	// .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, contactModel.getFirstName().trim())
-	// .build());
-	//
-	// // Insert Company Name
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-	// .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-	// .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
-	// .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY, getCompany().getName().trim())
-	// .build());
-	//
-	// // Insert Phone Number
-	// if (!StringHelper.isNullOrEmpty(contactModel.getContactNumber()))
-	// {
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-	// .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-	// .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-	// .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, contactModel.getContactNumber().trim())
-	// .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_WORK)
-	// .build());
-	// }
-	//
-	// // Insert Email
-	// if (!StringHelper.isNullOrEmpty(contactModel.getEmail()))
-	// {
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-	// .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-	// .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-	// .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, contactModel.getEmail().trim())
-	// .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
-	// .build());
-	// }
-	//
-	// // Insert Job Position
-	// if (!StringHelper.isNullOrEmpty(contactModel.getJobPosition()))
-	// {
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-	// .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-	// .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
-	// .withValue(ContactsContract.CommonDataKinds.Organization.JOB_DESCRIPTION, contactModel.getJobPosition().trim())
-	// .build());
-	// }
-	//
-	// // Insert Contact Photo
-	// Bitmap contactImage = contactModel.getContactImage();
-	// if (contactImage != null)
-	// {
-	// ByteArrayOutputStream stream = new ByteArrayOutputStream();
-	// contactImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-	//
-	// operations.add(
-	// ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-	// .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-	// .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
-	// .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, stream.toByteArray())
-	// .build());
-	// }
-	//
-	// // Push to Contacts
-	// try
-	// {
-	// ContentProviderResult[] result = getActivity().getContentResolver().applyBatch(ContactsContract.AUTHORITY,
-	// operations);
-	// if (result != null && result[0] != null)
-	// {
-	// newContactUri = result[0].uri;
-	// LogHelper.Log("newContactUri = " + newContactUri);
-	// }
-	// }
-	// catch (RemoteException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// catch (OperationApplicationException e)
-	// {
-	// e.printStackTrace();
-	// }
-	//
-	// // True if contact added successfully
-	// return newContactUri != null;
-	// }
-	//
-	// // No contact, nothing added
-	// return false;
-	// }
-	//
-	// @Override
-	// protected void onPostExecute(Boolean insertSuccess)
-	// {
-	// super.onPostExecute(insertSuccess);
-	//
-	// if (insertSuccess)
-	// {
-	// Intent editIntent = new Intent(Intent.ACTION_EDIT);
-	// editIntent.setDataAndType(newContactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE);
-	// editIntent.putExtra("finishActivityOnSaveCompleted", true);
-	// // putExtras(editIntent, null);
-	// startActivityForResult(editIntent, SAVE_CONTACT_REQUEST);
-	// }
-	// else
-	// {
-	// checkContactExists();
-	// }
-	// }
-	//
-	// }
-
-	// class DeleteContactTask extends AsyncTask<Void, Void, Boolean>
-	// {
-	// @Override
-	// protected Boolean doInBackground(Void... params)
-	// {
-	// if (newContactUri != null)
-	// {
-	// LogHelper.Log("About to delete contact");
-	// int rowsDeleted = getActivity().getContentResolver().delete(newContactUri, null, null);
-	// return rowsDeleted > 0;
-	// }
-	//
-	// return false;
-	// }
-	//
-	// @Override
-	// protected void onPostExecute(Boolean deleteSucceeded)
-	// {
-	// super.onPostExecute(deleteSucceeded);
-	//
-	// if (deleteSucceeded)
-	// {
-	// LogHelper.Log("Deleted contact");
-	// }
-	//
-	// checkContactExists();
-	// }
-	// }
 }
