@@ -65,17 +65,17 @@ public class CompanyDetailsFragment extends BaseProfileFragment
 				this.companyLogo.setImageBitmap(logo);
 			}
 
-			this.companyName.setText(model.getName().trim());
+			this.companyName.setText(model.getName());
 
 			String boothNumberText = BOOTH_NUMBER_PREFIX + String.valueOf(model.getBoothNumber());
 			if (model.getHasConferenceName())
 			{
-				boothNumberText += " - " + model.getConferenceName().trim();
+				boothNumberText += " - " + model.getConferenceName();
 			}
 
 			this.boothNumber.setText(boothNumberText);
 
-			this.companyDescription.setText(model.getDescription().trim());
+			this.companyDescription.setText(model.getDescription());
 		}
 	}
 

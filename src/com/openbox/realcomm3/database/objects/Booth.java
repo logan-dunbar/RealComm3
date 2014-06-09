@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 @DatabaseTable(tableName = "Booth")
 public class Booth implements Serializable
@@ -121,12 +122,12 @@ public class Booth implements Serializable
 	// Name
 	public String getName()
 	{
-		return this.name;
+		return StringHelper.nullOrTrim(this.name);
 	}
 
 	public void setName(String name)
 	{
-		this.name = name;
+		this.name = StringHelper.nullOrTrim(name);
 	}
 
 	// Booth Number

@@ -1,36 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:layout_height="wrap_content" >
 
     <ImageView
         android:id="@+id/contactImageView"
         android:layout_width="@dimen/contactImageSize"
         android:layout_height="@dimen/contactImageSize"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_marginRight="@dimen/contactsSpacingMargin"
+        android:background="@drawable/rounded_contact_background"
         android:contentDescription="@string/contactImageDescription"
-        android:src="@drawable/icon_contact_person" />
+        android:src="@drawable/icon_android_contact" />
 
     <LinearLayout
+        android:id="@+id/contactNameLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/contactImageView"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/contactNameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textColor="@color/white"
             android:textSize="@dimen/contactDetailsTextSize" />
 
-        <TextView
-            android:id="@+id/contactDetailsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoLink="all"
-            android:textColor="@color/white"
-            android:textSize="@dimen/contactDetailsTextSize" />
+        <ImageView
+            android:id="@+id/addContactImageView"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="right"
+            android:visibility="gone" />
     </LinearLayout>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/contactDetailsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contactNameLayout"
+        android:layout_toRightOf="@+id/contactImageView"
+        android:autoLink="all"
+        android:textColor="@color/white"
+        android:textSize="@dimen/contactDetailsTextSize" />
+
+</RelativeLayout>

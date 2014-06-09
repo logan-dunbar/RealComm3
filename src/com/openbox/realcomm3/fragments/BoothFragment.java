@@ -200,21 +200,21 @@ public class BoothFragment extends BaseFragment implements OnClickListener
 					circle.setColor(color);
 				}
 
-				this.header.setText(this.boothModel.getCompanyName().trim());
+				this.header.setText(this.boothModel.getCompanyName());
 
 				this.subHeader.setTextColor(color);
 
 				String subHeaderText = BOOTH_PREFIX + this.boothModel.getBoothNumber();
 				if (this.boothModel.getHasConferenceName())
 				{
-					subHeaderText += " - " + this.boothModel.getConferenceName().trim();
+					subHeaderText += " - " + this.boothModel.getConferenceName();
 				}
 
 				this.subHeader.setText(subHeaderText);
 
 				if (getArguments().getBoolean(IS_BIG_KEY))
 				{
-					this.details.setText(this.boothModel.getCompanyDescription().trim());
+					this.details.setText(this.boothModel.getCompanyDescription());
 				}
 				else
 				{

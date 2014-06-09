@@ -53,4 +53,14 @@ public class StringHelper
 
 		return string.replaceAll("\\s", EMPTY_STRING);
 	}
+	
+	public static String nullOrTrim(String string)
+	{
+		if (string == null)
+		{
+			return null;
+		}
+		
+		return string.trim();
+	}
 }

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 @DatabaseTable(tableName = "Company")
 public class Company implements Serializable
@@ -156,221 +157,221 @@ public class Company implements Serializable
 
 	public String getName()
 	{
-		return name;
+		return StringHelper.nullOrTrim(name);
 	}
 
 	public void setName(String name)
 	{
-		this.name = name;
+		this.name = StringHelper.nullOrTrim(name);
 	}
 
 	public String getDescription()
 	{
-		return description;
+		return StringHelper.nullOrTrim(description);
 	}
 
 	public void setDescription(String description)
 	{
-		this.description = description;
+		this.description = StringHelper.nullOrTrim(description);
 	}
 
 	public String getShortDescription()
 	{
-		return shortDescription;
+		return StringHelper.nullOrTrim(shortDescription);
 	}
 
 	public void setShortDescription(String shortDescription)
 	{
-		this.shortDescription = shortDescription;
+		this.shortDescription = StringHelper.nullOrTrim(shortDescription);
 	}
 
 	public String getWebsite()
 	{
-		return website;
+		return StringHelper.nullOrTrim(website);
 	}
 
 	public void setWebsite(String website)
 	{
-		this.website = website;
+		this.website = StringHelper.nullOrTrim(website);
 	}
 
 	public String getRelatedLinks()
 	{
-		return relatedLinks;
+		return StringHelper.nullOrTrim(relatedLinks);
 	}
 
 	public void setRelatedLinks(String relatedLinks)
 	{
-		this.relatedLinks = relatedLinks;
+		this.relatedLinks = StringHelper.nullOrTrim(relatedLinks);
 	}
 
 	public String getConferenceName()
 	{
-		return conferenceName;
+		return StringHelper.nullOrTrim(conferenceName);
 	}
 
 	public void setConferenceName(String conferenceName)
 	{
-		this.conferenceName = conferenceName;
+		this.conferenceName = StringHelper.nullOrTrim(conferenceName);
 	}
 
 	public String getCountry()
 	{
-		return country;
+		return StringHelper.nullOrTrim(country);
 	}
 
 	public void setCountry(String country)
 	{
-		this.country = country;
+		this.country = StringHelper.nullOrTrim(country);
 	}
 
 	public String getCity()
 	{
-		return city;
+		return StringHelper.nullOrTrim(city);
 	}
 
 	public void setCity(String city)
 	{
-		this.city = city;
+		this.city = StringHelper.nullOrTrim(city);
 	}
 
 	public String getState()
 	{
-		return state;
+		return StringHelper.nullOrTrim(state);
 	}
 
 	public void setState(String state)
 	{
-		this.state = state;
+		this.state = StringHelper.nullOrTrim(state);
 	}
 
 	public String getAddress1()
 	{
-		return address1;
+		return StringHelper.nullOrTrim(address1);
 	}
 
 	public void setAddress1(String address1)
 	{
-		this.address1 = address1;
+		this.address1 = StringHelper.nullOrTrim(address1);
 	}
 
 	public String getAddress2()
 	{
-		return address2;
+		return StringHelper.nullOrTrim(address2);
 	}
 
 	public void setAddress2(String address2)
 	{
-		this.address2 = address2;
+		this.address2 = StringHelper.nullOrTrim(address2);
 	}
 
 	public String getAddress3()
 	{
-		return address3;
+		return StringHelper.nullOrTrim(address3);
 	}
 
 	public void setAddress3(String address3)
 	{
-		this.address3 = address3;
+		this.address3 = StringHelper.nullOrTrim(address3);
 	}
 
 	public String getPostalCode()
 	{
-		return postalCode;
+		return StringHelper.nullOrTrim(postalCode);
 	}
 
 	public void setPostalCode(String postalCode)
 	{
-		this.postalCode = postalCode;
+		this.postalCode = StringHelper.nullOrTrim(postalCode);
 	}
 
 	public String getFacebook()
 	{
-		return facebook;
+		return StringHelper.nullOrTrim(facebook);
 	}
 
 	public void setFacebook(String facebook)
 	{
-		this.facebook = facebook;
+		this.facebook = StringHelper.nullOrTrim(facebook);
 	}
 
 	public String getFacebookProfileId()
 	{
-		return facebookProfileId;
+		return StringHelper.nullOrTrim(facebookProfileId);
 	}
 
 	public void setFacebookProfileId(String facebookProfileId)
 	{
-		this.facebookProfileId = facebookProfileId;
+		this.facebookProfileId = StringHelper.nullOrTrim(facebookProfileId);
 	}
 
 	public String getTwitter()
 	{
-		return twitter;
+		return StringHelper.nullOrTrim(twitter);
 	}
 
 	public void setTwitter(String twitter)
 	{
-		this.twitter = twitter;
+		this.twitter = StringHelper.nullOrTrim(twitter);
 	}
 
 	public String getLinkedIn()
 	{
-		return linkedIn;
+		return StringHelper.nullOrTrim(linkedIn);
 	}
 
 	public void setLinkedIn(String linkedIn)
 	{
-		this.linkedIn = linkedIn;
+		this.linkedIn = StringHelper.nullOrTrim(linkedIn);
 	}
 
 	public String getMainCategories()
 	{
-		return mainCategories;
+		return StringHelper.nullOrTrim(mainCategories);
 	}
 
 	public void setMainCategories(String mainCategories)
 	{
-		this.mainCategories = mainCategories;
+		this.mainCategories = StringHelper.nullOrTrim(mainCategories);
 	}
 
 	public String getSubCategories()
 	{
-		return subCategories;
+		return StringHelper.nullOrTrim(subCategories);
 	}
 
 	public void setSubCategories(String subCategories)
 	{
-		this.subCategories = subCategories;
+		this.subCategories = StringHelper.nullOrTrim(subCategories);
 	}
 
 	public String getTargetMarkets()
 	{
-		return targetMarkets;
+		return StringHelper.nullOrTrim(targetMarkets);
 	}
 
 	public void setTargetMarkets(String targetMarkets)
 	{
-		this.targetMarkets = targetMarkets;
+		this.targetMarkets = StringHelper.nullOrTrim(targetMarkets);
 	}
 
 	public String getClientSampling()
 	{
-		return clientSampling;
+		return StringHelper.nullOrTrim(clientSampling);
 	}
 
 	public void setClientSampling(String clientSampling)
 	{
-		this.clientSampling = clientSampling;
+		this.clientSampling = StringHelper.nullOrTrim(clientSampling);
 	}
 
 	public String getGeographicMarkets()
 	{
-		return geographicMarkets;
+		return StringHelper.nullOrTrim(geographicMarkets);
 	}
 
 	public void setGeographicMarkets(String geographicMarkets)
 	{
-		this.geographicMarkets = geographicMarkets;
+		this.geographicMarkets = StringHelper.nullOrTrim(geographicMarkets);
 	}
 }

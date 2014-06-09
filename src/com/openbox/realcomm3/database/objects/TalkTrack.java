@@ -5,13 +5,14 @@ import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 @DatabaseTable(tableName = "TalkTrack")
 public class TalkTrack implements Serializable
 {
 	// Generated Serializable UID
 	private static final long serialVersionUID = -6210861993284633017L;
-	
+
 	public static final Class<?> ID_CLASS = Integer.class;
 
 	/**********************************************************************************************
@@ -20,7 +21,7 @@ public class TalkTrack implements Serializable
 	public static final String TALK_TRACK_ID_COLUMN_NAME = "TalkTrackId";
 	public static final String NAME_COLUMN_NAME = "Name";
 	public static final String DESCRIPTION_COLUMN_NAME = "Description";
-	
+
 	/**********************************************************************************************
 	 * Database Fields
 	 **********************************************************************************************/
@@ -35,7 +36,7 @@ public class TalkTrack implements Serializable
 	@DatabaseField(columnName = DESCRIPTION_COLUMN_NAME)
 	@SerializedName(DESCRIPTION_COLUMN_NAME)
 	private String description;
-	
+
 	public TalkTrack()
 	{
 		// all persisted classes must define a no-arg constructor with at least package visibility
@@ -58,23 +59,23 @@ public class TalkTrack implements Serializable
 	// Name
 	public String getName()
 	{
-		return name;
+		return StringHelper.nullOrTrim(name);
 	}
 
 	public void setName(String name)
 	{
-		this.name = name;
+		this.name = StringHelper.nullOrTrim(name);
 	}
 
 	// Description
 	public String getDescription()
 	{
-		return description;
+		return StringHelper.nullOrTrim(description);
 	}
 
 	public void setDescription(String description)
 	{
-		this.description = description;
+		this.description = StringHelper.nullOrTrim(description);
 	}
 
 }

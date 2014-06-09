@@ -6,6 +6,7 @@ import java.util.Date;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 @DatabaseTable(tableName = "Talk")
 public class Talk implements Serializable
@@ -95,22 +96,22 @@ public class Talk implements Serializable
 
 	public String getName()
 	{
-		return name;
+		return StringHelper.nullOrTrim(name);
 	}
 
 	public void setName(String name)
 	{
-		this.name = name;
+		this.name = StringHelper.nullOrTrim(name);
 	}
 
 	public String getDescription()
 	{
-		return description;
+		return StringHelper.nullOrTrim(description);
 	}
 
 	public void setDescription(String description)
 	{
-		this.description = description;
+		this.description = StringHelper.nullOrTrim(description);
 	}
 
 	public Date getStartTime()

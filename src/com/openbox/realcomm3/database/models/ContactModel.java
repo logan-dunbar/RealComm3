@@ -43,7 +43,7 @@ public class ContactModel
 
 	public String getDisplayName()
 	{
-		// TODO do null checks etc
+		// TODO First and Last name are non-nullable, but maybe null checks in case that changes
 		return getFirstName() + " " + getLastName();
 	}
 

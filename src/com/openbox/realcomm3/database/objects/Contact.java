@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.openbox.realcomm3.utilities.helpers.StringHelper;
 
 @DatabaseTable(tableName = "Contact")
 public class Contact implements Serializable
@@ -93,34 +94,34 @@ public class Contact implements Serializable
 	// FirstName
 	public String getFirstName()
 	{
-		return this.firstName;
+		return StringHelper.nullOrTrim(firstName);
 	}
 
 	public void setFirstName(String firstName)
 	{
-		this.firstName = firstName;
+		this.firstName = StringHelper.nullOrTrim(firstName);
 	}
 
 	// LastName
 	public String getLastName()
 	{
-		return this.lastName;
+		return StringHelper.nullOrTrim(lastName);
 	}
 
 	public void setLastName(String lastName)
 	{
-		this.lastName = lastName;
+		this.lastName = StringHelper.nullOrTrim(lastName);
 	}
 
 	// JobPosition
 	public String getJobPosition()
 	{
-		return this.jobPosition;
+		return StringHelper.nullOrTrim(jobPosition);
 	}
 
 	public void setJobPosition(String jobPosition)
 	{
-		this.jobPosition = jobPosition;
+		this.jobPosition = StringHelper.nullOrTrim(jobPosition);
 	}
 
 	// IsPrimaryContact
@@ -137,36 +138,22 @@ public class Contact implements Serializable
 	// Email
 	public String getEmail()
 	{
-		return this.email;
+		return StringHelper.nullOrTrim(email);
 	}
 
 	public void setEmail(String email)
 	{
-		this.email = email;
+		this.email = StringHelper.nullOrTrim(email);
 	}
 
 	// ContactNumber
 	public String getContactNumber()
 	{
-		return this.contactNumber;
+		return StringHelper.nullOrTrim(contactNumber);
 	}
 
 	public void setContactNumber(String contactNumber)
 	{
-		this.contactNumber = contactNumber;
-	}
-
-	// Misc Funcs
-	@Override
-	public String toString()
-	{
-		StringBuilder builder = new StringBuilder();
-		builder.append(firstName + ", ");
-		builder.append(lastName + ", ");
-		builder.append(jobPosition + ", ");
-		builder.append(isPrimaryContact + ", ");
-		builder.append(email + ", ");
-		builder.append(contactNumber);
-		return builder.toString();
+		this.contactNumber = StringHelper.nullOrTrim(contactNumber);
 	}
 }

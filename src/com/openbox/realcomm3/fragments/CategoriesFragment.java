@@ -53,7 +53,7 @@ public class CategoriesFragment extends BaseProfileFragment
 		{
 			header.setText(companyCategory.getHeader());
 
-			String categoryDetailsString = model.getCompanyCategoryDetails(companyCategory).trim();
+			String categoryDetailsString = model.getCompanyCategoryDetails(companyCategory);
 			String[] categoryDetails = categoryDetailsString.split("[\\s]*,[\\s]*");
 
 			CharSequence spannedCategories = "";
