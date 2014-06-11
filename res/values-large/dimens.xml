@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Splash Screen -->
+    <dimen name="splashLogoSize">64dp</dimen>
+    <dimen name="splashDetailBetweenMargin">40dp</dimen>
+    
+    <!-- Booth -->
+    <dimen name="boothSubHeaderMarginBottom">@dimen/defaultMargin</dimen>
+</resources>

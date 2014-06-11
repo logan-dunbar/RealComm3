@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.openbox.realcomm3"
+    xmlns:app="http://schemas.android.com/apk/res/com.openbox.realcomm"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/companyContactsMargin"
@@ -17,13 +17,12 @@
         android:textColor="@color/white"
         android:textSize="@dimen/companyContactsHeaderTextSize" />
 
-    <com.openbox.realcomm3.controls.VariableHeightViewPager
+    <com.openbox.realcomm.controls.VariableHeightViewPager
         android:id="@+id/contactPager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/companyContactsSpacingMargin"
-        android:paddingBottom="@dimen/viewPagerIndicatorPadding" >
-    </com.openbox.realcomm3.controls.VariableHeightViewPager>
+        android:paddingBottom="@dimen/viewPagerIndicatorPadding" />
 
     <com.viewpagerindicator.LinePageIndicator
         android:id="@+id/contactPagerIndicator"

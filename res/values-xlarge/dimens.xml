@@ -8,4 +8,10 @@
     <!-- Booth List Item -->
     <dimen name="boothListItemHeight">80dp</dimen>
 
+    <!-- Splash Screen -->
+    <dimen name="splashRealcommOBLogoHeight">75dp</dimen>
+    <dimen name="splashLogoSize">96dp</dimen>
+    
+    <!-- Booth -->
+    <dimen name="boothSubHeaderMarginBottom">@dimen/defaultMargin</dimen>
 </resources>

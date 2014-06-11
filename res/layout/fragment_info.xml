@@ -15,7 +15,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/textSize20" />
 
-    <com.openbox.realcomm3.controls.FixedRatioImageView
+    <com.openbox.realcomm.controls.FixedRatioImageView
         android:id="@+id/infoLogoImageView"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/infoLogoHeight"

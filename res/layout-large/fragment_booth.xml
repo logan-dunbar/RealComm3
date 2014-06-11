@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/boothClickableLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/boothMargin"
+    android:layout_marginRight="@dimen/boothMargin"
+    android:layout_marginTop="@dimen/boothMargin"
+    android:background="@drawable/rounded_booth_background"
+    android:clickable="true"
+    android:padding="@dimen/boothPadding" >
+
+    <TextView
+        android:id="@+id/boothFragmentHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textSize="@dimen/textSize30" />
+
+    <TextView
+        android:id="@+id/boothFragmentSubHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/boothFragmentHeader"
+        android:layout_marginBottom="@dimen/boothSubHeaderMarginBottom"
+        android:textSize="@dimen/textSize24" />
+
+    <TextView
+        android:id="@+id/boothFragmentDetails"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/boothFragmentSubHeader"
+        android:ellipsize="end"
+        android:textSize="@dimen/textSize18" />
+
+</RelativeLayout>

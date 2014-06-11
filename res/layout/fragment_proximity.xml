@@ -8,7 +8,7 @@
     android:layout_marginTop="@dimen/proximityMarginTopBottom"
     android:orientation="vertical" >
 
-    <com.openbox.realcomm3.controls.FixedRatioImageView
+    <com.openbox.realcomm.controls.FixedRatioImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/logos_landing" />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/com.openbox.realcomm3"
+    xmlns:custom="http://schemas.android.com/apk/res/com.openbox.realcomm"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/boothListMargin"
@@ -59,7 +59,7 @@
         android:descendantFocusability="beforeDescendants"
         android:focusableInTouchMode="true" >
 
-        <com.openbox.realcomm3.controls.ClearableEditText
+        <com.openbox.realcomm.controls.ClearableEditText
             android:id="@+id/boothFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -71,8 +71,7 @@
             android:textColor="@color/opaque_blue"
             android:textCursorDrawable="@null"
             android:textSize="@dimen/textSize20"
-            custom:clearable="true" >
-        </com.openbox.realcomm3.controls.ClearableEditText>
+            custom:clearable="true" />
     </FrameLayout>
 
     <ListView

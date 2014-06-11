@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
-    <com.openbox.realcomm3.controls.FixedRatioImageView
+    <com.openbox.realcomm.controls.FixedRatioImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/proximity_graphic" />

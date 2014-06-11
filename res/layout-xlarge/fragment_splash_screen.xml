@@ -16,7 +16,7 @@
             android:layout_centerHorizontal="true"
             android:text="@string/splashHeader"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSize30" />
+            android:textSize="@dimen/textSize40" />
 
         <TextView
             android:id="@+id/splashScreenSubHeader"
@@ -26,7 +26,7 @@
             android:layout_centerHorizontal="true"
             android:text="@string/splashSubHeader"
             android:textColor="@color/white"
-            android:textSize="@dimen/textSize30" />
+            android:textSize="@dimen/textSize40" />
 
         <LinearLayout
             android:id="@+id/splashCircleContainer"
@@ -67,10 +67,11 @@
 
         <ImageView
             android:id="@+id/splashLogos"
-            android:layout_width="wrap_content"
+            android:layout_width="700dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/splashCircleContainer"
             android:layout_centerHorizontal="true"
+            android:contentDescription="@string/iconImageDescription"
             android:src="@drawable/logos_landing" />
 
         <TableLayout
@@ -87,25 +88,28 @@
 
                 <ImageView
                     android:id="@+id/splashScreenIconExplore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/splashLogoSize"
+                    android:layout_height="@dimen/splashLogoSize"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/iconImageDescription"
                     android:src="@drawable/icon_landing_explore" />
 
                 <ImageView
                     android:id="@+id/splashScreenIconExploreSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/splashLogoSize"
+                    android:layout_height="@dimen/splashLogoSize"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/splashDetailBetweenMargin"
                     android:layout_marginRight="@dimen/splashDetailBetweenMargin"
+                    android:contentDescription="@string/iconImageDescription"
                     android:src="@drawable/icon_landing_lookup" />
 
                 <ImageView
                     android:id="@+id/splashScreenIconExploreAttend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/splashLogoSize"
+                    android:layout_height="@dimen/splashLogoSize"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/iconImageDescription"
                     android:src="@drawable/icon_landing_attend" />
             </TableRow>
 
@@ -187,9 +191,10 @@
     </RelativeLayout>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/splashLogoSize"
+        android:layout_height="@dimen/splashLogoSize"
         android:layout_gravity="center|bottom"
+        android:contentDescription="@string/iconImageDescription"
         android:src="@drawable/icon_landing_down" />
 
 </FrameLayout>

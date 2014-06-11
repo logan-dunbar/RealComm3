@@ -38,6 +38,7 @@
     <dimen name="splashPadding">20dp</dimen>
     <dimen name="splashCirclePadding">5dp</dimen>
     <dimen name="splashCircleMargin">10dp</dimen>
+    <dimen name="splashRealcommOBLogoHeight">50dp</dimen>
     <dimen name="splashLogoSize">36dp</dimen>
     <dimen name="splashLogoMarginRight">20dp</dimen>
     <dimen name="splashDetailMarginTop">20dp</dimen>
@@ -45,6 +46,7 @@
     <dimen name="splashDetailInnerMargin">@dimen/defaultSpacingMargin</dimen>
     <dimen name="splashDetailsTextWidth">200dp</dimen>
     <dimen name="splashCircleDiameter">20dp</dimen>
+    <dimen name="splash7InchMargin">15dp</dimen>
     
     <!-- Info Dialog -->
     <dimen name="infoPadding">@dimen/defaultPadding</dimen>
@@ -70,6 +72,8 @@
     <dimen name="boothCompanyLogoHeight">@dimen/defaultCompanyLogoHeight</dimen>
     <dimen name="boothCircleDiameter">20dp</dimen>
     <dimen name="boothCircleMargin">15dp</dimen>
+    <dimen name="boothHeaderMarginTop">@dimen/defaultMargin</dimen>
+    <dimen name="boothSubHeaderMarginBottom">4dp</dimen>
 
     <!-- Booth List -->
     <dimen name="boothListMargin">@dimen/defaultMargin</dimen>

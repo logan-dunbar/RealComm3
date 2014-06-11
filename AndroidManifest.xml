@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE manifest>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.openbox.realcomm3"
+    package="com.openbox.realcomm"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -23,14 +23,14 @@
         android:required="false" />
 
     <application
-        android:name=".application.RealCommApplication"
+        android:name="com.openbox.realcomm.application.RealCommApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.openbox.realcomm3.activities.RealCommActivity"
+            android:name="com.openbox.realcomm.activities.RealCommActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/PhoneTheme"
@@ -43,7 +43,7 @@
         </activity>
 
         <service
-            android:name=".services.WebService"
+            android:name="com.openbox.realcomm.services.WebService"
             android:exported="false" >
         </service>
         <service
@@ -62,8 +62,8 @@
                 android:value="true" />
 
             <intent-filter android:priority="1" >
-                <action android:name="com.openbox.realcomm3.DID_RANGING" />
-                <action android:name="com.openbox.realcomm3.DID_MONITORING" />
+                <action android:name="com.openbox.realcomm.DID_RANGING" />
+                <action android:name="com.openbox.realcomm.DID_MONITORING" />
             </intent-filter>
         </service>
     </application>

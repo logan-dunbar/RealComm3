@@ -1,7 +1,7 @@
 <resources>
 
     <!-- App -->
-    <string name="app_name">RealComm</string>
+    <string name="app_name">Realcomm</string>
     <string name="openBoxCompanyName">Open Box Software</string>
     <string name="openLeaseCompanyName">Open Lease</string>
 
@@ -11,7 +11,7 @@
 
     <!-- EditTexts -->
     <string name="boothFilterHint">Filter by name or number</string>
-    
+
     <!-- Menu -->
     <string name="menuInfo">Info</string>
 
@@ -39,13 +39,14 @@
     <string name="companyContactTitle">CONTACT</string>
     <string name="companyLinksTitle">LINKS</string>
     <string name="infoDevelopedBy">Developed by:</string>
-    <string name="infoImageCourtesyOf">Background image courtesy of</string>
+    <string name="infoImageCourtesyOf">Background image copyright</string>
 
     <!-- Preferences -->
     <string name="enableProximityTitle">Enable Proximity Sensing</string>
     <string name="enableProximitySummary">Toggle to enable or disable bluetooth proximity sensing.</string>
 
     <!-- Image Content Descriptions -->
+    <string name="iconImageDescription">Icon</string>
     <string name="logoImageDescription">Company Logo</string>
     <string name="contactImageDescription">Contact Image</string>
     <string name="proximityImageDescription">Proximity Graphic</string>

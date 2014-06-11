@@ -68,9 +68,10 @@
         <ImageView
             android:id="@+id/splashLogos"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/splashRealcommOBLogoHeight"
             android:layout_below="@+id/splashCircleContainer"
             android:layout_centerHorizontal="true"
+            android:scaleType="fitCenter"
             android:src="@drawable/logos_landing" />
 
         <LinearLayout
