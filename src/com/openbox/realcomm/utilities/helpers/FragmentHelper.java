@@ -5,12 +5,14 @@ import android.support.v4.app.FragmentManager;
 
 public class FragmentHelper
 {
+	// TODO the .commitAllowingStateLoss() is a hack to fix crashes whenever a fragment
+	// transaction happens when there is a popover (like opening the google user from settings)
 	public static void addFragment(FragmentManager fm, int containerId, Fragment fragment, String tag)
 	{
 		fm
 			.beginTransaction()
 			.add(containerId, fragment, tag)
-			.commit();
+			.commitAllowingStateLoss();
 	}
 
 	public static void removeFragment(FragmentManager fm, Fragment fragment)
@@ -18,7 +20,7 @@ public class FragmentHelper
 		fm
 			.beginTransaction()
 			.remove(fragment)
-			.commit();
+			.commitAllowingStateLoss();
 	}
 
 	public static void showFragment(FragmentManager fm, Fragment fragment)
@@ -26,7 +28,7 @@ public class FragmentHelper
 		fm
 			.beginTransaction()
 			.show(fragment)
-			.commit();
+			.commitAllowingStateLoss();
 	}
 
 	public static void hideFragment(FragmentManager fm, Fragment fragment)
@@ -34,23 +36,11 @@ public class FragmentHelper
 		fm
 			.beginTransaction()
 			.hide(fragment)
-			.commit();
-	}
-	
-	public static void addAndHideFragment(FragmentManager fm, int containerId, Fragment fragment, String tag)
-	{
-		fm
-			.beginTransaction()
-			.add(containerId, fragment, tag)
-			.hide(fragment)
-			.commit();
+			.commitAllowingStateLoss();
 	}
 
-	public static void addAndHideFragmentAllowingStateLoss(FragmentManager fm, int containerId, Fragment fragment, String tag)
+	public static void addAndHideFragment(FragmentManager fm, int containerId, Fragment fragment, String tag)
 	{
-		// A bit of hax, the bluetooth prompt causes onSaveInstanceState, and then tries to do
-		// Fragment transactions before hitting onResume again we don't mind if this state is
-		// lost though, as it will be recreated when coming back if needs be.
 		fm
 			.beginTransaction()
 			.add(containerId, fragment, tag)
@@ -65,7 +55,7 @@ public class FragmentHelper
 			.setCustomAnimations(inAnimationId, outAnimationId)
 			.hide(hideFragment)
 			.show(showFragment)
-			.commit();
+			.commitAllowingStateLoss();
 	}
 
 	public static void showAndRemoveFragments(FragmentManager fm, Fragment showFragment, Fragment removeFragment, int inAnimationId, int outAnimationId)
@@ -75,6 +65,6 @@ public class FragmentHelper
 			.setCustomAnimations(inAnimationId, outAnimationId)
 			.remove(removeFragment)
 			.show(showFragment)
-			.commit();
+			.commitAllowingStateLoss();
 	}
 }

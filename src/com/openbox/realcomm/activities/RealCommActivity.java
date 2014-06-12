@@ -1038,7 +1038,7 @@ public class RealCommActivity extends FragmentActivity implements
 		if (dashboardTabletFragment == null)
 		{
 			dashboardTabletFragment = DashboardTabletFragment.newInstance();
-			FragmentHelper.addAndHideFragmentAllowingStateLoss(
+			FragmentHelper.addAndHideFragment(
 				getSupportFragmentManager(),
 				R.id.realcommFragmentContainer,
 				dashboardTabletFragment,
@@ -1058,7 +1058,7 @@ public class RealCommActivity extends FragmentActivity implements
 		if (dashboardPhoneFragment == null)
 		{
 			dashboardPhoneFragment = DashboardPhoneFragment.newInstance();
-			FragmentHelper.addAndHideFragmentAllowingStateLoss(
+			FragmentHelper.addAndHideFragment(
 				getSupportFragmentManager(),
 				R.id.realcommFragmentContainer,
 				dashboardPhoneFragment,
@@ -1078,7 +1078,7 @@ public class RealCommActivity extends FragmentActivity implements
 		if (profilePageFragment == null)
 		{
 			profilePageFragment = ProfilePageFragment.newInstance();
-			FragmentHelper.addAndHideFragmentAllowingStateLoss(
+			FragmentHelper.addAndHideFragment(
 				getSupportFragmentManager(),
 				R.id.realcommFragmentContainer,
 				profilePageFragment,
