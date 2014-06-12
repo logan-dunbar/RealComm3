@@ -9,14 +9,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import android.util.SparseArray;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.openbox.realcomm.application.RealCommApplication;
 import com.openbox.realcomm.database.DatabaseManager;
 import com.openbox.realcomm.database.models.BeaconModel;
 import com.openbox.realcomm.database.objects.Beacon;
@@ -30,7 +28,10 @@ public class UploadBeaconsHelper
 
 	public UploadBeaconsHelper()
 	{
-		this.gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setDateFormat(RealCommApplication.UPLOAD_DATE_FORMAT).create();
+		this.gson = new GsonBuilder()
+			.excludeFieldsWithoutExposeAnnotation()
+			.registerTypeAdapter(Date.class, new UtcDateTypeAdapter())
+			.create();
 	}
 
 	public boolean uploadBeaconRangingData()
