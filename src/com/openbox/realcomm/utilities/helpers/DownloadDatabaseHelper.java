@@ -169,6 +169,12 @@ public class DownloadDatabaseHelper
 
 	public boolean writeDatabase()
 	{
+		// TODO maybe check on all the tables to make sure data came through? Or maybe that is just paranoid...
+		if (realCommDatabase == null)
+		{
+			return false;
+		}
+
 		DatabaseManager databaseManager = DatabaseManager.getInstance();
 
 		try
