@@ -16,7 +16,7 @@ public class BoothModel
 	public static final double DEFAULT_ACCURACY = 20;
 
 	private static final int WINDOW_LENGTH = 5;
-	private static final int MAX_NOT_FOUND_COUNT = 8;
+	private static final int MAX_NOT_FOUND_COUNT = 3;
 
 	private int boothId;
 	private String UUID;

@@ -21,6 +21,7 @@ import com.google.gson.JsonSyntaxException;
 import com.openbox.realcomm.application.RealCommApplication;
 import com.openbox.realcomm.application.SharedPreferencesManager;
 import com.openbox.realcomm.database.DatabaseManager;
+import com.openbox.realcomm.database.objects.Beacon;
 import com.openbox.realcomm.database.objects.Booth;
 import com.openbox.realcomm.database.objects.BoothContact;
 import com.openbox.realcomm.database.objects.Company;
@@ -90,7 +91,19 @@ public class DownloadDatabaseHelper
 			// Read and convert mostRecentUpdateDate
 			this.updateNeeded = readMostRecentUpdateDateAndCompareToSaved(reader);
 
-			return true;
+			stream.close();
+
+			// Get the result
+			int httpResult = urlConnection.getResponseCode();
+			if (httpResult == HttpURLConnection.HTTP_OK)
+			{
+				return true;
+			}
+			else
+			{
+				// There was a problem, it will try again in a minute
+				// TODO potentially handle better/log error?
+			}
 		}
 		catch (MalformedURLException e)
 		{
@@ -117,7 +130,6 @@ public class DownloadDatabaseHelper
 
 			// Specify request properties asking for JSON
 			urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-			urlConnection.setRequestProperty("Connection", "Keep-Alive");
 
 			// Get the input stream
 			InputStream stream = urlConnection.getInputStream();
@@ -128,7 +140,19 @@ public class DownloadDatabaseHelper
 			// Read and convert database
 			readRealCommDatabaseJson(reader);
 
-			return true;
+			stream.close();
+
+			// Get the result
+			int httpResult = urlConnection.getResponseCode();
+			if (httpResult == HttpURLConnection.HTTP_OK)
+			{
+				return true;
+			}
+			else
+			{
+				// There was a problem, it will try again in a minute
+				// TODO potentially handle better/log error?
+			}
 		}
 		catch (MalformedURLException e)
 		{

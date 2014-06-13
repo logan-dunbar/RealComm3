@@ -207,9 +207,9 @@ public class RealCommActivity extends FragmentActivity implements
 			{
 				if (!this.showingEnableBluetoothRequest)
 				{
+					showingEnableBluetoothRequest = true;
 					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 					startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST);
-					showingEnableBluetoothRequest = true;
 				}
 			}
 		}
