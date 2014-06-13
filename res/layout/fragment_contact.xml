@@ -39,14 +39,34 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/contactDetailsTextView"
+    <LinearLayout
+        android:id="@+id/contactDetailsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/contactNameLayout"
         android:layout_toRightOf="@+id/contactImageView"
-        android:autoLink="all"
-        android:textColor="@color/white"
-        android:textSize="@dimen/contactDetailsTextSize" />
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/contactJobTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/contactDetailsTextSize" />
+
+        <TextView
+            android:id="@+id/contactPhoneNumberTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/contactDetailsTextSize" />
+
+        <TextView
+            android:id="@+id/contactEmailTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/contactDetailsTextSize" />
+    </LinearLayout>
 
 </RelativeLayout>

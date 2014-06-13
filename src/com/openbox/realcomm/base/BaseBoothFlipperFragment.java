@@ -143,8 +143,7 @@ public abstract class BaseBoothFlipperFragment extends BaseFragment implements
 	{
 		super.onAppModeChanged(newAppMode, previousAppMode);
 
-		if ((newAppMode == AppMode.ONLINE && previousAppMode == AppMode.OFFLINE) ||
-			(newAppMode == AppMode.OFFLINE && previousAppMode == AppMode.ONLINE))
+		if (previousAppMode != AppMode.INITIALIZING)
 		{
 			stopViewTimer();
 			startViewTimer();

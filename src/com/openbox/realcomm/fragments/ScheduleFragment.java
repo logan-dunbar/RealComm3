@@ -25,6 +25,7 @@ import com.openbox.realcomm.application.RealCommApplication;
 import com.openbox.realcomm.base.BaseScheduleFragment;
 import com.openbox.realcomm.database.models.TalkDayModel;
 import com.openbox.realcomm.database.models.VenueModel;
+import com.openbox.realcomm.utilities.helpers.DateHelper;
 import com.openbox.realcomm.utilities.loaders.ScheduleLoader;
 import com.openbox.realcomm.R;
 
@@ -39,6 +40,9 @@ public class ScheduleFragment extends BaseScheduleFragment
 	private FrameLayout scheduleLayout;
 
 	private List<TalkDayModel> talkDayList = new ArrayList<>();
+
+	private boolean onPauseCalled = false;
+	private Runnable startLoaderRunnable;
 
 	public static ScheduleFragment newInstance()
 	{
@@ -72,13 +76,49 @@ public class ScheduleFragment extends BaseScheduleFragment
 		return view;
 	}
 
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+
+		if (this.startLoaderRunnable != null)
+		{
+			this.startLoaderRunnable.run();
+			this.startLoaderRunnable = null;
+		}
+
+		onPauseCalled = false;
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+
+		onPauseCalled = true;
+	}
+
 	/**********************************************************************************************
 	 * Data Changed Callbacks
 	 **********************************************************************************************/
 	@Override
 	public void onDataChanged()
 	{
-		startScheduleLoader();
+		if (!onPauseCalled)
+		{
+			startScheduleLoader();
+		}
+		else
+		{
+			this.startLoaderRunnable = new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					startScheduleLoader();
+				}
+			};
+		}
 	}
 
 	/**********************************************************************************************
@@ -126,6 +166,7 @@ public class ScheduleFragment extends BaseScheduleFragment
 		updateScheduleFragment();
 	}
 
+	// TODO This is a seriously siff method, needs refactoring, no time
 	private void updateScheduleFragment()
 	{
 		TreeMap<Date, String> distinctDateList = getDistinctDayList();
@@ -135,8 +176,17 @@ public class ScheduleFragment extends BaseScheduleFragment
 			RealCommApplication application = (RealCommApplication) getActivity().getApplication();
 			boolean created = createTabHost(inflater);
 
+			TabWidget tw = this.scheduleTabHost.getTabWidget();
+			for (int i = 0; i < tw.getChildCount(); i++)
+			{
+				View tab = tw.getChildAt(i);
+				tab.setSelected(false);
+			}
+
 			this.scheduleTabHost.clearAllTabs();
 
+			int selectedDateIndex = 0;
+			int index = 0;
 			// For each day, create a tab holding a TalkDayFragment
 			for (TreeMap.Entry<Date, String> entry : distinctDateList.entrySet())
 			{
@@ -152,9 +202,15 @@ public class ScheduleFragment extends BaseScheduleFragment
 				args.putSerializable(TalkDayFragment.TALK_DATE_KEY, talkDate);
 				TabSpec tabSepc = this.scheduleTabHost.newTabSpec(talkDateDisplayName).setIndicator(view);
 				this.scheduleTabHost.addTab(tabSepc, TalkDayFragment.class, args);
+
+				if (DateHelper.getDateOnly(new Date()).equals(DateHelper.getDateOnly(talkDate)))
+				{
+					selectedDateIndex = index;
+				}
+
+				index++;
 			}
 
-			TabWidget tw = this.scheduleTabHost.getTabWidget();
 			int tabSpacing = (int) getResources().getDimension(R.dimen.tabSpacing);
 			int tabWidth = (int) getResources().getDimension(R.dimen.tabWidth);
 			int tabHeight = (int) getResources().getDimension(R.dimen.tabHeight);
@@ -170,8 +226,18 @@ public class ScheduleFragment extends BaseScheduleFragment
 				{
 					params.setMargins(0, 0, tabSpacing, 0);
 				}
+
+				if (i == selectedDateIndex)
+				{
+					tab.setSelected(true);
+				}
+				else
+				{
+					tab.setSelected(false);
+				}
 			}
 
+			this.scheduleTabHost.setCurrentTab(selectedDateIndex);
 			tw.requestLayout();
 
 			if (created)

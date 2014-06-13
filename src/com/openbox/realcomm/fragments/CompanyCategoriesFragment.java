@@ -111,7 +111,7 @@ public class CompanyCategoriesFragment extends BaseProfileFragment
 			}
 		}
 
-		ft.commit();
+		ft.commitAllowingStateLoss();
 		getChildFragmentManager().executePendingTransactions();
 		this.currentlyAddedFragments.clear();
 	}
@@ -135,7 +135,7 @@ public class CompanyCategoriesFragment extends BaseProfileFragment
 			containerId = R.id.companyCategoriesFirstContainer;
 		}
 
-		getChildFragmentManager().beginTransaction().add(containerId, fragment, tag).commit();
+		getChildFragmentManager().beginTransaction().add(containerId, fragment, tag).commitAllowingStateLoss();
 		this.currentlyAddedFragments.add(tag);
 	}
 }

@@ -28,8 +28,10 @@
     <dimen name="tabTextSize">@dimen/textSize18</dimen>
 
     <!-- View Pager -->
-    <dimen name="viewPagerIndicatorPadding">6dp</dimen>
-    <dimen name="viewPagerIndicatorStrokeWidth">3dp</dimen>
+    <dimen name="viewPagerIndicatorSpacePadding">12dp</dimen>
+    <dimen name="viewPagerIndicatorPadding">2dp</dimen>
+    <dimen name="viewPagerIndicatorStrokeWidth">1dp</dimen>
+    <dimen name="viewPagerIndicatorRadius">4dp</dimen>
 
     <!-- Navigation Drawer -->
     <dimen name="drawerHeight">60dp</dimen>

@@ -33,6 +33,8 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 	private static final String LAST_UPDATE_NOT_UPDATED = "-";
 	private static final String AUTHOR_HYPERLINK = "<a href=\"http://earthincolors.wordpress.com/\">Moyan Brenn</a>";
 
+	private TextView lastUpdatedTextView;
+
 	public static InfoFragment newInstance()
 	{
 		InfoFragment fragment = new InfoFragment();
@@ -49,7 +51,7 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 
 		TextView developedByTextView = (TextView) view.findViewById(R.id.infoDevelopedByTextView);
 		TextView versionTextView = (TextView) view.findViewById(R.id.infoVersionTextView);
-		TextView lastUpdatedTextView = (TextView) view.findViewById(R.id.infoLastUpdatedTextView);
+		this.lastUpdatedTextView = (TextView) view.findViewById(R.id.infoLastUpdatedTextView);
 		TextView courtesyOfTextView = (TextView) view.findViewById(R.id.infoCourtesyOfTextView);
 		TextView authorLink = (TextView) view.findViewById(R.id.infoAuthorLink);
 
@@ -61,7 +63,7 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 		authorLink.setTypeface(application.getExo2Font());
 
 		populateVersionText(versionTextView);
-		populateLastUpdatedText(lastUpdatedTextView);
+		populateLastUpdatedText();
 		populateAuthorLinkText(authorLink);
 
 		return view;
@@ -72,22 +74,30 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 	{
 		if (v.getId() == R.id.infoViewProfileButton)
 		{
-			goToOpenBoxPorfile();
+			goToOpenBoxProfile();
 		}
 	}
 
-	private void populateLastUpdatedText(TextView lastUpdatedTextView)
+	@Override
+	public void onDataChanged()
+	{
+		super.onDataChanged();
+
+		populateLastUpdatedText();
+	}
+
+	private void populateLastUpdatedText()
 	{
 		Long lastUpdatedDateLong = SharedPreferencesManager.getLastUpdateDate(getActivity());
 		if (lastUpdatedDateLong != SharedPreferencesManager.DEFAULT_LONG_VALUE)
 		{
 			DateFormat dateFormat = DateFormat.getDateInstance();
 			SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
-			lastUpdatedTextView.setText(LAST_UPDATE_DATE_PREFIX + dateFormat.format(lastUpdatedDateLong) + " " + timeFormat.format(lastUpdatedDateLong));
+			this.lastUpdatedTextView.setText(LAST_UPDATE_DATE_PREFIX + dateFormat.format(lastUpdatedDateLong) + " " + timeFormat.format(lastUpdatedDateLong));
 		}
 		else
 		{
-			lastUpdatedTextView.setText(LAST_UPDATE_DATE_PREFIX + LAST_UPDATE_NOT_UPDATED);
+			this.lastUpdatedTextView.setText(LAST_UPDATE_DATE_PREFIX + LAST_UPDATE_NOT_UPDATED);
 		}
 	}
 
@@ -111,7 +121,7 @@ public class InfoFragment extends BaseFragment implements OnClickListener
 		}
 	}
 
-	private void goToOpenBoxPorfile()
+	private void goToOpenBoxProfile()
 	{
 		if (getActivityInterface() != null && getDataInterface() != null)
 		{

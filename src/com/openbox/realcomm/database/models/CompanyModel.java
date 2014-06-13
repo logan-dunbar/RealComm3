@@ -2,6 +2,8 @@ package com.openbox.realcomm.database.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -90,7 +92,22 @@ public class CompanyModel
 
 		if (contactList != null)
 		{
-			this.contactList = contactList;
+			List<ContactModel> sortedContactList = new ArrayList<>(contactList);
+			Collections.sort(sortedContactList, new Comparator<ContactModel>()
+			{
+				@Override
+				public int compare(ContactModel lhs, ContactModel rhs)
+				{
+					if (lhs.getIsPrimary() != null && lhs.getIsPrimary())
+					{
+						return -1;
+					}
+
+					return 0;
+				}
+			});
+
+			this.contactList = sortedContactList;
 		}
 	}
 

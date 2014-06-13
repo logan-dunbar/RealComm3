@@ -7,12 +7,16 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Intents;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,8 +37,12 @@ public class ContactFragment extends BaseProfileFragment
 {
 	private ImageView contactImage;
 	private TextView contactName;
-	private TextView contactDetails;
 	private ImageView addContactImageView;
+	// private TextView contactDetails;
+
+	private TextView contactJobTitle;
+	private TextView contactPhoneNumber;
+	private TextView contactEmail;
 
 	private ContactModel contactModel;
 
@@ -58,11 +66,18 @@ public class ContactFragment extends BaseProfileFragment
 
 		this.contactImage = (ImageView) view.findViewById(R.id.contactImageView);
 		this.contactName = (TextView) view.findViewById(R.id.contactNameTextView);
-		this.contactDetails = (TextView) view.findViewById(R.id.contactDetailsTextView);
+		// this.contactDetails = (TextView) view.findViewById(R.id.contactDetailsTextView);
 		this.addContactImageView = (ImageView) view.findViewById(R.id.addContactImageView);
 
+		this.contactJobTitle = (TextView) view.findViewById(R.id.contactJobTitleTextView);
+		this.contactPhoneNumber = (TextView) view.findViewById(R.id.contactPhoneNumberTextView);
+		this.contactEmail = (TextView) view.findViewById(R.id.contactEmailTextView);
+
 		this.contactName.setTypeface(application.getExo2FontBold());
-		this.contactDetails.setTypeface(application.getExo2Font());
+		// this.contactDetails.setTypeface(application.getExo2Font());
+		this.contactJobTitle.setTypeface(application.getExo2Font());
+		this.contactPhoneNumber.setTypeface(application.getExo2Font());
+		this.contactEmail.setTypeface(application.getExo2Font());
 
 		updateView();
 
@@ -111,7 +126,61 @@ public class ContactFragment extends BaseProfileFragment
 			}
 
 			this.contactName.setText(getContactModel().getDisplayName());
-			this.contactDetails.setText(getContactModel().getDetails());
+
+			if (!StringHelper.isNullOrEmpty(getContactModel().getJobPosition()))
+			{
+				this.contactJobTitle.setText(getContactModel().getJobPosition());
+			}
+			else
+			{
+				this.contactJobTitle.setVisibility(View.GONE);
+			}
+
+			if (!StringHelper.isNullOrEmpty(getContactModel().getContactNumber()))
+			{
+				SpannableStringBuilder ssb = new SpannableStringBuilder();
+				ssb.append(getContactModel().getContactNumber());
+				ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				this.contactPhoneNumber.setText(ssb, TextView.BufferType.SPANNABLE);
+
+				this.contactPhoneNumber.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", getContactModel().getContactNumber(), null));
+						startActivity(callIntent);
+					}
+				});
+			}
+			else
+			{
+				this.contactPhoneNumber.setVisibility(View.GONE);
+			}
+
+			// Could not use Linkify, as it is broken and would somehow retain it's last value when coming back
+			// from attempting to send an email. It could be to do with the ViewPager and Adapter as well.
+			if (!StringHelper.isNullOrEmpty(getContactModel().getEmail()))
+			{
+				SpannableStringBuilder ssb = new SpannableStringBuilder();
+				ssb.append(getContactModel().getEmail());
+				ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				this.contactEmail.setText(ssb, TextView.BufferType.SPANNABLE);
+
+				this.contactEmail.setOnClickListener(new OnClickListener()
+				{
+					@Override
+					public void onClick(View v)
+					{
+						Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", getContactModel().getEmail(), null));
+						startActivity(Intent.createChooser(emailIntent, "Send email via"));
+					}
+				});
+			}
+			else
+			{
+				this.contactEmail.setVisibility(View.GONE);
+			}
 
 			checkContactExists();
 		}

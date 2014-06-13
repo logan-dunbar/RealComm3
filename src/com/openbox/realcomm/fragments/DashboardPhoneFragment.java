@@ -587,6 +587,8 @@ public class DashboardPhoneFragment extends BaseFragment implements DashboardPho
 		{
 			infoFragment = InfoFragment.newInstance();
 			FragmentHelper.addAndHideFragment(getChildFragmentManager(), R.id.phonePageContainer, infoFragment, InfoFragment.TAG);
+
+			getDataChangedListeners().add(infoFragment);
 		}
 	}
 }

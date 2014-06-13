@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -109,56 +107,9 @@ public class BoothFragment extends BaseFragment implements OnClickListener
 			boothClickableLayout.setOnClickListener(this);
 		}
 
-		setupViewTreeObservers();
-
 		updateBooth();
 
 		return view;
-	}
-
-	private void setupViewTreeObservers()
-	{
-		ViewTreeObserver headerObserver = this.header.getViewTreeObserver();
-		headerObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
-		{
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onGlobalLayout()
-			{
-				int maxLines = BoothFragment.this.header.getHeight() / BoothFragment.this.header.getLineHeight();
-				BoothFragment.this.header.setMaxLines(maxLines);
-				BoothFragment.this.header.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-			}
-		});
-
-		ViewTreeObserver subHeaderObserver = this.subHeader.getViewTreeObserver();
-		subHeaderObserver.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
-		{
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onGlobalLayout()
-			{
-				int maxLines = BoothFragment.this.subHeader.getHeight() / BoothFragment.this.subHeader.getLineHeight();
-				BoothFragment.this.subHeader.setMaxLines(maxLines);
-				BoothFragment.this.subHeader.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-			}
-		});
-
-		if (getArguments().getBoolean(IS_BIG_KEY))
-		{
-			ViewTreeObserver observer = this.details.getViewTreeObserver();
-			observer.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
-			{
-				@SuppressWarnings("deprecation")
-				@Override
-				public void onGlobalLayout()
-				{
-					int maxLines = BoothFragment.this.details.getHeight() / BoothFragment.this.details.getLineHeight();
-					BoothFragment.this.details.setMaxLines(maxLines);
-					BoothFragment.this.details.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-				}
-			});
-		}
 	}
 
 	/**********************************************************************************************

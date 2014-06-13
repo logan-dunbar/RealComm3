@@ -260,7 +260,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 				ft.hide(socialNetworksFragment);
 			}
 
-			ft.commit();
+			ft.commitAllowingStateLoss();
 		}
 	}
 
@@ -283,7 +283,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (fragment == null)
 		{
 			fragment = CompanyDetailsFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.companyDetailsContainer, fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.companyDetailsContainer, fragment).commitAllowingStateLoss();
 			getDataChangedListeners().add(fragment);
 			this.profileDataChangedListeners.add(fragment);
 		}
@@ -295,7 +295,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (fragment == null)
 		{
 			fragment = CompanyCategoriesFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.companyCategoriesContainer, fragment).hide(fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.companyCategoriesContainer, fragment).hide(fragment).commitAllowingStateLoss();
 			this.profileDataChangedListeners.add(fragment);
 		}
 	}
@@ -306,7 +306,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (fragment == null)
 		{
 			fragment = CompanyAddressFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.companyAddressContainer, fragment).hide(fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.companyAddressContainer, fragment).hide(fragment).commitAllowingStateLoss();
 			this.profileDataChangedListeners.add(fragment);
 		}
 	}
@@ -317,7 +317,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (fragment == null)
 		{
 			fragment = CompanyContactsFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.companyContactsContainer, fragment).hide(fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.companyContactsContainer, fragment).hide(fragment).commitAllowingStateLoss();
 			this.profileDataChangedListeners.add(fragment);
 		}
 	}
@@ -328,7 +328,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (fragment == null)
 		{
 			fragment = CompanyLinksFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.companyLinksContainer, fragment).hide(fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.companyLinksContainer, fragment).hide(fragment).commitAllowingStateLoss();
 			this.profileDataChangedListeners.add(fragment);
 		}
 	}
@@ -340,7 +340,7 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (fragment == null)
 		{
 			fragment = CompanySocialNetworksFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.companySocialNetworksContainer, fragment).hide(fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.companySocialNetworksContainer, fragment).hide(fragment).commitAllowingStateLoss();
 			this.profileDataChangedListeners.add(fragment);
 		}
 	}

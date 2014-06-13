@@ -49,7 +49,7 @@ public class BoothExploreFragment extends BaseBoothFlipperFragment
 		if (fragment == null)
 		{
 			fragment = ProximityFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commitAllowingStateLoss();
 		}
 
 		getDataChangedListeners().add(fragment);

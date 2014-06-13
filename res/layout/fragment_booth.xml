@@ -27,6 +27,8 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/boothFragmentHeader"
         android:layout_marginBottom="@dimen/boothSubHeaderMarginBottom"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textSize="@dimen/textSize20" />
 
     <TextView
@@ -36,6 +38,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/boothFragmentSubHeader"
         android:ellipsize="end"
+        android:singleLine="true"
         android:textSize="@dimen/textSize14" />
 
 </RelativeLayout>

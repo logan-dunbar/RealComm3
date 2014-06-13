@@ -13,7 +13,7 @@ import com.openbox.realcomm.database.models.CompanyModel;
 import com.openbox.realcomm.utilities.adapters.ContactFragmentAdapter;
 import com.openbox.realcomm.utilities.interfaces.AdapterFinishUpdateCallbacks;
 import com.openbox.realcomm.R;
-import com.viewpagerindicator.LinePageIndicator;
+import com.viewpagerindicator.CirclePageIndicator;
 
 public class CompanyContactsFragment extends BaseProfileFragment implements AdapterFinishUpdateCallbacks
 {
@@ -21,7 +21,7 @@ public class CompanyContactsFragment extends BaseProfileFragment implements Adap
 
 	private VariableHeightViewPager contactPager;
 	private ContactFragmentAdapter contactAdapter;
-	private LinePageIndicator indicator;
+	private CirclePageIndicator indicator;
 
 	public static CompanyContactsFragment newInstance()
 	{
@@ -39,7 +39,7 @@ public class CompanyContactsFragment extends BaseProfileFragment implements Adap
 		this.contactAdapter = new ContactFragmentAdapter(getChildFragmentManager(), this);
 		this.contactPager.setAdapter(this.contactAdapter);
 
-		this.indicator = (LinePageIndicator) view.findViewById(R.id.contactPagerIndicator);
+		this.indicator = (CirclePageIndicator) view.findViewById(R.id.contactPagerIndicator);
 		this.indicator.setViewPager(this.contactPager);
 
 		RealCommApplication application = (RealCommApplication) getActivity().getApplication();

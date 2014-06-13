@@ -74,6 +74,7 @@
             android:layout_marginRight="@dimen/boothDetailsMargin"
             android:ellipsize="end"
             android:gravity="center_horizontal"
+            android:maxLines="3"
             android:textSize="@dimen/textSize16" />
     </LinearLayout>
 

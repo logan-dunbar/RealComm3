@@ -57,7 +57,7 @@ public class DashboardTabletFragment extends BaseBoothFlipperFragment
 			getChildFragmentManager()
 				.beginTransaction()
 				.add(R.id.boothListContainer, fragment)
-				.commit();
+				.commitAllowingStateLoss();
 
 			getDataChangedListeners().add(fragment);
 			getClearFocusListeners().add(fragment);
@@ -71,7 +71,7 @@ public class DashboardTabletFragment extends BaseBoothFlipperFragment
 		if (fragment == null)
 		{
 			fragment = ProximityFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.proximityContainer, fragment).commitAllowingStateLoss();
 		}
 
 		getDataChangedListeners().add(fragment);
@@ -84,7 +84,7 @@ public class DashboardTabletFragment extends BaseBoothFlipperFragment
 		if (fragment == null)
 		{
 			fragment = ScheduleFragment.newInstance();
-			getChildFragmentManager().beginTransaction().add(R.id.scheduleFragmentContainer, fragment).commit();
+			getChildFragmentManager().beginTransaction().add(R.id.scheduleFragmentContainer, fragment).commitAllowingStateLoss();
 		}
 
 		getDataChangedListeners().add(fragment);

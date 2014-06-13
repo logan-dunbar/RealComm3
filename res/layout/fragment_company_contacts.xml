@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/companyContactsMargin"
-    android:layout_marginTop="0dp"
     android:layout_marginBottom="@dimen/companyContactsMarginBottom"
+    android:layout_marginTop="0dp"
     android:orientation="vertical" >
 
     <TextView
@@ -24,13 +24,17 @@
         android:layout_marginTop="@dimen/companyContactsSpacingMargin"
         android:paddingBottom="@dimen/viewPagerIndicatorPadding" />
 
-    <com.viewpagerindicator.LinePageIndicator
+    <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/contactPagerIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:padding="@dimen/viewPagerIndicatorPadding"
         android:visibility="gone"
         app:centered="true"
+        app:fillColor="@color/white"
+        app:radius="@dimen/viewPagerIndicatorRadius"
+        app:strokeColor="@color/white"
         app:strokeWidth="@dimen/viewPagerIndicatorStrokeWidth" />
 
 </LinearLayout>

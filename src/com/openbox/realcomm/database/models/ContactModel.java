@@ -1,20 +1,17 @@
 package com.openbox.realcomm.database.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.openbox.realcomm.database.objects.Contact;
 import com.openbox.realcomm.database.objects.ContactImage;
-import com.openbox.realcomm.utilities.helpers.StringHelper;
 
 public class ContactModel
 {
 	private int contactId;
 	private String firstName;
 	private String lastName;
+	private Boolean isPrimary;
 	private String jobPosition;
 	private String email;
 	private String contactNumber;
@@ -28,6 +25,7 @@ public class ContactModel
 			this.contactId = contact.getContactId();
 			this.firstName = contact.getFirstName();
 			this.lastName = contact.getLastName();
+			this.isPrimary = contact.getIsPrimaryContact();
 			this.jobPosition = contact.getJobPosition();
 			this.email = contact.getEmail();
 			this.contactNumber = contact.getContactNumber();
@@ -45,22 +43,6 @@ public class ContactModel
 	{
 		// TODO First and Last name are non-nullable, but maybe null checks in case that changes
 		return getFirstName() + " " + getLastName();
-	}
-
-	public String getDetails()
-	{
-		StringBuilder sb = new StringBuilder();
-
-		List<String> detailsList = new ArrayList<>();
-		detailsList.add(getJobPosition());
-		detailsList.add(getContactNumber());
-		detailsList.add(getEmail());
-
-		String newline = System.getProperty("line.separator");
-		String detailsString = StringHelper.join(detailsList, newline);
-		sb.append(detailsString);
-
-		return sb.toString();
 	}
 
 	public int getContactId()
@@ -91,6 +73,16 @@ public class ContactModel
 	public void setLastName(String lastName)
 	{
 		this.lastName = lastName;
+	}
+
+	public Boolean getIsPrimary()
+	{
+		return isPrimary;
+	}
+
+	public void setIsPrimary(Boolean isPrimary)
+	{
+		this.isPrimary = isPrimary;
 	}
 
 	public String getJobPosition()

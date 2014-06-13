@@ -1015,7 +1015,7 @@ public class RealCommActivity extends FragmentActivity implements
 		DataFragment fragment = (DataFragment) getSupportFragmentManager().findFragmentByTag(DataFragment.TAG);
 		if (fragment == null)
 		{
-			getSupportFragmentManager().beginTransaction().add(DataFragment.newInstance(), DataFragment.TAG).commit();
+			getSupportFragmentManager().beginTransaction().add(DataFragment.newInstance(), DataFragment.TAG).commitAllowingStateLoss();
 		}
 	}
 

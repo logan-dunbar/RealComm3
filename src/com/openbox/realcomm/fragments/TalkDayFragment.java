@@ -12,7 +12,7 @@ import com.openbox.realcomm.base.BaseScheduleFragment;
 import com.openbox.realcomm.database.models.TalkDayModel;
 import com.openbox.realcomm.utilities.adapters.VenueFragmentAdapter;
 import com.openbox.realcomm.R;
-import com.viewpagerindicator.LinePageIndicator;
+import com.viewpagerindicator.CirclePageIndicator;
 
 public class TalkDayFragment extends BaseScheduleFragment
 {
@@ -36,7 +36,7 @@ public class TalkDayFragment extends BaseScheduleFragment
 		this.venuePager.setAdapter(venueAdapter);
 		this.venuePager.setOffscreenPageLimit(5);
 
-		LinePageIndicator indicator = (LinePageIndicator) view.findViewById(R.id.venuePagerIndicator);
+		CirclePageIndicator indicator = (CirclePageIndicator) view.findViewById(R.id.venuePagerIndicator);
 		indicator.setViewPager(this.venuePager);
 
 		if (getScheduleDataInterface() != null)
