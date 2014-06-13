@@ -21,7 +21,6 @@ import com.google.gson.JsonSyntaxException;
 import com.openbox.realcomm.application.RealCommApplication;
 import com.openbox.realcomm.application.SharedPreferencesManager;
 import com.openbox.realcomm.database.DatabaseManager;
-import com.openbox.realcomm.database.objects.Beacon;
 import com.openbox.realcomm.database.objects.Booth;
 import com.openbox.realcomm.database.objects.BoothContact;
 import com.openbox.realcomm.database.objects.Company;
@@ -138,7 +137,7 @@ public class DownloadDatabaseHelper
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 
 			// Read and convert database
-			readRealCommDatabaseJson(reader);
+			boolean readAndConvertSucceeded = readRealCommDatabaseJson(reader);
 
 			stream.close();
 
@@ -146,7 +145,7 @@ public class DownloadDatabaseHelper
 			int httpResult = urlConnection.getResponseCode();
 			if (httpResult == HttpURLConnection.HTTP_OK)
 			{
-				return true;
+				return readAndConvertSucceeded;
 			}
 			else
 			{
@@ -217,7 +216,7 @@ public class DownloadDatabaseHelper
 	/**********************************************************************************************
 	 * Json Parsing Methods
 	 **********************************************************************************************/
-	private Boolean readMostRecentUpdateDateAndCompareToSaved(BufferedReader reader)
+	private boolean readMostRecentUpdateDateAndCompareToSaved(BufferedReader reader)
 	{
 		try
 		{
@@ -250,13 +249,14 @@ public class DownloadDatabaseHelper
 		return false;
 	}
 
-	private void readRealCommDatabaseJson(BufferedReader reader)
+	private boolean readRealCommDatabaseJson(BufferedReader reader)
 	{
 		try
 		{
 			JsonObject realCommDatabaseJsonObject = this.jsonParser.parse(reader).getAsJsonObject();
 
 			realCommDatabase = this.gson.fromJson(realCommDatabaseJsonObject, RealCommDatabase.class);
+			return true;
 		}
 		catch (JsonIOException e)
 		{
@@ -275,5 +275,7 @@ public class DownloadDatabaseHelper
 			// We rather catch all than have it crash
 			e.printStackTrace();
 		}
+
+		return false;
 	}
 }

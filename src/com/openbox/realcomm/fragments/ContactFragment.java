@@ -2,9 +2,12 @@ package com.openbox.realcomm.fragments;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -38,7 +41,6 @@ public class ContactFragment extends BaseProfileFragment
 	private ImageView contactImage;
 	private TextView contactName;
 	private ImageView addContactImageView;
-	// private TextView contactDetails;
 
 	private TextView contactJobTitle;
 	private TextView contactPhoneNumber;
@@ -66,7 +68,6 @@ public class ContactFragment extends BaseProfileFragment
 
 		this.contactImage = (ImageView) view.findViewById(R.id.contactImageView);
 		this.contactName = (TextView) view.findViewById(R.id.contactNameTextView);
-		// this.contactDetails = (TextView) view.findViewById(R.id.contactDetailsTextView);
 		this.addContactImageView = (ImageView) view.findViewById(R.id.addContactImageView);
 
 		this.contactJobTitle = (TextView) view.findViewById(R.id.contactJobTitleTextView);
@@ -74,7 +75,6 @@ public class ContactFragment extends BaseProfileFragment
 		this.contactEmail = (TextView) view.findViewById(R.id.contactEmailTextView);
 
 		this.contactName.setTypeface(application.getExo2FontBold());
-		// this.contactDetails.setTypeface(application.getExo2Font());
 		this.contactJobTitle.setTypeface(application.getExo2Font());
 		this.contactPhoneNumber.setTypeface(application.getExo2Font());
 		this.contactEmail.setTypeface(application.getExo2Font());
@@ -138,20 +138,30 @@ public class ContactFragment extends BaseProfileFragment
 
 			if (!StringHelper.isNullOrEmpty(getContactModel().getContactNumber()))
 			{
-				SpannableStringBuilder ssb = new SpannableStringBuilder();
-				ssb.append(getContactModel().getContactNumber());
-				ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				this.contactPhoneNumber.setText(ssb, TextView.BufferType.SPANNABLE);
-
-				this.contactPhoneNumber.setOnClickListener(new OnClickListener()
+				final Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", getContactModel().getContactNumber(), null));
+				PackageManager manager = getActivity().getPackageManager();
+				List<ResolveInfo> infos = manager.queryIntentActivities(callIntent, 0);
+				if (infos.size() > 0)
 				{
-					@Override
-					public void onClick(View v)
+					// Then there is application can handle your intent
+					SpannableStringBuilder ssb = new SpannableStringBuilder();
+					ssb.append(getContactModel().getContactNumber());
+					ssb.setSpan(new URLSpan("#"), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					this.contactPhoneNumber.setText(ssb, TextView.BufferType.SPANNABLE);
+
+					this.contactPhoneNumber.setOnClickListener(new OnClickListener()
 					{
-						Intent callIntent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", getContactModel().getContactNumber(), null));
-						startActivity(callIntent);
-					}
-				});
+						@Override
+						public void onClick(View v)
+						{
+							startActivity(callIntent);
+						}
+					});
+				}
+				else
+				{
+					this.contactPhoneNumber.setText(getContactModel().getContactNumber());
+				}
 			}
 			else
 			{

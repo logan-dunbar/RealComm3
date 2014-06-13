@@ -36,6 +36,8 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 	private List<ProfileDataChangedCallbacks> profileDataChangedListeners = new ArrayList<>();
 
 	private ScrollView profilePageScrollView;
+	private ScrollView profilePageTabletScrollView1;
+	private ScrollView profilePageTabletScrollView2;
 	private FrameLayout companyCategoriesBorder;
 	private FrameLayout companyAddressBorder;
 	private FrameLayout companyContactsBorder;
@@ -79,6 +81,8 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		View view = inflater.inflate(R.layout.fragment_profile_page, container, false);
 
 		this.profilePageScrollView = (ScrollView) view.findViewById(R.id.profilePageScrollView);
+		this.profilePageTabletScrollView1 = (ScrollView) view.findViewById(R.id.profilePageTabletScrollView1);
+		this.profilePageTabletScrollView2 = (ScrollView) view.findViewById(R.id.profilePageTabletScrollView2);
 		this.companyCategoriesBorder = (FrameLayout) view.findViewById(R.id.companyCategoriesBorder);
 		this.companyAddressBorder = (FrameLayout) view.findViewById(R.id.companyAddressBorder);
 		this.companyContactsBorder = (FrameLayout) view.findViewById(R.id.companyContactsBorder);
@@ -128,6 +132,16 @@ public class ProfilePageFragment extends BaseProfileFragment implements ProfileP
 		if (this.profilePageScrollView != null)
 		{
 			this.profilePageScrollView.scrollTo(0, 0);
+		}
+		
+		if (this.profilePageTabletScrollView1 != null)
+		{
+			this.profilePageTabletScrollView1.scrollTo(0, 0);
+		}
+		
+		if (this.profilePageTabletScrollView2 != null)
+		{
+			this.profilePageTabletScrollView2.scrollTo(0, 0);
 		}
 
 		this.selectedBoothModel = selectedBoothModel;
