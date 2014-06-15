@@ -47,9 +47,9 @@ public class DownloadDatabaseHelper
 	private Gson gson;
 	private JsonParser jsonParser;
 
-	private Boolean updateNeeded = false;
+	private boolean updateNeeded = false;
 
-	public Boolean getUpdateNeeded()
+	public boolean getUpdateNeeded()
 	{
 		return this.updateNeeded;
 	}
@@ -71,37 +71,34 @@ public class DownloadDatabaseHelper
 	 **********************************************************************************************/
 	public boolean checkUpdateNeeded()
 	{
+		boolean success = false;
+		HttpURLConnection urlConnection = null;
+		InputStream inputStream = null;
+		BufferedReader bufferedReader = null;
 		try
 		{
 			// Set up the connection
 			URL url = new URL(FETCH_MOST_RECENT_UPDATE_DATE_API_URL);
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 
 			// Specify request properties asking for JSON
 			urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
 			// Get the input stream
-			InputStream stream = urlConnection.getInputStream();
+			inputStream = urlConnection.getInputStream();
 
 			// Get the reader
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
 			// TODO maybe save date in DB so we can ship with a date to prevent download on first start
 			// Read and convert mostRecentUpdateDate
-			this.updateNeeded = readMostRecentUpdateDateAndCompareToSaved(reader);
-
-			stream.close();
+			this.updateNeeded = readMostRecentUpdateDateAndCompareToSaved(bufferedReader);
 
 			// Get the result
 			int httpResult = urlConnection.getResponseCode();
 			if (httpResult == HttpURLConnection.HTTP_OK)
 			{
-				return true;
-			}
-			else
-			{
-				// There was a problem, it will try again in a minute
-				// TODO potentially handle better/log error?
+				success = true;
 			}
 		}
 		catch (MalformedURLException e)
@@ -113,44 +110,75 @@ public class DownloadDatabaseHelper
 			// UnknownHostException comes in here
 			e.printStackTrace();
 		}
+		finally
+		{
+			// Clean up
+			if (urlConnection != null)
+			{
+				urlConnection.disconnect();
+			}
 
-		return false;
+			if (inputStream != null)
+			{
+				try
+				{
+					inputStream.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			if (bufferedReader != null)
+			{
+				try
+				{
+					bufferedReader.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return success;
 	}
 
 	public boolean downloadDatabase()
 	{
 		// TODO LD - NB Change - com.openbox.realcomm.database is downloaded and completely loaded into memory,
 		// and then written, might need to be incremental based on DB size
+		boolean success = false;
+		HttpURLConnection urlConnection = null;
+		InputStream inputStream = null;
+		BufferedReader bufferedReader = null;
 		try
 		{
 			// Set up the connection
 			URL url = new URL(FETCH_DATABASE_API_URL);
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 
 			// Specify request properties asking for JSON
 			urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
 			// Get the input stream
-			InputStream stream = urlConnection.getInputStream();
+			inputStream = urlConnection.getInputStream();
 
 			// Get the reader
-			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
 			// Read and convert database
-			boolean readAndConvertSucceeded = readRealCommDatabaseJson(reader);
+			boolean readAndConvertSucceeded = readRealCommDatabaseJson(bufferedReader);
 
-			stream.close();
+			inputStream.close();
 
 			// Get the result
 			int httpResult = urlConnection.getResponseCode();
 			if (httpResult == HttpURLConnection.HTTP_OK)
 			{
-				return readAndConvertSucceeded;
-			}
-			else
-			{
-				// There was a problem, it will try again in a minute
-				// TODO potentially handle better/log error?
+				success = readAndConvertSucceeded;
 			}
 		}
 		catch (MalformedURLException e)
@@ -162,8 +190,40 @@ public class DownloadDatabaseHelper
 			// UnknownHostException comes in here
 			e.printStackTrace();
 		}
+		finally
+		{
+			// Clean up
+			if (urlConnection != null)
+			{
+				urlConnection.disconnect();
+			}
 
-		return false;
+			if (inputStream != null)
+			{
+				try
+				{
+					inputStream.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			if (bufferedReader != null)
+			{
+				try
+				{
+					bufferedReader.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return success;
 	}
 
 	public boolean writeDatabase()

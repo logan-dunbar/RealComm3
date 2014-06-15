@@ -5,7 +5,7 @@ public enum AppMode
 	INITIALIZING("Initializing", -1, -1),
 	OFFLINE("Offline", 1500, 7000),
 	ONLINE("Online", 1500, 2000),
-	OUT_OF_RANGE("Out of Range", 1500, 7000);
+	OUT_OF_RANGE("Out of Range", 500, 7000);
 
 	private final String displayName;
 	private final int animationStartDelay;

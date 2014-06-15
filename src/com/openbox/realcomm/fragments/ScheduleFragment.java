@@ -22,6 +22,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import com.openbox.realcomm.application.RealCommApplication;
+import com.openbox.realcomm.application.SharedPreferencesManager;
 import com.openbox.realcomm.base.BaseScheduleFragment;
 import com.openbox.realcomm.database.models.TalkDayModel;
 import com.openbox.realcomm.database.models.VenueModel;
@@ -174,33 +175,35 @@ public class ScheduleFragment extends BaseScheduleFragment
 		{
 			LayoutInflater inflater = LayoutInflater.from(getActivity());
 			RealCommApplication application = (RealCommApplication) getActivity().getApplication();
+
+			// Create tabHost or populate reference
 			boolean created = createTabHost(inflater);
 
-			TabWidget tw = this.scheduleTabHost.getTabWidget();
-			for (int i = 0; i < tw.getChildCount(); i++)
-			{
-				View tab = tw.getChildAt(i);
-				tab.setSelected(false);
-			}
+			// Get the prefix for the tab fragments' tags
+			String tabTagPrefix = getLastUpdateDate();
 
 			this.scheduleTabHost.clearAllTabs();
 
-			int selectedDateIndex = 0;
-			int index = 0;
 			// For each day, create a tab holding a TalkDayFragment
+			int index = 0;
+			int selectedDateIndex = 0;
 			for (TreeMap.Entry<Date, String> entry : distinctDateList.entrySet())
 			{
 				Date talkDate = entry.getKey();
 				String talkDateDisplayName = entry.getValue();
 
+				// Set up the indicator (i.e. tab)
 				View view = inflater.inflate(R.layout.tab_item_schedule, null);
 				TextView title = (TextView) view.findViewById(R.id.tabTitle);
 				title.setTypeface(application.getExo2Font());
 				title.setText(talkDateDisplayName);
 
+				// Create unique name based on update so it doesn't reuse old fragment
+				String tabFragmentTag = tabTagPrefix + talkDateDisplayName;
+
 				Bundle args = new Bundle();
 				args.putSerializable(TalkDayFragment.TALK_DATE_KEY, talkDate);
-				TabSpec tabSepc = this.scheduleTabHost.newTabSpec(talkDateDisplayName).setIndicator(view);
+				TabSpec tabSepc = this.scheduleTabHost.newTabSpec(tabFragmentTag).setIndicator(view);
 				this.scheduleTabHost.addTab(tabSepc, TalkDayFragment.class, args);
 
 				if (DateHelper.getDateOnly(new Date()).equals(DateHelper.getDateOnly(talkDate)))
@@ -211,12 +214,15 @@ public class ScheduleFragment extends BaseScheduleFragment
 				index++;
 			}
 
+			// TabWidget doesn't respect padding/margin in xml, need to workaround like this
+			TabWidget tw = this.scheduleTabHost.getTabWidget();
 			int tabSpacing = (int) getResources().getDimension(R.dimen.tabSpacing);
 			int tabWidth = (int) getResources().getDimension(R.dimen.tabWidth);
 			int tabHeight = (int) getResources().getDimension(R.dimen.tabHeight);
 			for (int i = 0; i < tw.getChildCount(); i++)
 			{
 				View tab = tw.getChildAt(i);
+
 				LinearLayout.LayoutParams params = (LayoutParams) tab.getLayoutParams();
 				params.width = tabWidth;
 				params.height = tabHeight;
@@ -226,25 +232,31 @@ public class ScheduleFragment extends BaseScheduleFragment
 				{
 					params.setMargins(0, 0, tabSpacing, 0);
 				}
-
-				if (i == selectedDateIndex)
-				{
-					tab.setSelected(true);
-				}
-				else
-				{
-					tab.setSelected(false);
-				}
 			}
 
-			this.scheduleTabHost.setCurrentTab(selectedDateIndex);
 			tw.requestLayout();
+
+			// Set the tab to the current date if it is a tab, or first
+			this.scheduleTabHost.setCurrentTab(selectedDateIndex);
 
 			if (created)
 			{
+				// Can only add to the layout once all the tabs have been initialized
 				this.scheduleLayout.addView(this.scheduleTabHost);
 			}
 		}
+	}
+
+	private String getLastUpdateDate()
+	{
+		String lastUpdateDate = "";
+		Long lastUpdatedDateLong = SharedPreferencesManager.getLastUpdateDate(getActivity());
+		if (lastUpdatedDateLong != SharedPreferencesManager.DEFAULT_LONG_VALUE)
+		{
+			lastUpdateDate = String.valueOf(lastUpdatedDateLong);
+		}
+
+		return lastUpdateDate;
 	}
 
 	private boolean createTabHost(LayoutInflater inflater)
@@ -253,6 +265,11 @@ public class ScheduleFragment extends BaseScheduleFragment
 		if (this.scheduleTabHost == null)
 		{
 			this.scheduleTabHost = new FragmentTabHost(getActivity());
+
+			// This line caused me so much grief. I actually cried a little bit. Because
+			// I never set the Id, it would never find it, and therefore keep adding new TabHosts :'(
+			// So many hours... so many...
+			this.scheduleTabHost.setId(R.id.scheduleTabHost);
 
 			LinearLayout ll = new LinearLayout(getActivity());
 			ll.setOrientation(LinearLayout.VERTICAL);

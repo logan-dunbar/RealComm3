@@ -821,21 +821,6 @@ public class RealCommActivity extends FragmentActivity implements
 	}
 
 	/**********************************************************************************************
-	 * Clear Focus Interface Implements
-	 **********************************************************************************************/
-	@Override
-	public List<View> getViewsToClearFocus()
-	{
-		List<View> views = new ArrayList<>();
-		for (ClearFocusInterface listener : this.clearFocusListeners)
-		{
-			views.addAll(listener.getViewsToClearFocus());
-		}
-
-		return views;
-	}
-
-	/**********************************************************************************************
 	 * App Mode Interface
 	 **********************************************************************************************/
 	@Override
@@ -853,6 +838,21 @@ public class RealCommActivity extends FragmentActivity implements
 		}
 
 		return null;
+	}
+
+	/**********************************************************************************************
+	 * Clear Focus Interface Implements
+	 **********************************************************************************************/
+	@Override
+	public List<View> getViewsToClearFocus()
+	{
+		List<View> views = new ArrayList<>();
+		for (ClearFocusInterface listener : this.clearFocusListeners)
+		{
+			views.addAll(listener.getViewsToClearFocus());
+		}
+
+		return views;
 	}
 
 	/**********************************************************************************************

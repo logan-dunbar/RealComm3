@@ -36,6 +36,8 @@ public class UploadBeaconsHelper
 
 	public boolean uploadBeaconRangingData()
 	{
+		// If nothing happens, return true
+		boolean success = true;
 		List<Beacon> beaconList = null;
 		try
 		{
@@ -49,13 +51,19 @@ public class UploadBeaconsHelper
 
 		if (beaconList != null && beaconList.size() > 0)
 		{
+			// Something needs to happen, so could go wrong
+			success = false;
+			
 			String beaconJson = this.gson.toJson(new BeaconJsonWrapper(beaconList));
 
+			HttpURLConnection urlConnection = null;
+			BufferedOutputStream bufferedOutputStream = null;
 			try
 			{
+
 				// Set up the connection
 				URL url = new URL(POST_BEACON_DATA_API_URL);
-				HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+				urlConnection = (HttpURLConnection) url.openConnection();
 
 				// Specify request properties
 				urlConnection.setRequestProperty("Accept", "application/json;charset=utf-8");
@@ -64,10 +72,8 @@ public class UploadBeaconsHelper
 				urlConnection.setRequestMethod("POST");
 
 				// Write data to stream
-				// OutputStream stream = urlConnection.getOutputStream();
-				BufferedOutputStream os = new BufferedOutputStream(urlConnection.getOutputStream());
-				os.write(beaconJson.getBytes("UTF-8"));
-				os.close();
+				bufferedOutputStream = new BufferedOutputStream(urlConnection.getOutputStream());
+				bufferedOutputStream.write(beaconJson.getBytes("UTF-8"));
 
 				// Get the result
 				int httpResult = urlConnection.getResponseCode();
@@ -77,17 +83,12 @@ public class UploadBeaconsHelper
 					{
 						// Posted successfully, clear the table
 						DatabaseManager.getInstance().deleteAll(Beacon.class);
-						return true;
+						success = true;
 					}
 					catch (Exception e)
 					{
 						e.printStackTrace();
 					}
-				}
-				else
-				{
-					// There was a problem, it will try again in a minute
-					// TODO potentially handle better/log error?
 				}
 			}
 			catch (MalformedURLException e)
@@ -99,12 +100,29 @@ public class UploadBeaconsHelper
 				// UnknownHostException comes in here
 				e.printStackTrace();
 			}
+			finally
+			{
+				// Clean up
+				if (urlConnection != null)
+				{
+					urlConnection.disconnect();
+				}
 
-			return false;
+				if (bufferedOutputStream != null)
+				{
+					try
+					{
+						bufferedOutputStream.close();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
-		// Nothing done, so signal everything OK
-		return true;
+		return success;
 	}
 
 	private List<Beacon> aggregateBeacons(List<Beacon> beaconList)

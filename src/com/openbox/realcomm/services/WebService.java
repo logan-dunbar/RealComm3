@@ -117,6 +117,7 @@ public class WebService extends CustomIntentService
 
 	private void uploadBeacons()
 	{
+		// Used to prevent multiple calls here in onHandleIntent()
 		this.isUploading = true;
 
 		boolean uploadSucceeded = this.uploadBeaconsHelper.uploadBeaconRangingData();
