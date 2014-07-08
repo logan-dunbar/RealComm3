@@ -198,7 +198,10 @@ public class BoothModel
 		for (int i = 0; i < this.runningAccuracyList.size(); i++)
 		{
 			double tempAccuracy = this.runningAccuracyList.get(i);
-			double tempWeight = Math.exp(i * -0.2);
+			
+			// Beginning of list should be weighted lowest
+			int coeff = (this.runningAccuracyList.size() - 1) - i;
+			double tempWeight = Math.exp(coeff * -0.2);
 			accuracy += tempAccuracy * tempWeight;
 			weight += tempWeight;
 		}
